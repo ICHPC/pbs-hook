@@ -7,7 +7,7 @@
 import sys
 import pbs
 
-list_of_resources = ["ncpus","ngpus","mem","mpiprocs","ompthreads"]
+list_of_resources = ["ncpus","ngpus","mem","mpiprocs","ompthreads","arch","host","icib","avx","avx2","westmere","sandyb","ivyb","haswell","broadwell","skylake","nphis","fauxqueue","tmpspace","viz","has_magma","gpu_type","proxied","jupyter"]
 
 try:
 #
@@ -17,7 +17,7 @@ try:
 #
 # Verify a select statement was used
    if ( pbs.event().job.Resource_List["select"] == None ):
-      pbs.event().reject("All jobs must specify a select statement, jobs cannot be allocated proper resources without this!")
+      pbs.event().reject("All jobs must specify a select statement, jobs cannot be allocated proper resources without this!\n\n      Your select statment has to be of the form:\n\n      #PBS -l select=[X:ncpus=Y:mem=M[mb|MB|gb|GB]:[mpiprocs:Z[:ompthreads=T[:<extra_node_resources>]]]]\n\n      where X is the number of nodes, Y the number of cores per node, M the memory per node,\n      Z the number of ranks per nodes in a parallel job and T the threads per node in a multithreaded application.\n")
 #
 # Go over the select statement to verify resources are correct and count the number of nodes used.
    nodect = 0
