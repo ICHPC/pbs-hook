@@ -16,14 +16,15 @@ def monitor_queue( queue_to_watch, backfill_qlist ):
 	queued =  int( re.split("\s+", op[5] ) [6] )
 
 
+
 	if queued > 0:
 		#  Remove the backfill_qlist from the nodes
 		mode = "-="
-		print("Switching queue [%s] to exclusive mode (%s jobs queued)" % ( queue_to_watch, queued ) )
 	else:
 		# Queue idle, reallocate the nodes to the backfill qlist
 		mode = "+="
-		print("Switching queue [%s] to backfill mode" % ( queue_to_watch ) )
+
+	modified=False
 
 	for n in data["nodes"]:
 		node = data["nodes"][n]
@@ -35,7 +36,20 @@ def monitor_queue( queue_to_watch, backfill_qlist ):
 					cmd = [ "/opt/pbs/default/bin/qmgr", "-c", "set node %s resources_available.Qlist %s %s"% ( n, mode, b ) ]
 			#		print( cmd )
 					subprocess.check_output( cmd )
+					modified = True
 	
+	if modified:
+		#  Remove the backfill_qlist from the nodes
+		dt = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+		if mode == "-=" :
+			print("%s\t Switching queue [%s] to exclusive mode (%s jobs queued)" % ( dt, queue_to_watch, queued ), file=fh )
+		else:
+			print("%s\t Switching queue [%s] to backfill mode" % ( st, queue_to_watch ), file=fh )
+
+
+	fh = open("/var/log/queue_switch.log", "a" )
+
+	fh.close()
 
 if __name__ == "__main__":
 	if len(sys.argv)!=3:
