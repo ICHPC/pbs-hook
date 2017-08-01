@@ -4,6 +4,7 @@ import json
 import subprocess
 import sys
 import re
+import datetime
 
 
 def monitor_queue( queue_to_watch, backfill_qlist ):
@@ -40,16 +41,14 @@ def monitor_queue( queue_to_watch, backfill_qlist ):
 	
 	if modified:
 		#  Remove the backfill_qlist from the nodes
+
+		fh = open("/var/log/queue_switch.log", "a" )
 		dt = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
 		if mode == "-=" :
 			print("%s\t Switching queue [%s] to exclusive mode (%s jobs queued)" % ( dt, queue_to_watch, queued ), file=fh )
 		else:
-			print("%s\t Switching queue [%s] to backfill mode" % ( st, queue_to_watch ), file=fh )
-
-
-	fh = open("/var/log/queue_switch.log", "a" )
-
-	fh.close()
+			print("%s\t Switching queue [%s] to backfill mode" % ( dt, queue_to_watch ), file=fh )
+		fh.close()
 
 if __name__ == "__main__":
 	if len(sys.argv)!=3:
