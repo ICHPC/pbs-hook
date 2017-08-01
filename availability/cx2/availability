@@ -1,0 +1,32 @@
+#!/usr/bin/python3
+
+import json
+import subprocess
+
+
+data = json.loads(subprocess.check_output(["/opt/pbs/default/bin/pbsnodes", "-a", "-F", "json" ] ).decode("utf8"))
+
+count={ "16":0, "24":0, "28":0 }
+queue= { "short":0, "general":0, "large":0, "capability":0 }
+for n in data["nodes"]:
+	node=data["nodes"][n]
+	state = node["state"]
+	ncpus = str(node["resources_available"]["ncpus"])
+#	print("%s %s %s %s " % ( n, state, ncpus, node["resources_available"]["Qlist"] ) )
+	if state == "free":
+		count[ncpus] = count[ncpus]+1
+		qlist =  node["resources_available"]["Qlist"].split(",")
+		for q in qlist:
+	#		if q!="capability" or (q=="capability" and len(qlist)==1):
+				queue[q] = queue[q] + 1	
+
+
+print ("")
+print ( "Nodes available for short      ( select=1-18   ncpus=24 mem=120gb walltime=2:0:0  ) : %s " % (queue["short"] ) )
+print ( "                    general    ( select=2-18   ncpus=16 mem=60gb  walltime=72:0:0 ) : %s " % (queue["general"] ))
+print ( "                    large      ( select=18-72  ncpus=24 mem=120gb walltime=48:0:0 ) : %s, of which %d are 28-core" % (queue["large"], count["28"] ))
+print ( "                    capability ( select=72-270 ncpus=28 mem=120gb walltime=24:0:0 ) : %s" % (queue["capability"] ) )
+print ("")
+print (" You may not be eligible to run additional jobs if")
+print (" you have reached the per-user job concurrency limit")
+print ("")
