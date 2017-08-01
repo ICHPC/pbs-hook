@@ -1,0 +1,51 @@
+#!/usr/bin/python3
+
+import json
+import subprocess
+import sys
+import re
+
+
+def monitor_queue( queue_to_watch, backfill_qlist ):
+
+	data = json.loads(subprocess.check_output(["/opt/pbs/default/bin/pbsnodes", "-a", "-F", "json" ] ).decode("utf8"))
+
+	op = subprocess.check_output( [ "/opt/pbs/default/bin/qstat", "-q", queue_to_watch ] ).decode("utf8").split("\n")
+
+
+	queued =  int( re.split("\s+", op[5] ) [6] )
+
+
+	if queued > 0:
+		#  Remove the backfill_qlist from the nodes
+		mode = "-="
+		print("Switching queue [%s] to exclusive mode (%s jobs queued)" % ( queue_to_watch, queued ) )
+	else:
+		# Queue idle, reallocate the nodes to the backfill qlist
+		mode = "+="
+		print("Switching queue [%s] to backfill mode" % ( queue_to_watch ) )
+
+	for n in data["nodes"]:
+		node = data["nodes"][n]
+		assigned_queues = node["resources_available"]["Qlist"].split(",")
+		if queue_to_watch in assigned_queues:
+			for b in backfill_qlist:
+			#	print( "%s %s%s" %( n, mode, b ) )
+				if (mode == "-=" and b in assigned_queues) or ( mode == "+=" and b not in assigned_queues ):
+					cmd = [ "/opt/pbs/default/bin/qmgr", "-c", "set node %s resources_available.Qlist %s %s"% ( n, mode, b ) ]
+			#		print( cmd )
+					subprocess.check_output( cmd )
+	
+
+if __name__ == "__main__":
+	if len(sys.argv)!=3:
+		print("Syntax: %s priority_queue_list backfill_queue_list" % ( sys.argv[0] ) )
+		sys.exit(1)
+	queues_to_watch = sys.argv[1].split(",")
+	backfill_qlist = sys.argv[2].split(",")
+
+
+	for q in queues_to_watch:
+		monitor_queue( q, backfill_qlist )
+
+
