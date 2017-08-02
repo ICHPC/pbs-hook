@@ -16,12 +16,15 @@ for n in data["nodes"]:
 	ncpus = str(node["resources_available"]["ncpus"])
 #	print("%s %s %s %s " % ( n, state, ncpus, node["resources_available"]["Qlist"] ) )
 	if state == "free":
-		count[ncpus] = count[ncpus]+1
 		qlist =  node["resources_available"]["Qlist"].split(",")
 		for q in qlist:
 	#		if q!="capability" or (q=="capability" and len(qlist)==1):
 			queue[q] = queue[q] + 1	
-			if q == "capability" and len(qlist)==1: prioritising = True
+			if q == "capability" and len(qlist)==1: 
+				prioritising = True
+		if (prioritising == False) or (prioritising == True and ncpus!="28"):
+			count[ncpus] = count[ncpus]+1
+				
 
 
 prio = ""
