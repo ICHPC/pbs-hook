@@ -7,7 +7,7 @@
 import sys
 import pbs
 
-list_of_resources = ["ncpus","ngpus","mem","mpiprocs","ompthreads","arch","host","switchgroup","icib","avx","avx2","westmere","sandyb","ivyb","haswell","broadwell","skylake","nphis","fauxqueue","tmpspace","viz","has_magma","gpu_type","proxied","jupyter"]
+list_of_resources = ["ncpus","ngpus","mem","mpiprocs","ompthreads","arch","host","switchgroup","icib","avx","avx2","westmere","sandyb","ivyb","haswell","broadwell","skylake","fauxqueue","tmpspace","viz","has_magma","gpu_type","proxied","jupyter"]
 
 try:
 #
