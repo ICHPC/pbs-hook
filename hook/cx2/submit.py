@@ -49,11 +49,11 @@ try:
       if not matched and nodect>=2 and nodect <=18 and ncpus == 16 and walltime <= pbs.duration("72:0:0"):
           pbs.event().job.queue=pbs.server().queue("general")
           matched = True 
-      if not matched and nodect>=18 and nodect <=72 and ncpus in [24,28] and walltime <= pbs.duration("48:0:0"):
-          pbs.event().job.queue=pbs.server().queue("large")
-          matched = True 
       if not matched and nodect>=72 and nodect <=270 and ncpus in [28] and walltime <= pbs.duration("24:0:0"):
           pbs.event().job.queue=pbs.server().queue("capability")
+          matched = True 
+      if not matched and nodect>=18 and nodect <=72 and ncpus in [24,28] and walltime <= pbs.duration("48:0:0"):
+          pbs.event().job.queue=pbs.server().queue("large")
           matched = True 
 
       if not matched:
