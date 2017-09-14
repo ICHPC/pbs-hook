@@ -45,12 +45,37 @@ try:
       pbs.event().reject("You can only submit interactive jobs to the interactive queue!")
 #
 # All interactive jobs except the ones for the viz queue should go to the interactive queue 
-   if ( ( pbs.event().job.interactive ) and ( queue_name not in ["viz","debug","build"] ) and ( queue_name[0:2] != "pq" ) ):
+   if ( ( pbs.event().job.interactive ) and ( queue_name not in ["viz","debug","build"] ) and ( queue_name[0:2] != "pq" ) and ( queue_name[0] != "e" ) ):
       pbs.event().job.queue=pbs.server().queue("interactive")
 #
 # If we request accelerators but we are not on a private queue, or gpgpu then redirect
    if ( accel and ( queue_name != "gpgpu" ) and ( queue_name[0:2] != "pq" ) ):
       pbs.event().job.queue=pbs.server().queue("gpgpu")   
+
+# Check expedited queue config. Only allow certain configs, and force node exclusivity
+   if queue_name[0] == "e":
+      pbs.event().job.Resource_List["place"]=pbs.place("pack:exclhost")
+
+      nodect = 0
+      chunks = repr(pbs.event().job.Resource_List["select"]).split("+")
+      if ( len(chunks) != 1 ):
+         pbs.event().reject("You can only request one chunk of the form #PBS -l select=N:ncpus=X:mem=Ygb:mpiprocs=Z:ompthreads=W")
+      for chunk in chunks:
+         nodect+=int(chunk.split(":")[0])
+         for rs in chunk.split(":")[1:]:
+            kw = rs.split("=")[0]
+            if ( kw not in list_of_resources ):
+               pbs.event().reject("Select statements can only contain the resources: "+", ".join(list_of_resources))
+            if ( kw == "ncpus" ):
+               ncpus=int(rs.split("=")[1])
+      matched = False
+      if ncpus == 32: 
+          matched = True
+
+      if not matched:
+           pbs.event().reject("Unsupported geometry: Please read https://wiki.imperial.ac.uk/display/HPC/Job+sizing+on+cx1")
+
+
 #
 # If we accept or reject we are done
 except SystemExit:
