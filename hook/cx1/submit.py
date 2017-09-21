@@ -1,3 +1,4 @@
+
 #
 # Submit hook
 # CX1
@@ -7,7 +8,31 @@
 import sys
 import pbs
 
-list_of_resources = ["ncpus","ngpus","mem","mpiprocs","ompthreads","arch","host","switchgroup","icib","avx","avx2","westmere","sandyb","ivyb","haswell","broadwell","skylake","fauxqueue","tmpspace","viz","has_magma","gpu_type","proxied","jupyter","using_ht","cpumodel"]
+list_of_resources = ["ncpus","ngpus","mem","mpiprocs","ompthreads","arch","host","switchgroup","icib","avx","avx2","westmere","sandyb","ivyb","haswell","broadwell","skylake","tmpspace","viz","has_magma","gpu_type","proxied","jupyter","cpumodel","using_ht"]
+
+
+def check_express_queue( queue_name, accel, pbs ): 
+  pass
+
+def check_common( queue_name, accel, pbs ):
+  #
+  # Because the interactive queue is accessible by everyone check that only interactive jobs go there
+   if ( ( not pbs.event().job.interactive ) and ( queue_name == "interactive" ) ):
+      pbs.event().reject("You can only submit interactive jobs to the interactive queue!")
+  #
+  # All interactive jobs except the ones for the viz queue should go to the interactive queue 
+   if ( ( pbs.event().job.interactive ) and ( queue_name not in ["viz","debug","build"] ) and ( queue_name[0:2] != "pq" ) ):
+      pbs.event().job.queue=pbs.server().queue("interactive")
+  #
+  # If we request accelerators but we are not on a private queue, or gpgpu then redirect
+   if ( accel and ( queue_name != "gpgpu" ) and ( queue_name[0:2] != "pq" ) ):
+      pbs.event().job.queue=pbs.server().queue("gpgpu")   
+  #
+  # If we accept or reject we are done
+
+
+
+
 
 try:
 #
@@ -27,7 +52,7 @@ try:
       for rs in chunk.split(":")[1:]:
          kw = rs.split("=")[0]
          if kw not in list_of_resources:
-            pbs.event().reject("Select statements can only contain the resources: "+", ".join(list_of_resources))
+            pbs.event().reject( kw + " : Select statements can only contain the resources: "+", ".join(list_of_resources) )
          if kw in ["ngpus"]:
             accel=1
 #
@@ -39,20 +64,12 @@ try:
    queue_name=""
    if ( pbs.event().job.queue != "" ):
       queue_name=pbs.event().job.queue.name
-#
-# Because the interactive queue is accessible by everyone check that only interactive jobs go there
-   if ( ( not pbs.event().job.interactive ) and ( queue_name == "interactive" ) ):
-      pbs.event().reject("You can only submit interactive jobs to the interactive queue!")
-#
-# All interactive jobs except the ones for the viz queue should go to the interactive queue 
-   if ( ( pbs.event().job.interactive ) and ( queue_name not in ["viz","debug","build"] ) and ( queue_name[0:2] != "pq" ) ):
-      pbs.event().job.queue=pbs.server().queue("interactive")
-#
-# If we request accelerators but we are not on a private queue, or gpgpu then redirect
-   if ( accel and ( queue_name != "gpgpu" ) and ( queue_name[0:2] != "pq" ) ):
-      pbs.event().job.queue=pbs.server().queue("gpgpu")   
-#
-# If we accept or reject we are done
+
+   if len(queue_name)>0 and queue_name[0] == "e":
+      check_express_queue( queue_name, accel, pbs )
+   else:
+      check_common( queue_name, accel, pbs )
+
 except SystemExit:
    pass
 #
@@ -67,3 +84,5 @@ except:
 #
 # pbs.logmsg(pbs.LOG_DEBUG, "Jobid = %s"%(pbs.event().job.id))
 #
+
+
