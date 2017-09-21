@@ -28,7 +28,7 @@ try:
          kw = rs.split("=")[0]
          if kw not in list_of_resources:
             pbs.event().reject("Select statements can only contain the resources: "+", ".join(list_of_resources))
-         if kw in ["ngpus","nmics","nphi"]:
+         if kw in ["ngpus"]:
             accel=1
 #
 # If we are in multinode make sure we use scatter and exclusive hosts
