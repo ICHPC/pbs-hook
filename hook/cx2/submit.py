@@ -28,7 +28,7 @@ try:
       queue_name=pbs.event().job.queue.name
 #
 # Verify resources requested, count the number of nodes used, the ncpus requested and compute the number of IRUs
-   if queue_name[0] != "R": # Anything goes in a Reservation
+   if queue_name[0] != "R" and queue_name[0] != "e": # Anything goes in a Reservation or expedited queue
       nodect = 0
       chunks = repr(pbs.event().job.Resource_List["select"]).split("+")
       if ( len(chunks) != 1 ):
@@ -58,6 +58,30 @@ try:
 
       if not matched:
            pbs.event().reject("Unsupported geometry: Please read https://wiki.imperial.ac.uk/display/HPC/Job+sizing+on+cx2")
+
+# Logic for expedited queues
+# Only allow 24 core jobs
+   if queue_name[0] == "e":
+      nodect = 0
+      chunks = repr(pbs.event().job.Resource_List["select"]).split("+")
+      if ( len(chunks) != 1 ):
+         pbs.event().reject("You can only request one chunk of the form #PBS -l select=N:ncpus=X:mem=Ygb:mpiprocs=Z:ompthreads=W")
+      for chunk in chunks:
+         nodect+=int(chunk.split(":")[0])
+         for rs in chunk.split(":")[1:]:
+            kw = rs.split("=")[0]
+            if ( kw not in list_of_resources ):
+               pbs.event().reject("Select statements can only contain the resources: "+", ".join(list_of_resources))
+            if ( kw == "ncpus" ):
+               ncpus=int(rs.split("=")[1])
+      matched = False
+      if ncpus == 24 and nodect <= 270:
+          matched = True 
+
+      if not matched:
+           pbs.event().reject("Unsupported geometry: Please read https://wiki.imperial.ac.uk/display/HPC/Job+sizing+on+cx2")
+
+      
 
 #
 # If we accept or reject we are done
