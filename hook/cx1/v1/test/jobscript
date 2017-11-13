@@ -1,2 +1,7 @@
+#PBS -j oe
+#PBS -o /tmp/log.txt
+#PBS -e /tmp/log.txt
+
 hostname
+sleep 10
 

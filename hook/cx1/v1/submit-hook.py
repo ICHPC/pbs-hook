@@ -16,114 +16,101 @@ list_of_resources = ["ncpus","ngpus","mem","mpiprocs","ompthreads","arch","host"
 queue_config_version = "v1_"
 
 classifications = {
-		"Interactive": {
+		"interactive": {
 			"nodect"   : [1,1],
 			"ncpus"    : [1,20],
 			"ngpus"    : [0,1],
 			"walltime" : [0,8],
 			"mem"      : [1, 128],
 			"interactive": True,
-			"target_queue": "interactive",
 		},
-		"Debug": {
+		"debug": {
 			"nodect"   : [1,1],
 			"ncpus"    : [1,20],
 			"ngpus"    : [0,1],
 			"walltime" : [0,0.5], # Up to 3 mins
 			"mem"      : [1, 128],
 			"interactive": False,
-			"target_queue": "debug",
 		},
 
-		"Throughput24": {
+		"throughput24": {
 			"nodect"   : [1,1],
-			"ncpus"    : [1,20],
+			"ncpus"    : [1,16],
 			"ngpus"    : [0,0],
 			"walltime" : [0,24],
 			"mem"      : [1, 128],
 			"interactive": False,
-			"target_queue": "throughput24",
 		},
 
-		"Throughput72": {
+		"throughput72": {
 			"nodect"   : [1,1],
-			"ncpus"    : [1,20],
+			"ncpus"    : [1,16],
 			"ngpus"    : [0,0],
 			"walltime" : [24.001, 72],
 			"mem"      : [1, 128],
 			"interactive": False,
-			"target_queue": "throughput72",
 		},
 
-		"Turnaround24": {
+		"turnaround24": {
 			"nodect"   : [1,16],
 			"ncpus"    : [ [16,16], [32,32] ],
 			"ngpus"    : [0,0],
 			"walltime" : [1,24.],
 			"mem"      : [1, 128],
 			"interactive": False,
-			"target_queue": "turnaround24",
 		},
 
-		"Turnaround72": {
+		"turnaround72": {
 			"nodect"   : [1,16],
 			"ncpus"    : [ [16,16], [32,32] ],
 			"ngpus"    : [0,0],
 			"walltime" : [24.001, 72.],
 			"mem"      : [1, 128],
 			"interactive": False,
-			"target_queue": "turnaround72",
 		},
-		"Singlenode24": {
+		"singlenode24": {
 			"nodect"   : [1,1],
 			"ncpus"    : [ [24,24], [48,48] ],
 			"ngpus"    : [0,0],
 			"walltime" : [1,24.],
 			"mem"      : [1, 256],
 			"interactive": False,
-			"target_queue": "singlenode24",
 		},
 
-
-
-		"Multinode24": {
+		"multinode24": {
 			"nodect"   : [ 2, 20 ],
 			"ncpus"    : [ 12, 12 ],
 			"ngpus"    : [0,0],
 			"walltime" : [ 0., 24. ],
 			"mem"      : [1, 48],
 			"interactive": False,
-			"target_queue": "multinode24",
 		},
 
-		"Multinode72": {
+		"multinode72": {
 			"nodect"   : [ 2, 20 ],
 			"ncpus"    : [ 12, 12 ],
 			"ngpus"    : [0,0],
 			"walltime" : [ 0., 24. ],
 			"mem"      : [1, 48],
 			"interactive": False,
-			"target_queue": "multinode72",
 		},
 
-		"Turnaround48_large_mem": {
+		"largemem48": {
 			"nodect"   : [ 1, 1 ],
 			"ncpus"    : [ 1, 24 ],
 			"ngpus"    : [0,0],
 			"walltime" : [ 0., 48. ],
 			"mem"      : [128, 256],
 			"interactive": False,
-			"target_queue": "largemem48",
 		},
 
-		"Turnaround8_gpu": {
+		"gpu48": {
 			"nodect"   : [ 1, 1 ],
 			"ncpus"    : [ 1, 24 ],
 			"ngpus"    : [1,8],
 			"walltime" : [ 0., 48. ],
 			"mem"      : [1, 128],
 			"interactive": False,
-			"target_queue": "gpu48",
 		},
 
 }
@@ -158,7 +145,7 @@ def classify_job( selection, walltime ):
 	for clssname  in classifications.keys():
 		clss = classifications[clssname]
 		if match_class( selection, walltime, clss ):
-			clss["name"] = clssname
+			clss["target_queue"] = clssname
 			ret.append( clss )
 			names = names + clssname + " "
 
