@@ -138,16 +138,17 @@ def match_class(selection, walltime, clss ):
 
 
 # Match job to class. Error out if it matches more than one class
-def classify_job( selection, walltime ):
+def classify_job( selection, walltime, queue = None ):
 	names = ""
 	ret=[];
 
 	for clssname  in classifications.keys():
 		clss = classifications[clssname]
-		if match_class( selection, walltime, clss ):
-			clss["target_queue"] = clssname
-			ret.append( clss )
-			names = names + clssname + " "
+		if ( queue == None ) or clssname == queue:
+			if match_class( selection, walltime, clss ):
+				clss["target_queue"] = clssname
+				ret.append( clss )
+				names = names + clssname + " "
 
 	if len(ret) > 1:
 		pbs.event().reject( "Job matches multiple classes: [ " + names.strip() + "]" )
@@ -172,6 +173,8 @@ def extract_queue_type():
 		return "express"
 	elif len(queue_name)>0 and ( queue_name[0] == "p"  or queue_name == "med-bio" ):
 		return "private"
+	elif queue_name.startswith(queue_config_version):
+		return "common:" + queue_name
 	else:
 		pbs.event().reject("Invalid queue name.")
 
@@ -289,9 +292,14 @@ try:
 	if queue_type == "express":
 		pbs.event().reject("Express queue functionality not available yet")
 
-
-
-	clss = classify_job( selection, walltime )
+	
+	if queue_type == "common":
+		clss = classify_job( selection, walltime )
+	else:
+		# If the user submitted to a specific queue, test against the config for that alone
+		queue_type = queue_type.split(":")
+		clss = classify_job( selection, walltime, queue = queue_type[1] )
+		
 
 	# Move the job into the right queue
 	pbs.event().job.queue = pbs.server().queue( clss["target_queue"] )
