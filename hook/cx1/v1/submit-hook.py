@@ -74,6 +74,17 @@ classifications = {
 			"interactive": False,
 			"target_queue": "turnaround72",
 		},
+		"Singlenode24": {
+			"nodect"   : [1,1],
+			"ncpus"    : [ [24,24], [48,48] ]
+			"ngpus"    : [0,0],
+			"walltime" : [1,24.]
+			"mem"      : [1, 256],
+			"interactive": False,
+			"target_queue": "singlenode24",
+		},
+
+
 
 		"Multinode24": {
 			"nodect"   : [ 2, 20 ],

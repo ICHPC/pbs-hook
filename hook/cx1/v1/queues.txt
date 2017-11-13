@@ -1,22 +1,45 @@
 VER=v1
-QUEUES="interactive debug throughput24 throughput72 turnaround24 turnaround72 multinode24 multinode72 largemem48 gpu48"
+QUEUES="interactive debug throughput24 throughput72 turnaround24 turnaround72 multinode24 multinode72 largemem48 gpu48 singlenode24"
 
 IB_QUEUES="multinode24 multinode72"
 
+qmgr -c "delete resource Qlist"
+qmgr -c "create resource Qlist"
+qmgr -c "set resource Qlist type = string_array"
+qmgr -c "set resource Qlist flag = hr"
+
+qmgr -c "delete resource icib"
+qmgr -c "create resource icib"
+qmgr -c "set resource icib type = boolean"
+qmgr -c "set resource icib flag = h"
+
+
+
+qmgr -c "delete queue submit"
+qmgr -c "create queue submit"
+qmgr -c "set queue submit queue_type = Route"
+qmgr -c "set queue submit acl_group_enable = True"
+qmgr -c "set queue submit acl_groups += hpc-users"
+qmgr -c "set queue submit acl_groups += scan-proxy-group"
+qmgr -c "set queue submit route_destinations = fallthrough"
+qmgr -c "set queue submit enabled = True"
+qmgr -c "set queue submit started = True"
+qmgr -c "set server default_queue = submit"
+
 for Q in $QUEUES; do
-	qmgr -c "delete queue $VER_$Q"
-	qmgr -c "create queue $VER_$Q"
-	qmgr -c "set queue $VER_$Q queue_type      = Execution"	
-	qmgr -c "set queue $VER_$Q from_route_only = True"
-	qmgr -c "set queue $VER_$Q default_chunk.Qlist = $VER_$Q"
-	qmgr -c "set queue $VER_$Q enabled         = True"
-	qmgr -c "set queue $VER_$Q started         = True"
+	qmgr -c "delete queue ${VER}_$Q"
+	qmgr -c "create queue ${VER}_$Q"
+	qmgr -c "set queue ${VER}_$Q queue_type      = Execution"	
+	qmgr -c "set queue ${VER}_$Q from_route_only = True"
+	qmgr -c "set queue ${VER}_$Q default_chunk.Qlist = ${VER}_$Q"
+	qmgr -c "set queue ${VER}_$Q enabled         = True"
+	qmgr -c "set queue ${VER}_$Q started         = True"
 done
 
 for Q	 in $IB_QUEUES; do
-	qmgr -c "set queue $VER_$Q  default_chunk.icib  = True"
-	qmgr -c "set queue $VER_$Q  default_chunk.place = scatter:excl"
+	qmgr -c "set queue ${VER}_$Q  default_chunk.icib  = True"
+	qmgr -c "set queue ${VER}_$Q  resources_default.place = scatter:excl"
 done
 
-qmgr -c "set queue $VER_interactive max_run = [u:PBS_GENERIC=1]"
-qmgr -c "set queue $VER_gpu48       max_run = [u:PBS_GENERIC=2]"
+qmgr -c "set queue ${VER}_interactive max_run = [u:PBS_GENERIC=1]"
+qmgr -c "set queue ${VER}_gpu48       max_run = [u:PBS_GENERIC=2]"
