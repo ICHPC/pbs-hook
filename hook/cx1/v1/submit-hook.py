@@ -18,18 +18,18 @@ queue_config_version = "v1_"
 classifications = {
 		"interactive": {
 			"nodect"   : [1,1],
-			"ncpus"    : [1,12],
+			"ncpus"    : [1,8],
 			"ngpus"    : [0,1],
-			"walltime" : [0,8],
-			"mem"      : [1, 128],
+			"walltime" : [0,8.],
+			"mem"      : [1, 96],
 			"interactive": True,
 		},
 		"debug": {
 			"nodect"   : [1,1],
-			"ncpus"    : [1,12],
+			"ncpus"    : [1,8],
 			"ngpus"    : [0,1],
 			"walltime" : [0,0.5], # Up to 30 mins
-			"mem"      : [1, 128],
+			"mem"      : [1, 96],
 			"interactive": False,
 		},
 
@@ -37,7 +37,7 @@ classifications = {
 			"nodect"   : [1,1],
 			"ncpus"    : [1,8],
 			"ngpus"    : [0,0],
-			"walltime" : [0,24],
+			"walltime" : [0.5001,24],
 			"mem"      : [1, 96],
 			"interactive": False,
 		},
@@ -56,7 +56,7 @@ classifications = {
 			"ncpus"    : [ [16,16], [32,32] ],
 			"ngpus"    : [0,0],
 			"walltime" : [1,24.],
-			"mem"      : [1, 128],
+			"mem"      : [1, 124],
 			"interactive": False,
 		},
 
@@ -65,7 +65,7 @@ classifications = {
 			"ncpus"    : [ [16,16], [32,32] ],
 			"ngpus"    : [0,0],
 			"walltime" : [24.001, 72.],
-			"mem"      : [1, 128],
+			"mem"      : [1, 124],
 			"interactive": False,
 		},
 		"singlenode24": {
@@ -73,7 +73,7 @@ classifications = {
 			"ncpus"    : [ [24,24], [48,48] ],
 			"ngpus"    : [0,0],
 			"walltime" : [1,24.],
-			"mem"      : [1, 256],
+			"mem"      : [1, 250],
 			"interactive": False,
 		},
 
@@ -82,25 +82,25 @@ classifications = {
 			"ncpus"    : [ 12, 12 ],
 			"ngpus"    : [0,0],
 			"walltime" : [ 0., 24. ],
-			"mem"      : [1, 48],
+			"mem"      : [1, 46],
 			"interactive": False,
 		},
 
-		"multinode72": {
+		"multinode48": {
 			"nodect"   : [ 2, 20 ],
 			"ncpus"    : [ 12, 12 ],
 			"ngpus"    : [0,0],
-			"walltime" : [ 0., 24. ],
-			"mem"      : [1, 48],
+			"walltime" : [ 24.001, 48.00 ],
+			"mem"      : [1, 46],
 			"interactive": False,
 		},
 
 		"largemem48": {
 			"nodect"   : [ 1, 1 ],
-			"ncpus"    : [ 1, 12 ],
+			"ncpus"    : [ 24, 24 ],
 			"ngpus"    : [0,0],
 			"walltime" : [ 0., 48. ],
-			"mem"      : [128, 256],
+			"mem"      : [127, 250],
 			"interactive": False,
 		},
 12

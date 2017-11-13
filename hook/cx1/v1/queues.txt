@@ -1,7 +1,7 @@
 VER=v1
-QUEUES="interactive debug throughput24 throughput72 turnaround24 turnaround72 multinode24 multinode72 largemem48 gpu48 singlenode24"
+QUEUES="interactive debug throughput24 throughput72 general24 general72 multinode24 multinode48 largemem48 gpu48 singlenode24"
 
-IB_QUEUES="multinode24 multinode72"
+IB_QUEUES="multinode24 multinode48"
 
 qmgr -c "delete resource Qlist"
 qmgr -c "create resource Qlist"
