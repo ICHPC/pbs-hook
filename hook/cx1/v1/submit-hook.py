@@ -57,9 +57,9 @@ classifications = {
 
 		"Turnaround24": {
 			"nodect"   : [1,16],
-			"ncpus"    : [ [16,16], [32,32] ]
+			"ncpus"    : [ [16,16], [32,32] ],
 			"ngpus"    : [0,0],
-			"walltime" : [1,24.]
+			"walltime" : [1,24.],
 			"mem"      : [1, 128],
 			"interactive": False,
 			"target_queue": "turnaround24",
@@ -67,18 +67,18 @@ classifications = {
 
 		"Turnaround72": {
 			"nodect"   : [1,16],
-			"ncpus"    : [ [16,16], [32,32] ]
+			"ncpus"    : [ [16,16], [32,32] ],
 			"ngpus"    : [0,0],
-			"walltime" : [24.001, 72.]
+			"walltime" : [24.001, 72.],
 			"mem"      : [1, 128],
 			"interactive": False,
 			"target_queue": "turnaround72",
 		},
 		"Singlenode24": {
 			"nodect"   : [1,1],
-			"ncpus"    : [ [24,24], [48,48] ]
+			"ncpus"    : [ [24,24], [48,48] ],
 			"ngpus"    : [0,0],
-			"walltime" : [1,24.]
+			"walltime" : [1,24.],
 			"mem"      : [1, 256],
 			"interactive": False,
 			"target_queue": "singlenode24",
@@ -88,9 +88,9 @@ classifications = {
 
 		"Multinode24": {
 			"nodect"   : [ 2, 20 ],
-			"ncpus"    : [ 12, 12 ]
+			"ncpus"    : [ 12, 12 ],
 			"ngpus"    : [0,0],
-			"walltime" : [ 0., 24. ]
+			"walltime" : [ 0., 24. ],
 			"mem"      : [1, 48],
 			"interactive": False,
 			"target_queue": "multinode24",
@@ -98,9 +98,9 @@ classifications = {
 
 		"Multinode72": {
 			"nodect"   : [ 2, 20 ],
-			"ncpus"    : [ 12, 12 ]
+			"ncpus"    : [ 12, 12 ],
 			"ngpus"    : [0,0],
-			"walltime" : [ 0., 24. ]
+			"walltime" : [ 0., 24. ],
 			"mem"      : [1, 48],
 			"interactive": False,
 			"target_queue": "multinode72",
@@ -108,9 +108,9 @@ classifications = {
 
 		"Turnaround48_large_mem": {
 			"nodect"   : [ 1, 1 ],
-			"ncpus"    : [ 1, 24 ]
+			"ncpus"    : [ 1, 24 ],
 			"ngpus"    : [0,0],
-			"walltime" : [ 0., 48. ]
+			"walltime" : [ 0., 48. ],
 			"mem"      : [128, 256],
 			"interactive": False,
 			"target_queue": "largemem48",
@@ -118,15 +118,37 @@ classifications = {
 
 		"Turnaround8_gpu": {
 			"nodect"   : [ 1, 1 ],
-			"ncpus"    : [ 1, 24 ]
+			"ncpus"    : [ 1, 24 ],
 			"ngpus"    : [1,8],
-			"walltime" : [ 0., 48. ]
+			"walltime" : [ 0., 48. ],
 			"mem"      : [1, 128],
 			"interactive": False,
 			"target_queue": "gpu48",
 		},
 
 }
+
+def match_class(selection, walltime, clss ):
+	# Compare walltime
+	if (walltime < clss["walltime"][0])  or ( walltime > clss["walltime"][1] ):
+		return False
+
+	if clss["interactive"] != selection["interactive"]:
+		return False
+
+	for minmax in ["walltime", "mem", "nodect", "ngpus"]:
+		if ( selection[minmax] < clss[minmax][0] ) or ( selection[minmax] > clss[minmax][1] ):
+			return False
+
+	if not isinstance( clss["ncpus"], list ):
+		clss["ncpus"] = [ clss["ncpus"] ]
+
+	for c in range(len(clss["ncpus"])):
+		if ( selection["ncpus"] < clss["ncpus"][c][0] ) or ( selection["ncpus"] > clss["ncpus"][c][1] ):
+			return False
+	# Classification matches
+	return True
+
 
 # Match job to class. Error out if it matches more than one class
 def classify_job( selection, walltime ):
@@ -183,7 +205,7 @@ def extract_walltime():
 #  
 
 # Return the amount of requested memory in gb as an int, rounded down (min 1gb)
-def canoncical_mem( mem )
+def canoncical_mem( mem ):
 	# Canonicalise "mem"
 	mem = mem.lower()
 	factor = 1./ (1024*1024*1024) # scale down from bytes to gb
