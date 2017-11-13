@@ -1,0 +1,22 @@
+VER=v1
+QUEUES="interactive debug throughput24 throughput72 turnaround24 turnaround72 multinode24 multinode72 largemem48 gpu48"
+
+IB_QUEUES="multinode24 multinode72"
+
+for Q in $QUEUES; do
+	qmgr -c "delete queue $VER_$Q"
+	qmgr -c "create queue $VER_$Q"
+	qmgr -c "set queue $VER_$Q queue_type      = Execution"	
+	qmgr -c "set queue $VER_$Q from_route_only = True"
+	qmgr -c "set queue $VER_$Q default_chunk.Qlist = $VER_$Q"
+	qmgr -c "set queue $VER_$Q enabled         = True"
+	qmgr -c "set queue $VER_$Q started         = True"
+done
+
+for Q	 in $IB_QUEUES; do
+	qmgr -c "set queue $VER_$Q  default_chunk.icib  = True"
+	qmgr -c "set queue $VER_$Q  default_chunk.place = scatter:excl"
+done
+
+qmgr -c "set queue $VER_interactive max_run = [u:PBS_GENERIC=1]"
+qmgr -c "set queue $VER_gpu48       max_run = [u:PBS_GENERIC=2]"
