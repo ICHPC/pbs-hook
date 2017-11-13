@@ -3,7 +3,7 @@
 # Submit hook
 # CX1
 # HPC - Imperial College London
-#
+# Home: github ICHPC/pbs-hook
 
 import sys
 import pbs
@@ -18,7 +18,7 @@ queue_config_version = "v1_"
 classifications = {
 		"interactive": {
 			"nodect"   : [1,1],
-			"ncpus"    : [1,20],
+			"ncpus"    : [1,12],
 			"ngpus"    : [0,1],
 			"walltime" : [0,8],
 			"mem"      : [1, 128],
@@ -26,32 +26,32 @@ classifications = {
 		},
 		"debug": {
 			"nodect"   : [1,1],
-			"ncpus"    : [1,20],
+			"ncpus"    : [1,12],
 			"ngpus"    : [0,1],
-			"walltime" : [0,0.5], # Up to 3 mins
+			"walltime" : [0,0.5], # Up to 30 mins
 			"mem"      : [1, 128],
 			"interactive": False,
 		},
 
 		"throughput24": {
 			"nodect"   : [1,1],
-			"ncpus"    : [1,16],
+			"ncpus"    : [1,8],
 			"ngpus"    : [0,0],
 			"walltime" : [0,24],
-			"mem"      : [1, 128],
+			"mem"      : [1, 96],
 			"interactive": False,
 		},
 
 		"throughput72": {
 			"nodect"   : [1,1],
-			"ncpus"    : [1,16],
+			"ncpus"    : [1,8],
 			"ngpus"    : [0,0],
 			"walltime" : [24.001, 72],
-			"mem"      : [1, 128],
+			"mem"      : [1, 96],
 			"interactive": False,
 		},
 
-		"turnaround24": {
+		"general24": {
 			"nodect"   : [1,16],
 			"ncpus"    : [ [16,16], [32,32] ],
 			"ngpus"    : [0,0],
@@ -60,7 +60,7 @@ classifications = {
 			"interactive": False,
 		},
 
-		"turnaround72": {
+		"general72": {
 			"nodect"   : [1,16],
 			"ncpus"    : [ [16,16], [32,32] ],
 			"ngpus"    : [0,0],
@@ -97,13 +97,13 @@ classifications = {
 
 		"largemem48": {
 			"nodect"   : [ 1, 1 ],
-			"ncpus"    : [ 1, 24 ],
+			"ncpus"    : [ 1, 12 ],
 			"ngpus"    : [0,0],
 			"walltime" : [ 0., 48. ],
 			"mem"      : [128, 256],
 			"interactive": False,
 		},
-
+12
 		"gpu48": {
 			"nodect"   : [ 1, 1 ],
 			"ncpus"    : [ 1, 24 ],
