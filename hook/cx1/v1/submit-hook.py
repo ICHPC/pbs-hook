@@ -270,6 +270,33 @@ def extract_selection():
 	return ret
 	
 
+def fixup_mpiprocs_ompthreads( sel ):
+	selstr = repr(pbs.event().job.Resource_List["select"])
+
+	if "mpiprocs" not in sel and "ompthreads" not in sel:
+		mpiprocs   = int(sel["ncpus"])
+		ompthreads = 1
+		pbs.event().job.Resource_List["select"] = pbs.select( selstr + ":mpiprocs=" + str(mpiprocs ) + ":ompthreads=" + str(ompthreads) )
+	elif "mpiprocs" not in sel and "ompthreads" in sel:
+		ompthreads = int(sel["ompthreads"])
+		mpiprocs   = ( sel["ncpus"] / ompthreads )
+		if mpiprocs < 1:
+			mpiprocs = 1
+		pbs.event().job.Resource_List["select"] = pbs.select( selstr + ":mpiprocs=" + str(mpiprocs ) )
+		# Add mpiprocs = ncpus / ompthreads
+	elif "mpiprocs" in sel and "ompthreads" not in sel:
+		mpiprocs   = int( sel["mpiprocs"] )
+		ompthreads = int( sel["ncpus"] ) / mpiprocs 
+		if ompthreads < 1:
+			ompthreads =1
+		pbs.event().job.Resource_List["select"] = pbs.select( selstr + ":ompthreads=" + str(ompthreads ) )
+	else:
+			mpiprocs  = int(sel["mpiprocs"])
+			ompthreads= int(sel["ompthreads"])
+			if (mpiprocs * ompthreads) != int(sel["ncpus"]):
+				pbs.event().reject( "mpiprocs * ompthreads must equal ncpus" )
+			
+
 
 # MAIN LOGIC BEGIN
 try:
@@ -301,6 +328,8 @@ try:
 
 	pbs.logmsg( pbs.LOG_ERROR, "MOVING JOB TO QUEUE: " + clss["target_queue"] )
 	pbs.logmsg( pbs.LOG_ERROR, "MOVING JOB TO QUEUE: " + repr( pbs.event().job.queue.name )  )
+
+	fixup_mpiprocs_ompthreads( selection )
 
 	pbs.event().accept()
 
