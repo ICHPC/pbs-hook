@@ -3,34 +3,33 @@ QUEUES="interactive debug throughput24 throughput72 general24 general72 multinod
 
 IB_QUEUES="multinode24 multinode48"
 
-qmgr -c "delete resource Qlist"
+#qmgr -c "delete resource Qlist"
 qmgr -c "create resource Qlist"
 qmgr -c "set resource Qlist type = string_array"
 qmgr -c "set resource Qlist flag = hr"
 
-qmgr -c "delete resource icib"
+#qmgr -c "delete resource icib"
 qmgr -c "create resource icib"
 qmgr -c "set resource icib type = boolean"
 qmgr -c "set resource icib flag = h"
 
 
 
-qmgr -c "delete queue submit"
-qmgr -c "create queue submit"
-qmgr -c "set queue submit queue_type = Route"
-qmgr -c "set queue submit acl_group_enable = True"
-qmgr -c "set queue submit acl_groups += hpc-users"
-qmgr -c "set queue submit acl_groups += scan-proxy-group"
-qmgr -c "set queue submit route_destinations = fallthrough"
-qmgr -c "set queue submit enabled = True"
-qmgr -c "set queue submit started = True"
-qmgr -c "set server default_queue = submit"
+qmgr -c "delete queue ${VER}_submit"
+qmgr -c "create queue ${VER}_submit"
+qmgr -c "set queue ${VER}_submit queue_type = Execution"
+qmgr -c "set queue ${VER}_submit acl_group_enable = True"
+qmgr -c "set queue ${VER}_submit acl_groups += hpc-users"
+qmgr -c "set queue ${VER}_submit acl_groups += scan-proxy-group"
+qmgr -c "set queue ${VER}_submit enabled = True"
+qmgr -c "set queue ${VER}_submit started = False"
+qmgr -c "set server default_queue = ${VER}_submit"
 
 for Q in $QUEUES; do
 	qmgr -c "delete queue ${VER}_$Q"
 	qmgr -c "create queue ${VER}_$Q"
 	qmgr -c "set queue ${VER}_$Q queue_type      = Execution"	
-	qmgr -c "set queue ${VER}_$Q from_route_only = True"
+	qmgr -c "set queue ${VER}_$Q from_route_only = False"
 	qmgr -c "set queue ${VER}_$Q default_chunk.Qlist = ${VER}_$Q"
 	qmgr -c "set queue ${VER}_$Q enabled         = True"
 	qmgr -c "set queue ${VER}_$Q started         = True"
@@ -42,4 +41,4 @@ for Q	 in $IB_QUEUES; do
 done
 
 qmgr -c "set queue ${VER}_interactive max_run = [u:PBS_GENERIC=1]"
-qmgr -c "set queue ${VER}_gpu48       max_run = [u:PBS_GENERIC=2]"
+qmgr -c "set queue ${VER}_gpu48       max_run = [u:PBS_GENERIC=8]"

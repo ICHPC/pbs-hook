@@ -7,6 +7,8 @@
 
 import sys
 import pbs
+import traceback
+import re
 
 list_of_resources = ["ncpus","ngpus","mem","mpiprocs","ompthreads","arch","host","switchgroup","avx","avx2","avx512","tmpspace","has_magma","gpu_type","cpumodel","using_ht"]
 
@@ -37,7 +39,7 @@ classifications = {
 			"nodect"   : [1,1],
 			"ncpus"    : [1,8],
 			"ngpus"    : [0,0],
-			"walltime" : [0.5001,24],
+			"walltime" : [0.500001,24],
 			"mem"      : [1, 96],
 			"interactive": False,
 		},
@@ -46,7 +48,7 @@ classifications = {
 			"nodect"   : [1,1],
 			"ncpus"    : [1,8],
 			"ngpus"    : [0,0],
-			"walltime" : [24.001, 72],
+			"walltime" : [24.00001, 72],
 			"mem"      : [1, 96],
 			"interactive": False,
 		},
@@ -55,7 +57,7 @@ classifications = {
 			"nodect"   : [1,16],
 			"ncpus"    : [ [16,16], [32,32] ],
 			"ngpus"    : [0,0],
-			"walltime" : [1,24.],
+			"walltime" : [0.50001,24.],
 			"mem"      : [1, 124],
 			"interactive": False,
 		},
@@ -64,7 +66,7 @@ classifications = {
 			"nodect"   : [1,16],
 			"ncpus"    : [ [16,16], [32,32] ],
 			"ngpus"    : [0,0],
-			"walltime" : [24.001, 72.],
+			"walltime" : [24.00001, 72.],
 			"mem"      : [1, 124],
 			"interactive": False,
 		},
@@ -90,50 +92,65 @@ classifications = {
 			"nodect"   : [ 2, 20 ],
 			"ncpus"    : [ 12, 12 ],
 			"ngpus"    : [0,0],
-			"walltime" : [ 24.001, 48.00 ],
+			"walltime" : [ 24.00001, 48.00 ],
 			"mem"      : [1, 46],
 			"interactive": False,
 		},
 
 		"largemem48": {
 			"nodect"   : [ 1, 1 ],
-			"ncpus"    : [ 24, 24 ],
+			"ncpus"    : [ 12, 12 ],
 			"ngpus"    : [0,0],
 			"walltime" : [ 0., 48. ],
 			"mem"      : [127, 250],
 			"interactive": False,
 		},
-12
+
 		"gpu48": {
 			"nodect"   : [ 1, 1 ],
-			"ncpus"    : [ 1, 24 ],
-			"ngpus"    : [1,8],
+			"ncpus"    : [ 1, 4 ],
+			"ngpus"    : [1,1],
 			"walltime" : [ 0., 48. ],
-			"mem"      : [1, 128],
+			"mem"      : [1, 16],
 			"interactive": False,
 		},
 
 }
 
-def match_class(selection, walltime, clss ):
+def match_class(selection, walltime, clssname, clss ):
 	# Compare walltime
 	if (walltime < clss["walltime"][0])  or ( walltime > clss["walltime"][1] ):
+		pbs.logmsg( pbs.LOG_ERROR, "CLASS [" + clssname +"] failed walltime ("+str(walltime) + "in range " + str(clss["walltime"][0]) + " " + str(clss["walltime"][1]) )
 		return False
 
 	if clss["interactive"] != selection["interactive"]:
+		pbs.logmsg( pbs.LOG_ERROR, "CLASS [" + clssname +"] failed interactive " + str(clss["interactive"] ) + " " + str(selection["interactive"]) )
 		return False
 
-	for minmax in ["walltime", "mem", "nodect", "ngpus"]:
+	for minmax in [ "nodect", "ngpus" ]:
 		if ( selection[minmax] < clss[minmax][0] ) or ( selection[minmax] > clss[minmax][1] ):
+
+			pbs.logmsg( pbs.LOG_ERROR, "CLASS [" + clssname +"] failed " + minmax )
 			return False
 
-	if not isinstance( clss["ncpus"], list ):
+	if ( selection["mem"] < pbs.size(str(clss["mem"][0])+"gb") ) or ( selection["mem"] > pbs.size(str(clss["mem"][1])+"gb") ):
+		pbs.logmsg( pbs.LOG_ERROR, "CLASS [" + clssname +"] failed mem" )
+		return False
+
+	if not isinstance( clss["ncpus"][0], list ):
 		clss["ncpus"] = [ clss["ncpus"] ]
 
-	for c in range(len(clss["ncpus"])):
-		if ( selection["ncpus"] < clss["ncpus"][c][0] ) or ( selection["ncpus"] > clss["ncpus"][c][1] ):
+	ncpus_match = False
+	for c in clss["ncpus"]:
+		if ( selection["ncpus"] >= c[0] ) and ( selection["ncpus"] <= c[1] ):
+			ncpus_match = True
+
+	if not ncpus_match:
+			pbs.logmsg( pbs.LOG_ERROR, "CLASS [" + clssname +"] failed ncpus" )
 			return False
+
 	# Classification matches
+	pbs.logmsg( pbs.LOG_ERROR, " CLASS  " + clssname + " matched" )
 	return True
 
 
@@ -142,10 +159,10 @@ def classify_job( selection, walltime, queue = None ):
 	names = ""
 	ret=[];
 
-	for clssname  in classifications.keys():
+	for clssname  in sorted(classifications.keys()):
 		clss = classifications[clssname]
 		if ( queue == None ) or clssname == queue:
-			if match_class( selection, walltime, clss ):
+			if match_class( selection, walltime, clssname, clss ):
 				clss["target_queue"] = clssname
 				ret.append( clss )
 				names = names + clssname + " "
@@ -156,7 +173,7 @@ def classify_job( selection, walltime, queue = None ):
 	if len(ret):
 		return ret[0]
 	else:
-		pbs.event().reject( "Job resource selection does not match any permitted configuration. Please review the CX1 Job Sizing page on https://www.imperial.ac.uk/ict/rcs" )
+		pbs.event().reject( "Job resource selection does not match any permitted configuration.\n      Please review the CX1 Job Sizing page on:\n       https://www.imperial.ac.uk/ict/rcs" )
 
 
 # Returns the type of the submission queue "common", "private" or "express"
@@ -174,6 +191,7 @@ def extract_queue_type():
 	elif len(queue_name)>0 and ( queue_name[0] == "p"  or queue_name == "med-bio" ):
 		return "private"
 	elif queue_name.startswith(queue_config_version):
+		queue_name = re.sub("^" + queue_config_version, "", queue_name )
 		return "common:" + queue_name
 	else:
 		pbs.event().reject("Invalid queue name.")
@@ -184,35 +202,10 @@ def extract_walltime():
 	hrs=0;
 	if ( pbs.event().job.Resource_List["walltime"] == None ):
 		pbs.event().reject("You must specify a walltime.")
-	try:
-		wt = pbs.event().job.Resource_List["walltime"].split(":")
-		if len(wt) != 3:
-			pbs.event().reject("The walltime must be in the format -lwalltime=hh:mm:ss" )
-		hrs =  float(wt[0]) + float(wt[1])/60. + float(wt[2])/3600. 
-		return hrs
-	except:
-		pbs.event().reject("The walltime must be in the format -lwalltime=hh:mm:ss" )
-#  
-
-# Return the amount of requested memory in gb as an int, rounded down (min 1gb)
-def canoncical_mem( mem ):
-	# Canonicalise "mem"
-	mem = mem.lower()
-	factor = 1./ (1024*1024*1024) # scale down from bytes to gb
-
-	if re.search("^[1234567890]+kb$", mem) or re.search("^[1234567890]+k$", mem ):
-		factor = 1. / (1024. * 1024.) # scale from kb to gb
-	elif re.search("^[1234567890]+mb$", mem) or re.search("^[1234567890]+m$", mem ):
-		factor = 1. /1024. # scale from mb to gb
-	elif re.search("^[1234567890]+gb$", mem) or re.search("^[1234567890]+g$", mem ):
-		factor = 1. # scale from gb to gb
-	elif re.search("^[1234567890]+tb$", mem) or re.search("^[1234567890]+t$", mem ):
-		factor = 1024. # scale from tb to gb
-
-	mem = re.sub( "[tkmgb]+", "", mem )
-	mem = int(float(mem) * factor)
-	if mem<=0:
-		mem = 1
+	
+	wt = pbs.event().job.Resource_List["walltime"]
+	wt = float(wt)/ 3600.
+	return wt
 
 
 # Return a dict of the job selection
@@ -221,7 +214,7 @@ def extract_selection():
 	if ("select" not in pbs.event().job.Resource_List) or ( pbs.event().job.Resource_List["select"] == None ):
 		pbs.event().reject("You must specify a resource selection." )
 
-	select = pbs.event().job.Resource_List["select"]
+	select = repr(pbs.event().job.Resource_List["select"])
 	select = select.split("+")
 
 	if len(select) > 1:
@@ -232,13 +225,12 @@ def extract_selection():
 	ret= dict()
 	try:
 		nodect = 0
-		chunk.split(":")
+		chunk=chunk.split(":")
 		nodect = int(	 chunk[0] )
 
 		ret["nodect"] = nodect
 
-		selects = chunk[1].split(":")
-		for rs in selects:
+		for rs in chunk[1:]:
 			key = rs.split("=")[0]
 			val = rs.split("=")[1]
 			if key not in list_of_resources:
@@ -258,7 +250,7 @@ def extract_selection():
 
 			ret[key] = val
 	except:
-		pbs.event().reject("Invalid -lselect syntax." )
+		pbs.event().reject("Invalid -lselect syntax. :" + str(select) )
 
 	if "ncpus" not in ret:
 			pbs.event().reject("[ncpus] must be in the -lselect")
@@ -267,10 +259,13 @@ def extract_selection():
 	if "mem" not in ret:
 			pbs.event().reject("[mem] must be in the -lselect")
 
-	ret["mem"] = canconical_mem( ret["mem"] )
 
 	# Not part of the select, but smuggle it in here
 	ret["interactive"] = pbs.event().job.interactive
+	if ret["interactive"] == None:
+		ret["interactive"] = False
+	else:
+		ret["interactive"] = True	
 
 	return ret
 	
@@ -302,7 +297,14 @@ try:
 		
 
 	# Move the job into the right queue
-	pbs.event().job.queue = pbs.server().queue( clss["target_queue"] )
+	pbs.event().job.queue = pbs.server().queue( queue_config_version + clss["target_queue"] )
+
+	pbs.logmsg( pbs.LOG_ERROR, "MOVING JOB TO QUEUE: " + clss["target_queue"] )
+	pbs.logmsg( pbs.LOG_ERROR, "MOVING JOB TO QUEUE: " + repr( pbs.event().job.queue.name )  )
+
+	pbs.event().accept()
+
+
 	 	
 except SystemExit:
 	pass
@@ -310,8 +312,8 @@ except SystemExit:
 # If an error was generated then stop the job submission
 except:
 	e=sys.exc_info()
-	pbs.logmsg(pbs.LOG_DEBUG, "Error - type:  %s"%(e[0]))
-	pbs.logmsg(pbs.LOG_DEBUG, "Error - value:  %s"%(e[1]))
-	pbs.logmsg(pbs.LOG_DEBUG, "Error - traceback:  %s"%(e[2]))
-	pbs.event().reject("Internal error submitting job. Please report this to rcs-support@imperial.ac.uk")
+	pbs.logmsg(pbs.LOG_ERROR, "Error - type:  %s"%(e[0]))
+	pbs.logmsg(pbs.LOG_ERROR, "Error - value:  %s"%(e[1]))
+	pbs.logmsg(pbs.LOG_ERROR, "Error - traceback:  %s"%(e[2]))
+	pbs.event().reject("Internal error submitting job.\n     Please report this to rcs-support@imperial.ac.uk:\n" + traceback.format_exc())
 

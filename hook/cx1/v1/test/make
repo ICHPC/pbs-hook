@@ -4,67 +4,67 @@ for W in 0:1:0 0:30:0; do
 for N in 1; do
  for S in  1 8; do
 	for M in 1 96; do
-		echo "v1_debug | -lselect=$N:npcus=$S:mem=${M}gb -lwalltime=$W" 
+		echo "v1_debug | -lselect=$N:ncpus=$S:mem=${M}gb -lwalltime=$W" 
 	done 
  done
 done
 done
 
-for W in 0:31:0 24:00; do
+for W in 0:31:0 24:00:0; do
 for N in 1 ; do
  for S in 1 8; do
 	for M in 1 96; do
-		echo "v1_throughput24 | -lselect=$N:npcus=$S:mem=${M}gb -lwalltime=$W" 
+		echo "v1_throughput24 | -lselect=$N:ncpus=$S:mem=${M}gb -lwalltime=$W" 
 	done 
  done
 done
 done
 
-for W in 24:01; do
+for W in 24:0:01; do
 for N in 1 ; do
  for S in 1 8; do
 	for M in 1 96; do
-		echo "v1_throughput72 | -lselect=$N:npcus=$S:mem=${M}gb -lwalltime=$W" 
+		echo "v1_throughput72 | -lselect=$N:ncpus=$S:mem=${M}gb -lwalltime=$W" 
 	done 
  done
 done
 done
 
-for W in 24:00; do
+for W in 24:00:0; do
 for N in 1 16; do
  for S in  16 32; do
 	for M in 1 124; do
-		echo "v1_general24 | -lselect=$N:npcus=$S:mem=${M}gb -lwalltime=$W" 
+		echo "v1_general24 | -lselect=$N:ncpus=$S:mem=${M}gb -lwalltime=$W" 
 	done 
  done
 done
 done
 
-for W in 24:01; do
+for W in 24:0:01; do
 for N in 1 16; do
  for S in 16 32; do
 	for M in 1 124; do
-		echo "v1_general72 | -lselect=$N:npcus=$S:mem=${M}gb -lwalltime=$W" 
+		echo "v1_general72 | -lselect=$N:ncpus=$S:mem=${M}gb -lwalltime=$W" 
 	done 
  done
 done
 done
 
-for W in 24:00; do
+for W in 24:00:0; do
 for N in 2 16; do
  for S in 12 12; do
 	for M in 46; do
-		echo "v1_multinode24 | -lselect=$N:npcus=$S:mem=${M}gb -lwalltime=$W" 
+		echo "v1_multinode24 | -lselect=$N:ncpus=$S:mem=${M}gb -lwalltime=$W" 
 	done 
  done
 done
 done
 
-for W in 24:01; do
+for W in 24:0:01; do
 for N in 2 16; do
  for S in 12 12; do
 	for M in 46; do
-		echo "v1_multinode48 | -lselect=$N:npcus=$S:mem=${M}gb -lwalltime=$W" 
+		echo "v1_multinode48 | -lselect=$N:ncpus=$S:mem=${M}gb -lwalltime=$W" 
 	done 
  done
 done
@@ -72,11 +72,23 @@ done
 
 
 
-for W in 48:00; do
+for W in 48:0:0; do
 for N in 1; do
  for S in  12 12; do
 	for M in 127 250; do
-		echo "v1_largemem48 | -lselect=$N:npcus=$S:mem=${M}gb -lwalltime=$W" 
+		echo "v1_largemem48 | -lselect=$N:ncpus=$S:mem=${M}gb -lwalltime=$W" 
+	done 
+ done
+done
+done
+
+for W in 48:0:0; do
+for N in 1; do
+ for S in 1 8 12 16 24; do
+	for M in $(seq 1 10 250); do
+	for GPU in 1 8; do
+		echo "v1_gpu48 | -lselect=$N:ncpus=$S:mem=${M}gb:ngpus=$GPU -lwalltime=$W" 
+	done 
 	done 
  done
 done
