@@ -1,5 +1,5 @@
 VER=v1
-QUEUES="interactive debug throughput24 throughput72 general24 general72 multinode24 multinode48 largemem48 gpu48 singlenode24"
+QUEUES="interactive debug throughput24 throughput72 general24 general72 multinode24 multinode48 largemem24 largemem48 gpu24 gpu48 singlenode24"
 
 IB_QUEUES="multinode24 multinode48"
 
@@ -41,4 +41,5 @@ for Q	 in $IB_QUEUES; do
 done
 
 qmgr -c "set queue ${VER}_interactive max_run = [u:PBS_GENERIC=1]"
+qmgr -c "set queue ${VER}_gpu24       max_run = [u:PBS_GENERIC=8]"
 qmgr -c "set queue ${VER}_gpu48       max_run = [u:PBS_GENERIC=8]"

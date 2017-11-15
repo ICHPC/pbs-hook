@@ -97,23 +97,44 @@ classifications = {
 			"interactive": False,
 		},
 
+		"largemem24": {
+			"nodect"   : [ 1, 1 ],
+			"ncpus"    : [ 12, 12 ],
+			"ngpus"    : [0,0],
+			"walltime" : [ 0.5, 24. ],
+			"mem"      : [127, 252],
+			"interactive": False,
+		},
+
+
+
 		"largemem48": {
 			"nodect"   : [ 1, 1 ],
 			"ncpus"    : [ 12, 12 ],
 			"ngpus"    : [0,0],
-			"walltime" : [ 0., 48. ],
-			"mem"      : [127, 250],
+			"walltime" : [ 24.00001, 48. ],
+			"mem"      : [127, 252],
 			"interactive": False,
 		},
 
+		"gpu24": {
+			"nodect"   : [ 1, 1 ],
+			"ncpus"    : [ 1, 4 ],
+			"ngpus"    : [1,1],
+			"walltime" : [ 0.1, 24. ],
+			"mem"      : [1, 16],
+			"interactive": False,
+		},
 		"gpu48": {
 			"nodect"   : [ 1, 1 ],
 			"ncpus"    : [ 1, 4 ],
 			"ngpus"    : [1,1],
-			"walltime" : [ 0., 48. ],
+			"walltime" : [ 24.00001, 48. ],
 			"mem"      : [1, 16],
 			"interactive": False,
 		},
+
+
 
 }
 
@@ -173,7 +194,7 @@ def classify_job( selection, walltime, queue = None ):
 	if len(ret):
 		return ret[0]
 	else:
-		pbs.event().reject( "Job resource selection does not match any permitted configuration.\n      Please review the CX1 Job Sizing page on:\n       https://www.imperial.ac.uk/ict/rcs" )
+		pbs.event().reject( "Job resource selection does not match any permitted configuration.\n      Please review the CX1 Job Sizing guidance on:\n       https://bit.ly/2AInEIj\n")
 
 
 # Returns the type of the submission queue "common", "private" or "express"
@@ -201,7 +222,7 @@ def extract_queue_type():
 def extract_walltime():
 	hrs=0;
 	if ( pbs.event().job.Resource_List["walltime"] == None ):
-		pbs.event().reject("You must specify a walltime.")
+		pbs.event().reject("You must specify a walltime using the format\n      -lwalltime=HH:MM:00")
 	
 	wt = pbs.event().job.Resource_List["walltime"]
 	wt = float(wt)/ 3600.
@@ -212,7 +233,7 @@ def extract_walltime():
 # Errors out if mandatory values are not set
 def extract_selection():
 	if ("select" not in pbs.event().job.Resource_List) or ( pbs.event().job.Resource_List["select"] == None ):
-		pbs.event().reject("You must specify a resource selection." )
+		pbs.event().reject("You must specify a resource selection using the format\n      -lselect=N:ncpus=X:mem=Ygb" )
 
 	select = repr(pbs.event().job.Resource_List["select"])
 	select = select.split("+")
@@ -250,7 +271,7 @@ def extract_selection():
 
 			ret[key] = val
 	except:
-		pbs.event().reject("Invalid -lselect syntax. :" + str(select) )
+		pbs.event().reject("Invalid -lselect syntax. :" + str(select) + "\n     The corrcet format is -lselect=N:ncpus=X:mem=Ygb" )
 
 	if "ncpus" not in ret:
 			pbs.event().reject("[ncpus] must be in the -lselect")
@@ -269,6 +290,12 @@ def extract_selection():
 
 	return ret
 	
+
+def fixup_icib( queue, sel ):
+	if "multinode" in queue:
+		selstr = repr(pbs.event().job.Resource_List["select"])
+		selstr = selstr + ":icib=true"
+		pbs.event().job.Resource_List["select"] = pbs.select( selstr )
 
 def fixup_mpiprocs_ompthreads( sel ):
 	selstr = repr(pbs.event().job.Resource_List["select"])
@@ -344,5 +371,5 @@ except:
 	pbs.logmsg(pbs.LOG_ERROR, "Error - type:  %s"%(e[0]))
 	pbs.logmsg(pbs.LOG_ERROR, "Error - value:  %s"%(e[1]))
 	pbs.logmsg(pbs.LOG_ERROR, "Error - traceback:  %s"%(e[2]))
-	pbs.event().reject("Internal error submitting job.\n     Please report this to rcs-support@imperial.ac.uk:\n" + traceback.format_exc())
+	pbs.event().reject("Internal error submitting job.\n     Please report the following information to rcs-support@imperial.ac.uk, including a copy of your jobscript:\n" + traceback.format_exc())
 
