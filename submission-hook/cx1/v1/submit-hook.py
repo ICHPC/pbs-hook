@@ -209,7 +209,7 @@ def extract_queue_type():
 
 	if len(queue_name)>0 and queue_name[0] == "e":
 		return "express"
-	elif len(queue_name)>0 and ( queue_name[0] == "p"  or queue_name == "med-bio" ):
+	elif len(queue_name)>0 and ( queue_name[0] == "p"  or queue_name == "med-bio" or queue_name == "viz" or queue_name == "gpgpu" ):
 		return "private"
 	elif queue_name.startswith(queue_config_version):
 		queue_name = re.sub("^" + queue_config_version, "", queue_name )

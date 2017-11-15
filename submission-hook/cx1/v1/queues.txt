@@ -44,5 +44,6 @@ for Q	 in $IB_QUEUES; do
 done
 
 qmgr -c "set queue ${VER}_interactive max_run = [u:PBS_GENERIC=1]"
+qmgr -c "set queue ${VER}_debug       max_run = [u:PBS_GENERIC=1]"
 qmgr -c "set queue ${VER}_gpu24       max_run = [u:PBS_GENERIC=8]"
 qmgr -c "set queue ${VER}_gpu48       max_run = [u:PBS_GENERIC=8]"
