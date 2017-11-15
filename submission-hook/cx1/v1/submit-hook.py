@@ -215,8 +215,10 @@ def extract_queue_type():
 	elif queue_name.startswith(queue_config_version):
 		queue_name = re.sub("^" + queue_config_version, "", queue_name )
 		return "common:" + queue_name
+	elif queue_name == "gpgpu":
+		pbs.event().reject("-q gpgpu no longer required. Please submit without a queue qualification")
 	else:
-		pbs.event().reject("Invalid queue name.")
+		pbs.event().reject("Unknown queue name.")
 
 # Returns a float of the # of hours requested for the job
 # Errors out if not specified or the format is wrong 
