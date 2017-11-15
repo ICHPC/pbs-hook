@@ -75,7 +75,7 @@ def make_queue_dedicated( queue, nodes ):
 				if q != queue:
 					log("\tRemoving %s from %s" %( q, n ) )
 					cmd = [ "/opt/pbs/default/bin/qmgr", "-c", "set node %s resources_available.Qlist -= %s"% ( n, q, ) ]
-				#	subprocess.check_output( cmd )
+					subprocess.check_output( cmd )
 
 # return a list of the v1 queues that the node "node" should be shared with		
 def choose_shared_queues( queue, node ):
@@ -108,7 +108,7 @@ def make_queue_shared( queue, nodes ):
 				if q != queue and q not in qlist:
 					log("\tAdding %s to %s" %( q, n ) )
 					cmd = [ "/opt/pbs/default/bin/qmgr", "-c", "set node %s resources_available.Qlist += %s"% ( n, q, ) ]
-			#		subprocess.check_output( cmd )
+					subprocess.check_output( cmd )
 	
 
 def get_node_states():

@@ -154,7 +154,7 @@ def match_class(selection, walltime, clssname, clss ):
 			pbs.logmsg( pbs.LOG_ERROR, "CLASS [" + clssname +"] failed " + minmax )
 			return False
 
-	if ( selection["mem"] < pbs.size(str(clss["mem"][0])+"gb") ) or ( selection["mem"] > pbs.size(str(clss["mem"][1])+"gb") ):
+	if ( pbs.size(selection["mem"]) < pbs.size(str(clss["mem"][0])+"gb") ) or ( pbs.size(selection["mem"]) > pbs.size(str(clss["mem"][1])+"gb") ):
 		pbs.logmsg( pbs.LOG_ERROR, "CLASS [" + clssname +"] failed mem" )
 		return False
 
