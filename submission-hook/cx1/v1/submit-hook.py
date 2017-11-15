@@ -141,21 +141,21 @@ classifications = {
 def match_class(selection, walltime, clssname, clss ):
 	# Compare walltime
 	if (walltime < clss["walltime"][0])  or ( walltime > clss["walltime"][1] ):
-		pbs.logmsg( pbs.LOG_ERROR, "CLASS [" + clssname +"] failed walltime ("+str(walltime) + "in range " + str(clss["walltime"][0]) + " " + str(clss["walltime"][1]) )
+#		pbs.logmsg( pbs.LOG_ERROR, "CLASS [" + clssname +"] failed walltime ("+str(walltime) + "in range " + str(clss["walltime"][0]) + " " + str(clss["walltime"][1]) )
 		return False
 
 	if clss["interactive"] != selection["interactive"]:
-		pbs.logmsg( pbs.LOG_ERROR, "CLASS [" + clssname +"] failed interactive " + str(clss["interactive"] ) + " " + str(selection["interactive"]) )
+#		pbs.logmsg( pbs.LOG_ERROR, "CLASS [" + clssname +"] failed interactive " + str(clss["interactive"] ) + " " + str(selection["interactive"]) )
 		return False
 
 	for minmax in [ "nodect", "ngpus" ]:
 		if ( selection[minmax] < clss[minmax][0] ) or ( selection[minmax] > clss[minmax][1] ):
 
-			pbs.logmsg( pbs.LOG_ERROR, "CLASS [" + clssname +"] failed " + minmax )
+#			pbs.logmsg( pbs.LOG_ERROR, "CLASS [" + clssname +"] failed " + minmax )
 			return False
 
 	if ( pbs.size(selection["mem"]) < pbs.size(str(clss["mem"][0])+"gb") ) or ( pbs.size(selection["mem"]) > pbs.size(str(clss["mem"][1])+"gb") ):
-		pbs.logmsg( pbs.LOG_ERROR, "CLASS [" + clssname +"] failed mem" )
+#		pbs.logmsg( pbs.LOG_ERROR, "CLASS [" + clssname +"] failed mem" )
 		return False
 
 	if not isinstance( clss["ncpus"][0], list ):
@@ -167,11 +167,11 @@ def match_class(selection, walltime, clssname, clss ):
 			ncpus_match = True
 
 	if not ncpus_match:
-			pbs.logmsg( pbs.LOG_ERROR, "CLASS [" + clssname +"] failed ncpus" )
+#			pbs.logmsg( pbs.LOG_ERROR, "CLASS [" + clssname +"] failed ncpus" )
 			return False
 
 	# Classification matches
-	pbs.logmsg( pbs.LOG_ERROR, " CLASS  " + clssname + " matched" )
+#	pbs.logmsg( pbs.LOG_ERROR, " CLASS  " + clssname + " matched" )
 	return True
 
 
@@ -194,6 +194,7 @@ def classify_job( selection, walltime, queue = None ):
 	if len(ret):
 		return ret[0]
 	else:
+		pbs.logmsg( pbs.LOG_ERROR, "FAILED TO MATCH A JOB:"  +  repr(pbs.event().job.Resource_List["select"])  + " walltime " + repr(pbs.event().job.Resource_List["walltime"]) )
 		pbs.event().reject( "Job resource selection does not match any permitted configuration.\n      Please review the CX1 Job Sizing guidance on:\n       https://bit.ly/2AInEIj\n")
 
 
@@ -353,8 +354,8 @@ try:
 	# Move the job into the right queue
 	pbs.event().job.queue = pbs.server().queue( queue_config_version + clss["target_queue"] )
 
-	pbs.logmsg( pbs.LOG_ERROR, "MOVING JOB TO QUEUE: " + clss["target_queue"] )
-	pbs.logmsg( pbs.LOG_ERROR, "MOVING JOB TO QUEUE: " + repr( pbs.event().job.queue.name )  )
+#	pbs.logmsg( pbs.LOG_ERROR, "MOVING JOB TO QUEUE: " + clss["target_queue"] )
+#	pbs.logmsg( pbs.LOG_ERROR, "MOVING JOB TO QUEUE: " + repr( pbs.event().job.queue.name )  )
 
 	fixup_mpiprocs_ompthreads( selection )
 
