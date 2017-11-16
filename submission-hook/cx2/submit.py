@@ -9,7 +9,68 @@ import pbs
 
 list_of_resources = ["ncpus","mem","mpiprocs","ompthreads", "cpumodel"]
 
-#geometries = {16:range(2,19),24: range( 18, 73, 6 ), 28:range( 18,73,6 ) } 
+def extract_selection():
+  if ("select" not in pbs.event().job.Resource_List) or ( pbs.event().job.Resource_List["select"] == None ):
+    pbs.event().reject("You must specify a resource selection using the format\n      -lselect=N:ncpus=X:mem=Ygb" )
+
+  select = repr(pbs.event().job.Resource_List["select"])
+  select = select.split("+")
+
+  if len(select) > 1:
+    pbs.event().reject("Only one -lselect is permitted.")
+
+  chunk = select[0]
+
+  ret= dict()
+  try:
+    nodect = 0
+    chunk=chunk.split(":")
+    nodect = int(  chunk[0] )
+
+    ret["nodect"] = nodect
+
+    for rs in chunk[1:]:
+      key = rs.split("=")[0]
+      val = rs.split("=")[1]
+      if key not in list_of_resources:
+        pbs.event().reject("Resource ["+key+"] not permitted in -lselect.")
+      # Try converting the value to an integer if it happens to be one
+      try:
+        val=int(val)
+      except:
+        pass
+      ret[key] = val
+  except:
+    pass
+  return ret
+  
+
+def fixup_mpiprocs_ompthreads( sel ):
+  selstr = repr(pbs.event().job.Resource_List["select"])
+
+  if "mpiprocs" not in sel and "ompthreads" not in sel:
+    mpiprocs   = int(sel["ncpus"])
+    ompthreads = 1
+    pbs.event().job.Resource_List["select"] = pbs.select( selstr + ":mpiprocs=" + str(mpiprocs ) + ":ompthreads=" + str(ompthreads) )
+  elif "mpiprocs" not in sel and "ompthreads" in sel:
+    ompthreads = int(sel["ompthreads"])
+    mpiprocs   = ( sel["ncpus"] / ompthreads )
+    if mpiprocs < 1:
+      mpiprocs = 1
+    pbs.event().job.Resource_List["select"] = pbs.select( selstr + ":mpiprocs=" + str(mpiprocs ) )
+    # Add mpiprocs = ncpus / ompthreads
+  elif "mpiprocs" in sel and "ompthreads" not in sel:
+    mpiprocs   = int( sel["mpiprocs"] )
+    ompthreads = int( sel["ncpus"] ) / mpiprocs
+    if ompthreads < 1:
+      ompthreads =1
+    pbs.event().job.Resource_List["select"] = pbs.select( selstr + ":ompthreads=" + str(ompthreads ) )
+  else:
+      mpiprocs  = int(sel["mpiprocs"])
+      ompthreads= int(sel["ompthreads"])
+      if (mpiprocs * ompthreads) != int(sel["ncpus"]):
+        pbs.event().reject( "mpiprocs * ompthreads must equal ncpus" )
+
 
 try:
 #
@@ -81,6 +142,8 @@ try:
       if not matched:
            pbs.event().reject("Unsupported geometry: Please read https://wiki.imperial.ac.uk/display/HPC/Job+sizing+on+cx2")
 
+   sel = extract_selection()
+   fixup_mpiprocs_ompthreads(sel)
       
 
 #
