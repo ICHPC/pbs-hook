@@ -1,8 +1,12 @@
 #!/usr/bin/env python2
 
 import json
+import getpass
+import re
 import sys
 import subprocess
+from subprocess import Popen, PIPE
+from sets import Set
 
 
 data = json.loads(subprocess.check_output(["/opt/pbs/default/bin/pbsnodes", "-av", "-F", "json" ] ).decode("utf8"))
@@ -25,11 +29,20 @@ classes= {
 	"v1_debug"        : 0,
 }
 
+qlistlen = dict()
+
 prioritising=False
 for n in data["nodes"]:
 	node=data["nodes"][n]
 	state = node["state"]
 	qlist =  node["resources_available"]["Qlist"].split(",")
+
+	for q  in qlist:
+		if q not in qlistlen:
+			qlistlen[q] = len(qlist)
+		else:
+			qlistlen[q] = max( len(qlist), qlistlen[q] )
+
 	if "jobs" not in node or len(node["jobs"])==0:
 		for q in qlist:
 			if q not in classes:
@@ -38,6 +51,23 @@ for n in data["nodes"]:
 				classes[q] += 1
 
 
+who = getpass.getuser()
+pqmemb=[]
+
+for pq in classes.keys():
+	if re.match("pq", pq):
+		g = re.sub("^pq", "pq-", pq )
+	elif pq == "med-bio":
+		g = "pq-med-bio"
+	else:
+		g= None
+	users = []
+	if g:
+		output = Popen(["/usr/bin/getent", "group", g], stdout=PIPE).communicate()[0].strip()
+		output = output.split(':')[-1].split(',')
+		users = output #users.union(output)
+	if who in users:
+		pqmemb.append(pq)
 
 
 print ("")
@@ -48,8 +78,15 @@ print ( " Nodes available for multinode   : %3d (24hr) %3d (48hr)" % (classes["v
 print ( " Nodes available for large memory: %3d (24hr) %3d (48hr) "  % (classes["v1_largemem24"], classes["v1_largemem48"], ) )
 print ( " Nodes available for GPU         : %3d (24hr) %3d (48hr)"  % (classes["v1_gpu24"], classes["v1_gpu48"], ) )
 print ( " Nodes available for debug       : %3d (30min) " % (classes["v1_debug"], ) )
+print ("")
 
-
+for pq in sorted(pqmemb):
+	if pq in classes:
+		if qlistlen[pq]>1:
+			mode = "(shared)"
+		else:	
+			mode = "(dedicated)"
+		print ( " Nodes available for %-11s : %3d   %s" % (pq, classes[pq], mode, ) )
 
 print ("")
 print (" You may not be eligible to run additional jobs if")
@@ -57,3 +94,4 @@ print (" you have reached the per-user job concurrency limit")
 print ("")
 print (" See our current job sizing guidance at http://bit.ly/2AInEIj" )
 print ("")
+
