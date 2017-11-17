@@ -37,18 +37,22 @@ for n in data["nodes"]:
 	state = node["state"]
 	qlist =  node["resources_available"]["Qlist"].split(",")
 
-	for q  in qlist:
-		if q not in qlistlen:
-			qlistlen[q] = len(qlist)
-		else:
-			qlistlen[q] = max( len(qlist), qlistlen[q] )
-
-	if "jobs" not in node or len(node["jobs"])==0:
-		for q in qlist:
-			if q not in classes:
-				classes[q] = 1
+	if ("down" in state)  or  ("offline" in state) or ("unknown" in state):
+		# Ignore offline nodes
+		pass
+	else:
+		for q  in qlist:
+			if q not in qlistlen:
+				qlistlen[q] = len(qlist)
 			else:
-				classes[q] += 1
+				qlistlen[q] = max( len(qlist), qlistlen[q] )
+
+		if "jobs" not in node or len(node["jobs"])==0:
+			for q in qlist:
+				if q not in classes:
+					classes[q] = 1
+				else:
+					classes[q] += 1
 
 
 who = getpass.getuser()
