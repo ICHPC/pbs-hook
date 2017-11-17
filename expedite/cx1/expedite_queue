@@ -46,7 +46,11 @@ def make_queue_dedicated( queue, nodes ):
 					subprocess.check_output( cmd )
 
 # return a list of the v1 queues that the node "node" should be shared with		
-def choose_shared_queues( queue, node ):
+def choose_shared_queues( queue, n, node ):
+	# Never reassign the top-end of med-bio
+	if re.match("cx1-140", n ):
+		return []
+
 	if queue == "med-bio":
 		return [ "v1_throughput24", "v1_debug", "v1_interactive" ]
 	if queue == "exp_48_128_72":
@@ -61,7 +65,7 @@ def make_queue_shared( queue, nodes ):
 		qlist = node["resources_available"]["Qlist"].split(",")
 		if queue in qlist: # Node is assigned to this queue
 			# decide which queues to add based on node resources
-			shared_queues = choose_shared_queues( queue, node )
+			shared_queues = choose_shared_queues( queue, n, node )
 			for q in shared_queues: # Remove every other queue but the dedicated one from the qlist
 				if q != queue and q not in qlist:
 					log("\tAdding %s to %s" %( q, n ) )
