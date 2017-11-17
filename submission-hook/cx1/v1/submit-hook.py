@@ -138,6 +138,15 @@ classifications = {
 
 }
 
+
+def check_express_project_code():
+	project = pbs.event().job.project
+	if not re.match("^exp-[a-z0-9]+$", project ):
+		pbs.event().reject( "Invalid express code: these have the format 'exp-XXXX'" )
+	if not e pbs.event().requestor in  get_group_membership() )
+		pbs.event().reject( "You are not authorised to use this express code" )
+	return project
+
 def match_class(selection, walltime, clssname, clss ):
 	# Compare walltime
 	if (walltime < clss["walltime"][0])  or ( walltime > clss["walltime"][1] ):
@@ -326,6 +335,34 @@ def fixup_mpiprocs_ompthreads( sel ):
 			if (mpiprocs * ompthreads) != int(sel["ncpus"]):
 				pbs.event().reject( "mpiprocs * ompthreads must equal ncpus" )
 			
+# Returns a list of all the groups the requestor is a member of
+def get_group_membership()
+  import pbs
+  import sys
+
+  PBS_EXEC = '/opt/pbs/default'
+  GETENT_CMD = '/bin/getent'
+
+  # Main
+  sys.path.append(PBS_EXEC + '/python/lib/python2.7')
+  sys.path.append(PBS_EXEC + '/python/lib/python2.7/lib-dynload')
+  from subprocess import Popen, PIPE
+  from sets import Set
+
+  e = pbs.event()
+  j = e.job
+
+  # Get the username
+  who = str(e.requestor)
+
+  # Build a list of users from all permitted groups
+  users = Set([])
+  for g in permitted_groups:
+      output = Popen([GETENT_CMD , "group", g], stdout=PIPE).communicate()[0].strip()
+      output = output.split(':')[-1].split(',')
+      users = users.union(output)
+
+  return users
 
 
 # MAIN LOGIC BEGIN
@@ -340,9 +377,10 @@ try:
 	walltime   = extract_walltime()
 	selection  = extract_selection()
 
-	# 
+	# Express version 0 - accept anything provided the user is in an exp-XXX group
 	if queue_type == "express":
-		pbs.event().reject("Express queue functionality not available yet")
+		check_express_project_code()
+		pbs.event().accept() #reject("Express queue functionality not available yet")
 
 	
 	if queue_type == "common":
