@@ -141,9 +141,13 @@ classifications = {
 
 def check_express_project_code():
 	project = pbs.event().job.project
+	if not project:
+		pbs.event().reject( "You must specify an express code with -P when submitting express jobs" )
+
+	project = repr(project)
 	if not re.match("^exp-[a-z0-9]+$", project ):
 		pbs.event().reject( "Invalid express code: these have the format 'exp-XXXX'" )
-	if not e pbs.event().requestor in  get_group_membership() )
+	if not test_group_membership( [ project ] ):
 		pbs.event().reject( "You are not authorised to use this express code" )
 	return project
 
@@ -336,16 +340,16 @@ def fixup_mpiprocs_ompthreads( sel ):
 				pbs.event().reject( "mpiprocs * ompthreads must equal ncpus" )
 			
 # Returns a list of all the groups the requestor is a member of
-def get_group_membership()
+def test_group_membership( permitted_groups ):
   import pbs
   import sys
 
-  PBS_EXEC = '/opt/pbs/default'
+#  PBS_EXEC = '/opt/pbs/default'
   GETENT_CMD = '/bin/getent'
 
   # Main
-  sys.path.append(PBS_EXEC + '/python/lib/python2.7')
-  sys.path.append(PBS_EXEC + '/python/lib/python2.7/lib-dynload')
+#  sys.path.append(PBS_EXEC + '/python/lib/python2.7')
+#  sys.path.append(PBS_EXEC + '/python/lib/python2.7/lib-dynload')
   from subprocess import Popen, PIPE
   from sets import Set
 
@@ -356,13 +360,13 @@ def get_group_membership()
   who = str(e.requestor)
 
   # Build a list of users from all permitted groups
-  users = Set([])
   for g in permitted_groups:
       output = Popen([GETENT_CMD , "group", g], stdout=PIPE).communicate()[0].strip()
       output = output.split(':')[-1].split(',')
-      users = users.union(output)
+      if who in output:
+        return True
 
-  return users
+  return False
 
 
 # MAIN LOGIC BEGIN
@@ -372,6 +376,8 @@ try:
 	# Anything goes in private queues
 	# so exit at this point, to prevent walltime and select parsing raising a reject()
 	if queue_type == "private":
+		if pbs.event().job.project:
+			pbs.event.reject( "Express project codes can not be used with private queues" )
 		pbs.event().accept()
 
 	walltime   = extract_walltime()
@@ -381,6 +387,9 @@ try:
 	if queue_type == "express":
 		check_express_project_code()
 		pbs.event().accept() #reject("Express queue functionality not available yet")
+	else:
+		if pbs.event().job.project:
+			pbs.event.reject( "Express project codes can only be used if submitting to express queues" )
 
 	
 	if queue_type == "common":
