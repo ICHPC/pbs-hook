@@ -21,7 +21,7 @@ def log( ll ):
 	
 def are_there_queued_jobs( queue ):
 
-	op = subprocess.check_output( [ "/opt/pbs/default/bin/qselect", "-q", queue, "-s", "Q" ] ).decode("utf8").split("\n")
+	op = subprocess.check_output( [ "/opt/pbs/default/bin/qselect", "-T", "-q", queue, "-s", "Q" ] ).decode("utf8").split("\n")
 	log( "Queue " + queue + " has " + str(len(op)-1) + " jobs pending" )
 	return (len(op)-1)>0
 	
