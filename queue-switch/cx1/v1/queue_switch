@@ -101,14 +101,16 @@ def make_queue_shared( queue, nodes ):
 	for n in nodes.keys():
 		node = nodes[n]
 		qlist = node["resources_available"]["Qlist"].split(",")
-		if queue in qlist: # Node is assigned to this queue
-			# decide which queues to add based on node resources
-			shared_queues = choose_shared_queues( queue, node )
-			for q in shared_queues: # Remove every other queue but the dedicated one from the qlist
-				if q != queue and q not in qlist:
-					log("\tAdding %s to %s" %( q, n ) )
-					cmd = [ "/opt/pbs/default/bin/qmgr", "-c", "set node %s resources_available.Qlist += %s"% ( n, q, ) ]
-					subprocess.check_output( cmd )
+
+		if "dedicated" not in node["resources_available"] or node["resources_available"]["dedicated"] == False:		
+			if queue in qlist: # Node is assigned to this queue
+				# decide which queues to add based on node resources
+				shared_queues = choose_shared_queues( queue, node )
+				for q in shared_queues: # Remove every other queue but the dedicated one from the qlist
+					if q != queue and q not in qlist:
+						log("\tAdding %s to %s" %( q, n ) )
+						cmd = [ "/opt/pbs/default/bin/qmgr", "-c", "set node %s resources_available.Qlist += %s"% ( n, q, ) ]
+						subprocess.check_output( cmd )
 	
 
 def get_node_states():
