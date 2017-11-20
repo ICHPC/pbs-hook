@@ -99,10 +99,13 @@ else:
 
 # Build a list of users from all permitted groups
 users = Set([])
-for g in permitted_groups:
-    output = Popen([GETENT_CMD , "group", g], stdout=PIPE).communicate()[0].strip()
-    output = output.split(':')[-1].split(',')
-    users = users.union(output)
+try:
+    for g in permitted_groups:
+       output = Popen([GETENT_CMD , "group", g], stdout=PIPE).communicate()[0].strip()
+       output = output.split(':')[-1].split(',')
+       users = users.union(output)
+except:
+    pass
 
 # Check if job submitter is in the list of users
 if who in users:
