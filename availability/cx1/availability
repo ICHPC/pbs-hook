@@ -27,6 +27,7 @@ classes= {
 	"v1_gpu48"        : 0,
 	"v1_singlenode24" : 0,
 	"v1_debug"        : 0,
+	"exp_48_128_72"   : 0,
 }
 
 qlistlen = dict()
@@ -82,7 +83,9 @@ print ( " Nodes available for multinode   : %3d (24hr) %3d (48hr)" % (classes["v
 print ( " Nodes available for large memory: %3d (24hr) %3d (48hr) "  % (classes["v1_largemem24"], classes["v1_largemem48"], ) )
 print ( " Nodes available for GPU         : %3d (24hr) %3d (48hr)"  % (classes["v1_gpu24"], classes["v1_gpu48"], ) )
 print ( " Nodes available for debug       : %3d (30min) " % (classes["v1_debug"], ) )
-print ("")
+print ( "")
+print ( " Nodes available for express     : %3d (72hr) " % (classes["exp_48_128_72" ] ) )
+print ( "")
 
 for pq in sorted(pqmemb):
 	if pq in classes:

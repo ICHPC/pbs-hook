@@ -40,6 +40,11 @@ done
 
 for Q	 in $IB_QUEUES; do
 	qmgr -c "set queue ${VER}_$Q  default_chunk.icib  = True"
+	qmgr -c "set queue ${VER}_$Q  resources_default.place = pack:excl"
+done
+
+for Q	 in v1_general24 v1_general72; do
+	qmgr -c "set queue ${VER}_$Q  default_chunk.icib  = True"
 	qmgr -c "set queue ${VER}_$Q  resources_default.place = scatter:excl"
 done
 
