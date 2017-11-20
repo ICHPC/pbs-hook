@@ -47,8 +47,8 @@ def make_queue_dedicated( queue, nodes ):
 
 # return a list of the v1 queues that the node "node" should be shared with		
 def choose_shared_queues( queue, n, node ):
-	# Never reassign the top-end of med-bio
-	if re.match("cx1-140", n ):
+	# Never reassign nodes that have dedicated==True
+	if "dedicated" in node["resources_available"]["dedicated"] == "True":
 		return []
 
 	if queue == "med-bio":
