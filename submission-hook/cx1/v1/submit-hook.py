@@ -417,7 +417,7 @@ try:
 		express = True
 
 	if queue_type != "express" and pbs.event().job.project:
-			pbs.event.reject( "Express project codes can only be used if submitting express jobs with -q express" )
+			pbs.event().reject( "Express project codes can only be used if submitting express jobs with -q express" )
 
 	
 	if queue_type == "common" or queue_type == "express":
