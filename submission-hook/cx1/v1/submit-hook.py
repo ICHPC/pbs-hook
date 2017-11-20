@@ -207,7 +207,7 @@ def match_class(selection, walltime, clssname, clss, express ):
 #			pbs.logmsg( pbs.LOG_ERROR, "CLASS [" + clssname +"] failed ncpus" )
 			return False
 
-	if select["express"] != express:
+	if clss["express"] != express:
 #			pbs.logmsg( pbs.LOG_ERROR, "CLASS [" + clssname +"] doesn't match express" )
 			return False
 	# Classification matches
@@ -248,7 +248,7 @@ def extract_queue_type():
 	if ( pbs.event().job.queue != "" ):
 		queue_name=pbs.event().job.queue.name
 
-	if len(queue_name)>0 and queue_name[0] == "e":
+	if queue_name == "express": # len(queue_name)>0 and queue_name[0] == "e":
 		return "express"
 	elif len(queue_name)>0 and ( queue_name[0] == "p"  or queue_name == "med-bio" or queue_name == "viz"):
 		return "private"
@@ -404,7 +404,7 @@ try:
 	# so exit at this point, to prevent walltime and select parsing raising a reject()
 	if queue_type == "private":
 		if pbs.event().job.project:
-			pbs.event.reject( "Express project codes can not be used with private queues" )
+			pbs.event().reject( "Express project codes can not be used with private queues" )
 		pbs.event().accept()
 
 	walltime   = extract_walltime()
@@ -416,22 +416,25 @@ try:
 		check_express_project_code()
 		express = True
 
-	if queue_type == "private" and pbs.event().job.project:
-			pbs.event.reject( "Express project codes can only be used if submitting to express queues" )
+	if queue_type != "express" and pbs.event().job.project:
+			pbs.event().reject( "Express project codes can only be used if submitting express jobs with -q express" )
 
 	
-	if queue_type == "common":
+	if queue_type == "common" or queue_type == "express":
 		clss = classify_job( selection, walltime, express )
 	else:
 		# If the user submitted to a specific queue, test against the config for that alone
 		queue_type = queue_type.split(":")
-		clss = classify_job( selection, walltime, express ) #, queue = queue_type[1] )
+		clss = classify_job( selection, walltime, express, queue = queue_type[1] )
 		
 
 	# Move the job into the right queue
-	pbs.event().job.queue = pbs.server().queue( queue_config_version + clss["target_queue"] )
+	if queue_type == "express":
+		pbs.event().job.queue = pbs.server().queue( clss["target_queue"] )
+	else:
+		pbs.event().job.queue = pbs.server().queue( queue_config_version + clss["target_queue"] )
 
-#	pbs.logmsg( pbs.LOG_ERROR, "MOVING JOB TO QUEUE: " + clss["target_queue"] )
+	pbs.logmsg( pbs.LOG_ERROR, "MOVING JOB TO QUEUE: " + clss["target_queue"] )
 #	pbs.logmsg( pbs.LOG_ERROR, "MOVING JOB TO QUEUE: " + repr( pbs.event().job.queue.name )  )
 
 	fixup_mpiprocs_ompthreads( selection )
