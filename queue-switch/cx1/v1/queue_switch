@@ -1,6 +1,5 @@
-#!/usr/bin/env python
+#!/opt/miniconda3/bin/python3
 
-from __future__ import print_function
 import json
 import subprocess
 import sys
@@ -9,130 +8,78 @@ import datetime
 import time
 
 
-def log( ll ):
-	fh = open("/var/tmp/queue_switch.log", "a" )
+def monitor_queue( queue_to_watch, backfill_qlist ):
+
+	epoch_time = int(time.time())
+
+	fh = open("/var/log/queue_switch.log", "a" )
 	dt = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-	print( "%s %s" %( dt, ll), file=fh)
+
+	data = json.loads(subprocess.check_output(["/opt/pbs/default/bin/pbsnodes", "-a", "-F", "json" ] ).decode("utf8"))
+
+	op = subprocess.check_output( [ "/opt/pbs/default/bin/qstat", "-q", queue_to_watch ] ).decode("utf8").split("\n")
+
+
+	queued  =  int( re.split("\s+", op[5] ) [6] )
+	running =  int( re.split("\s+", op[5] ) [5] )
+
+
+	queue_active = False
+
+	if queued > 0 or running > 0:
+		#  Remove the backfill_qlist from the nodes
+		queue_active = True
+		mode = "dedicated"
+	else:
+		# Queue idle, reallocate the nodes to the backfill qlist
+		mode = "non-dedicated"
+
+	modified=False
+
+	for n in data["nodes"]:
+		node = data["nodes"][n]
+
+		assigned_queues = node["resources_available"]["Qlist"].split(",")
+
+		if queue_to_watch in assigned_queues: # This node is allocated to the pq
+
+			if queue_active: # Set the "last_switch" resource which indicates when the queue was last seen busy
+				cmd = [ "/opt/pbs/default/bin/qmgr", "-c", "set node %s resources_available.last_switch =  %s"% ( n, epoch_time ) ]
+#				print(cmd)
+				subprocess.check_output( cmd )
+				for b in backfill_qlist:
+					# Now remove any of the backfill queues if they are still assigned to the node
+					if b in assigned_queues:
+						cmd = [ "/opt/pbs/default/bin/qmgr", "-c", "set node %s resources_available.Qlist %s %s"% ( n, "-=", b ) ]
+#						print(cmd)
+						subprocess.check_output( cmd )
+						modified = True
+				
+			else: # Queue empty
+				last_switch = node["resources_available"]["last_switch"]  
+				if ( epoch_time - int(last_switch) ) > (48 * 3600 ): # Only switch the nodes to non-dedicated use 48h after the queue was last busy
+					for b in backfill_qlist:
+						# Now add any of the backfill queues that are not yet assigned to the node
+						if b not in assigned_queues:
+							cmd = [ "/opt/pbs/default/bin/qmgr", "-c", "set node %s resources_available.Qlist %s %s"% ( n, "+=", b ) ]
+#							print(cmd)
+							subprocess.check_output( cmd )
+							modified = True
+	
+	if modified:
+		print("%s\t Switching queue [%s] to %s mode (%s jobs queued, %s jobs running)" % ( dt, queue_to_watch, mode, queued, running  ), file=fh )
+
 	fh.close()
 
-def load_history():
-	try:
-		fh = open("/var/tmp/queue_switch.json", "r" )
-		ret = json.load( fh )
-		fh.close()
-		if ret == None:
-			ret=dict()
-		return ret
-	except:
-		log("COULD NOT READ HISTORY")
-		pass
-	return dict()
-	
-def save_history( states ):
-	try:
-		fh = open("/var/tmp/queue_switch.json", "w" )
-		json.dump( states, fh )
-		fh.close()
-	except:
-		raise
-	
-	
-def get_queue_states( ):
-	states = load_history()
-
-	op = subprocess.check_output( [ "/opt/pbs/default/bin/qstat", "-q" ] ).decode("utf8").split("\n")
-	for i in range(5, len(op)-3 ): 
-			try:
-				queue   = re.split( "\s+", op[i] ) [0] 
-				queued  =  int( re.split("\s+", op[i] ) [6] )
-				running =  int( re.split("\s+", op[i] ) [5] )
-				if (queue not in states) or running>0 or queued>0:
-					states[ queue ] = { "last_active" : int(time.time() ) }
-			except:
-				raise
-				pass
-	save_history( states )
-	return states
-	
-def switch_queues( op,  queue_mask, nodes,  threshold  = 3 ):
-	threshold = threshold * 86400  # days to seconds
-	now = int(time.time())
-	for queue in op.keys():
-		if re.match( queue_mask, queue ):
-#			log("%s %d %d %d" %( queue, op[queue]["last_active"], now, threshold ) )
-			if (now - op[queue]["last_active"]) < threshold:
-				make_queue_dedicated( queue, nodes )
-			else:
-				make_queue_shared( queue, nodes )
-
-def make_queue_dedicated( queue, nodes ):
-	log("Making %s dedicated" % (queue) )
-	for n in nodes.keys():
-		node = nodes[n]
-		qlist = node["resources_available"]["Qlist"].split(",")
-		if queue in qlist: # Node is assigned to this queue
-			for q in qlist: # Remove every other queue but the dedicated one from the qlist
-				if q != queue:
-					log("\tRemoving %s from %s" %( q, n ) )
-					cmd = [ "/opt/pbs/default/bin/qmgr", "-c", "set node %s resources_available.Qlist -= %s"% ( n, q, ) ]
-					subprocess.check_output( cmd )
-
-# return a list of the v1 queues that the node "node" should be shared with		
-def choose_shared_queues( queue, node ):
-	if "cpumodel" in node["resources_available"]:
-		cpumodel = int(re.sub( "[^1234567890]", "", str(node["resources_available"]["cpumodel"] )) )
-	else:
-		cpumodel = 0
-	if "mem" in node["resources_available"]:
-		mem = node["resources_available"]["mem"]
-		mem = re.sub( "gb", "000000",  mem )
-		mem = re.sub( "mb", "000", mem )
-		mem = re.sub( "kb", "", mem )
-		mem = int(mem)
-	else:
-		mem = 0
-
-
-	if "icib" in node["resources_available"]:
-		return ["v1_multinode24"]
-	if "ngpus" in node["resources_available"] and int(node["resources_available"]["ngpus"])>0:
-		return ["v1_gpu24", "v1_debug", "v1_interactive"] 
-	if  mem > 130000000:
-		return ["v1_largemem24", "v1_debug", "v1_interactive"] 
-	if cpumodel == 24:
-		return ["v1_singlenode24"]
-	if cpumodel == 16:
-		return["v1_general24", "v1_throughput24"]
-
-	return ["v1_throughput24", "v1_debug", "v1_interactive"]
-	
-def make_queue_shared( queue, nodes ):
-	log("Making %s shared" % (queue) )
-	for n in nodes.keys():
-		node = nodes[n]
-		qlist = node["resources_available"]["Qlist"].split(",")
-
-		if "dedicated" not in node["resources_available"] or node["resources_available"]["dedicated"] == "False":		
-			if queue in qlist: # Node is assigned to this queue
-				# decide which queues to add based on node resources
-				shared_queues = choose_shared_queues( queue, node )
-				for q in shared_queues: # Remove every other queue but the dedicated one from the qlist
-					if q != queue and q not in qlist:
-						log("\tAdding %s to %s" %( q, n ) )
-						cmd = [ "/opt/pbs/default/bin/qmgr", "-c", "set node %s resources_available.Qlist += %s"% ( n, q, ) ]
-						subprocess.check_output( cmd )
-	
-
-def get_node_states():
-	data = json.loads(subprocess.check_output(["/opt/pbs/default/bin/pbsnodes", "-av", "-F", "json" ] ).decode("utf8"))
-	return data["nodes"]
-
 if __name__ == "__main__":
-	log("== Switching Cycle START ==" )
-	nodes = get_node_states()
-	op    = get_queue_states()
+	if len(sys.argv)!=3:
+		print("Syntax: %s priority_queue_list backfill_queue_list" % ( sys.argv[0] ) )
+		sys.exit(1)
+	queues_to_watch = sys.argv[1].split(",")
+	backfill_qlist = sys.argv[2].split(",")
 
-	switch_queues( op, "^pq", nodes, threshold = 3 )
 
-	sys.exit(1)
+	for q in queues_to_watch:
+		monitor_queue( q, backfill_qlist )
+
 
