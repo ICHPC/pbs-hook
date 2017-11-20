@@ -102,7 +102,7 @@ def make_queue_shared( queue, nodes ):
 		node = nodes[n]
 		qlist = node["resources_available"]["Qlist"].split(",")
 
-		if "dedicated" not in node["resources_available"] or node["resources_available"]["dedicated"] == False:		
+		if "dedicated" not in node["resources_available"] or node["resources_available"]["dedicated"] == "False":		
 			if queue in qlist: # Node is assigned to this queue
 				# decide which queues to add based on node resources
 				shared_queues = choose_shared_queues( queue, node )
