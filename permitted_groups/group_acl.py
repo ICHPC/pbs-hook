@@ -77,41 +77,45 @@ sys.path.append(PBS_EXEC + '/python/lib/python2.7/lib-dynload')
 from subprocess import Popen, PIPE
 from sets import Set
 
-e = pbs.event()
-j = e.job
+try:
+  e = pbs.event()
+  j = e.job
+ 
+  # Get the username
+  who = str(e.requestor)
 
-# Get the username
-who = str(e.requestor)
+  # Get queue
+  if j.queue == '':
+      q = pbs.server().default_queue.name
+  else:
+      q = j.queue.name
 
-# Get queue
-if j.queue == '':
-    q = pbs.server().default_queue.name
-else:
-    q = j.queue.name
+  # Get permitted_groups or accept the job
 
-# Get permitted_groups or accept the job
-
-permitted_groups = pbs.server().queue(q).resources_available['permitted_groups']
-if permitted_groups == None:
+  permitted_groups = pbs.server().queue(q).resources_available['permitted_groups']
+  if permitted_groups == None:
     e.accept()
-else:
+  else:
     permitted_groups = permitted_groups.split(',')
 
-# Build a list of users from all permitted groups
-users = Set([])
-try:
+  # Build a list of users from all permitted groups
+  users = Set([])
+  try:
     for g in permitted_groups:
        output = Popen([GETENT_CMD , "group", g], stdout=PIPE).communicate()[0].strip()
        output = output.split(':')[-1].split(',')
        users = users.union(output)
-except:
+  except:
     pass
 
-# Check if job submitter is in the list of users
-if who in users:
+  # Check if job submitter is in the list of users
+  if who in users:
     e.accept()
-else:
+  else:
     e.reject('You are not permitted to submit jobs to queue %s.' % q)
 
-e.accept()
+  e.accept()
 
+except:
+  pbs.event().accept()
+  pass
