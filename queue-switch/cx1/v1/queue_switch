@@ -79,13 +79,23 @@ def make_queue_dedicated( queue, nodes ):
 
 # return a list of the v1 queues that the node "node" should be shared with		
 def choose_shared_queues( queue, node ):
-	cpumodel = int(re.sub( "[^1234567890]", "", str(node["resources_available"]["cpumodel"] )) )
-	mem      = int(re.sub( "kb", "", node["resources_available"]["mem"]) )
+	if "cpumodel" in node["resources_available"]:
+		cpumodel = int(re.sub( "[^1234567890]", "", str(node["resources_available"]["cpumodel"] )) )
+	else:
+		cpumodel = 0
+	if "mem" in node["resources_available"]:
+		mem = node["resources_available"]["mem"]
+		mem = re.sub( "gb", "000000",  mem )
+		mem = re.sub( "mb", "000", mem )
+		mem = re.sub( "kb", "", mem )
+		mem = int(mem)
+	else:
+		mem = 0
 
 
 	if "icib" in node["resources_available"]:
 		return ["v1_multinode24"]
-	if "ngpus" in node["resources_available"] and int(node["resources_avialable"]["ngpus"])>0:
+	if "ngpus" in node["resources_available"] and int(node["resources_available"]["ngpus"])>0:
 		return ["v1_gpu24", "v1_debug", "v1_interactive"] 
 	if  mem > 130000000:
 		return ["v1_largemem24", "v1_debug", "v1_interactive"] 
