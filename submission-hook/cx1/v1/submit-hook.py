@@ -25,6 +25,7 @@ classifications = {
 			"walltime" : [0,8.],
 			"mem"      : [1, 96],
 			"interactive": True,
+			"express"  : False
 		},
 		"debug": {
 			"nodect"   : [1,1],
@@ -33,6 +34,7 @@ classifications = {
 			"walltime" : [0,0.5], # Up to 30 mins
 			"mem"      : [1, 96],
 			"interactive": False,
+			"express"  : False
 		},
 
 		"throughput24": {
@@ -42,6 +44,7 @@ classifications = {
 			"walltime" : [0.500001,24],
 			"mem"      : [1, 96],
 			"interactive": False,
+			"express"  : False
 		},
 
 		"throughput72": {
@@ -51,6 +54,7 @@ classifications = {
 			"walltime" : [24.00001, 72],
 			"mem"      : [1, 96],
 			"interactive": False,
+			"express"  : False
 		},
 
 		"general24": {
@@ -60,6 +64,7 @@ classifications = {
 			"walltime" : [0.50001,24.],
 			"mem"      : [1, 124],
 			"interactive": False,
+			"express"  : False
 		},
 
 		"general72": {
@@ -69,6 +74,7 @@ classifications = {
 			"walltime" : [24.00001, 72.],
 			"mem"      : [1, 124],
 			"interactive": False,
+			"express"  : False
 		},
 		"singlenode24": {
 			"nodect"   : [1,1],
@@ -77,6 +83,7 @@ classifications = {
 			"walltime" : [1,24.],
 			"mem"      : [1, 250],
 			"interactive": False,
+			"express"  : False
 		},
 
 		"multinode24": {
@@ -86,6 +93,7 @@ classifications = {
 			"walltime" : [ 0., 24. ],
 			"mem"      : [1, 46],
 			"interactive": False,
+			"express"  : False
 		},
 
 		"multinode48": {
@@ -95,6 +103,7 @@ classifications = {
 			"walltime" : [ 24.00001, 48.00 ],
 			"mem"      : [1, 46],
 			"interactive": False,
+			"express"  : False
 		},
 
 		"largemem24": {
@@ -104,6 +113,7 @@ classifications = {
 			"walltime" : [ 0.5, 24. ],
 			"mem"      : [127, 252],
 			"interactive": False,
+			"express"  : False
 		},
 
 
@@ -115,6 +125,7 @@ classifications = {
 			"walltime" : [ 24.00001, 48. ],
 			"mem"      : [127, 252],
 			"interactive": False,
+			"express"  : False
 		},
 
 		"gpu24": {
@@ -124,6 +135,7 @@ classifications = {
 			"walltime" : [ 0.1, 24. ],
 			"mem"      : [1, 16],
 			"interactive": False,
+			"express"  : False
 		},
 		"gpu48": {
 			"nodect"   : [ 1, 1 ],
@@ -132,6 +144,18 @@ classifications = {
 			"walltime" : [ 24.00001, 48. ],
 			"mem"      : [1, 16],
 			"interactive": False,
+			"express"  : False
+		},
+
+
+		"exp_48_128_72": {
+			"nodect"   : [1,16],
+			"ncpus"    : [ [24,24], [48,48] ],
+			"ngpus"    : [0,0],
+			"walltime" : [1, 72.],
+			"mem"      : [1, 126],
+			"interactive": False,
+			"express"  : True
 		},
 
 
@@ -151,7 +175,7 @@ def check_express_project_code():
 		pbs.event().reject( "You are not authorised to use this express code" )
 	return project
 
-def match_class(selection, walltime, clssname, clss ):
+def match_class(selection, walltime, clssname, clss, express ):
 	# Compare walltime
 	if (walltime < clss["walltime"][0])  or ( walltime > clss["walltime"][1] ):
 #		pbs.logmsg( pbs.LOG_ERROR, "CLASS [" + clssname +"] failed walltime ("+str(walltime) + "in range " + str(clss["walltime"][0]) + " " + str(clss["walltime"][1]) )
@@ -183,20 +207,23 @@ def match_class(selection, walltime, clssname, clss ):
 #			pbs.logmsg( pbs.LOG_ERROR, "CLASS [" + clssname +"] failed ncpus" )
 			return False
 
+	if select["express"] != express:
+#			pbs.logmsg( pbs.LOG_ERROR, "CLASS [" + clssname +"] doesn't match express" )
+			return False
 	# Classification matches
 #	pbs.logmsg( pbs.LOG_ERROR, " CLASS  " + clssname + " matched" )
 	return True
 
 
 # Match job to class. Error out if it matches more than one class
-def classify_job( selection, walltime, queue = None ):
+def classify_job( selection, walltime, express= False, queue = None ):
 	names = ""
 	ret=[];
 
 	for clssname  in sorted(classifications.keys()):
 		clss = classifications[clssname]
 		if ( queue == None ) or clssname == queue:
-			if match_class( selection, walltime, clssname, clss ):
+			if match_class( selection, walltime, clssname, clss, express ):
 				clss["target_queue"] = clssname
 				ret.append( clss )
 				names = names + clssname + " "
@@ -384,20 +411,21 @@ try:
 	selection  = extract_selection()
 
 	# Express version 0 - accept anything provided the user is in an exp-XXX group
+	express = False
 	if queue_type == "express":
 		check_express_project_code()
-		pbs.event().accept() #reject("Express queue functionality not available yet")
-	else:
-		if pbs.event().job.project:
+		express = True
+
+	if queue_type == "private" and pbs.event().job.project:
 			pbs.event.reject( "Express project codes can only be used if submitting to express queues" )
 
 	
 	if queue_type == "common":
-		clss = classify_job( selection, walltime )
+		clss = classify_job( selection, walltime, express )
 	else:
 		# If the user submitted to a specific queue, test against the config for that alone
 		queue_type = queue_type.split(":")
-		clss = classify_job( selection, walltime, queue = queue_type[1] )
+		clss = classify_job( selection, walltime, express ) #, queue = queue_type[1] )
 		
 
 	# Move the job into the right queue
