@@ -43,6 +43,10 @@ for n in data["nodes"]:
 		pass
 	else:
 		for q  in qlist:
+
+			if q not in classes:
+				classes[q] = 0
+
 			if q not in qlistlen:
 				qlistlen[q] = len(qlist)
 			else:
@@ -50,9 +54,6 @@ for n in data["nodes"]:
 
 		if "jobs" not in node or len(node["jobs"])==0:
 			for q in qlist:
-				if q not in classes:
-					classes[q] = 1
-				else:
 					classes[q] += 1
 
 
