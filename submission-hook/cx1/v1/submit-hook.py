@@ -131,18 +131,18 @@ classifications = {
 		"gpu24": {
 			"nodect"   : [ 1, 1 ],
 			"ncpus"    : [ 1, 4 ],
-			"ngpus"    : [1,1],
-			"walltime" : [ 0.1, 24. ],
-			"mem"      : [1, 16],
+			"ngpus"    : [1,2],
+			"walltime" : [ 0.5, 24. ],
+			"mem"      : [1, 32],
 			"interactive": False,
 			"express"  : False
 		},
 		"gpu48": {
 			"nodect"   : [ 1, 1 ],
 			"ncpus"    : [ 1, 4 ],
-			"ngpus"    : [1,1],
+			"ngpus"    : [1,2],
 			"walltime" : [ 24.00001, 48. ],
-			"mem"      : [1, 16],
+			"mem"      : [1, 32],
 			"interactive": False,
 			"express"  : False
 		},
