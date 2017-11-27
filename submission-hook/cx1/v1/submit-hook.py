@@ -139,7 +139,7 @@ classifications = {
 		},
 		"gpu48": {
 			"nodect"   : [ 1, 1 ],
-			"ncpus"    : [ 1, 4 ],
+			"ncpus"    : [ 1, 16 ],
 			"ngpus"    : [1,2],
 			"walltime" : [ 24.00001, 48. ],
 			"mem"      : [1, 32],
