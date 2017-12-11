@@ -48,8 +48,9 @@ def make_queue_dedicated( queue, nodes ):
 # return a list of the v1 queues that the node "node" should be shared with		
 def choose_shared_queues( queue, n, node ):
 	# Never reassign nodes that have dedicated==True
-	if "dedicated" in node["resources_available"]["dedicated"] == "True":
-		return []
+	if "dedicated" in node["resources_available"]:
+		if node["resources_available"]["dedicated"] == "True" or node["resources_available"]["dedicated"] == True:
+			return []
 
 	if queue == "med-bio":
 		return [ "v1_throughput24", "v1_debug", "v1_interactive" ]
