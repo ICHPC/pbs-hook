@@ -1,0 +1,89 @@
+#!/usr/bin/env python
+
+# This watches queues and immediately switches them to dedicated if any jobs are seen queueing
+
+from __future__ import print_function
+import json
+import subprocess
+import sys
+import re
+import datetime
+import time
+
+
+def log( ll ):
+	fh = open("/var/tmp/expedite.log", "a" )
+	dt = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+	print( "%s %s" %( dt, ll), file=fh)
+	fh.close()
+
+
+	
+def are_there_queued_jobs( queue ):
+
+	op = subprocess.check_output( [ "/opt/pbs/default/bin/qselect", "-T", "-q", queue, "-s", "Q" ] ).decode("utf8").split("\n")
+	log( "Queue " + queue + " has " + str(len(op)-1) + " jobs pending" )
+	return (len(op)-1)>0
+	
+def switch_queues( queue, nodes,  threshold  = 0 ):
+	threshold = threshold * 86400  # days to seconds
+	now = int(time.time())
+	if are_there_queued_jobs( queue ):
+				make_queue_dedicated( queue, nodes )
+	else:
+				make_queue_shared( queue, nodes )
+
+def make_queue_dedicated( queue, nodes ):
+	log("Making %s dedicated" % (queue) )
+	for n in nodes.keys():
+		node = nodes[n]
+		qlist = node["resources_available"]["Qlist"].split(",")
+		if queue in qlist: # Node is assigned to this queue
+			for q in qlist: # Remove every other queue but the dedicated one from the qlist
+				if q != queue:
+					log("\tRemoving %s from %s" %( q, n ) )
+					cmd = [ "/opt/pbs/default/bin/qmgr", "-c", "set node %s resources_available.Qlist -= %s"% ( n, q, ) ]
+					subprocess.check_output( cmd )
+
+# return a list of the v1 queues that the node "node" should be shared with		
+def choose_shared_queues( queue, n, node ):
+	# Never reassign nodes that have dedicated==True
+	if "dedicated" in node["resources_available"]:
+		if node["resources_available"]["dedicated"] == "True" or node["resources_available"]["dedicated"] == True:
+			return []
+
+	if queue == "v1_capability24":
+		return [ "v1_capability24", "v1_large48" ]
+	if queue == "exp_24_128_ib":
+		return [ "exp_24_18_ib", "v1_large48" ]
+	else:
+		return []
+		
+def make_queue_shared( queue, nodes ):
+	log("Making %s shared" % (queue) )
+	for n in nodes.keys():
+		node = nodes[n]
+		qlist = node["resources_available"]["Qlist"].split(",")
+		if queue in qlist: # Node is assigned to this queue
+			# decide which queues to add based on node resources
+			shared_queues = choose_shared_queues( queue, n, node )
+			for q in shared_queues: # Remove every other queue but the dedicated one from the qlist
+				if q != queue and q not in qlist:
+					log("\tAdding %s to %s" %( q, n ) )
+					cmd = [ "/opt/pbs/default/bin/qmgr", "-c", "set node %s resources_available.Qlist += %s"% ( n, q, ) ]
+					subprocess.check_output( cmd )
+	
+
+def get_node_states():
+	data = json.loads(subprocess.check_output(["/opt/pbs/default/bin/pbsnodes", "-av", "-F", "json" ] ).decode("utf8"))
+	return data["nodes"]
+
+if __name__ == "__main__":
+	log("== Switching Cycle START ==" )
+	nodes = get_node_states()
+
+	switch_queues( "v1_capability24", nodes, threshold = 0 )
+	switch_queues( "exp_24_128_ib",   nodes, threshold = 0 )
+
+	sys.exit(1)
+
