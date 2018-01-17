@@ -55,7 +55,7 @@ def choose_shared_queues( queue, n, node ):
 	if queue == "v1_capability24":
 		return [ "v1_capability24", "v1_large48" ]
 	if queue == "exp_24_128_ib":
-		return [ "exp_24_18_ib", "v1_large48" ]
+		return [ "exp_24_128_ib", "v1_large48" ]
 	else:
 		return []
 		
