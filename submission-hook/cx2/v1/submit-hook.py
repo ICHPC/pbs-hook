@@ -19,7 +19,7 @@ queue_config_version = "v1_"
 
 classifications = {
 		"short2": {
-			"nodect"   : [1,18],
+			"nodect"   : [1,17],
 			"ncpus"    : [24,24],
 			"ngpus"    : [0,0],
 			"walltime" : [0,2.],
@@ -41,7 +41,7 @@ classifications = {
 			"nodect"   : [18,72],
 			"ncpus"    : [24,24],
 			"ngpus"    : [0,0],
-			"walltime" : [0,48], 
+			"walltime" : [2.,48], 
 			"mem"      : [1, 120],
 			"interactive": False,
 			"express"  : False
