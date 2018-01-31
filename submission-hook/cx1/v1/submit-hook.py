@@ -152,8 +152,8 @@ classifications = {
 			"nodect"   : [1,16],
 			"ncpus"    : [ [24,24], [48,48] ],
 			"ngpus"    : [0,0],
-			"walltime" : [1, 72.],
-			"mem"      : [1, 126],
+			"walltime" : [1, 240.],
+			"mem"      : [1, 252],
 			"interactive": False,
 			"express"  : True
 		},
@@ -167,12 +167,22 @@ def check_express_project_code():
 	project = pbs.event().job.project
 	if not project:
 		pbs.event().reject( "You must specify an express code with -P when submitting express jobs" )
-
+	
 	project = repr(project)
 	if not re.match("^exp-[a-z0-9]+$", project ):
 		pbs.event().reject( "Invalid express code: these have the format 'exp-XXXX'" )
 	if not test_group_membership( [ project ] ):
 		pbs.event().reject( "You are not authorised to use this express code" )
+
+	try:
+		import requests
+		r = requests.get( "https://api.rcs.imperial.ac.uk/v1.0/express/%s/enabled" % ( project, ) )
+		if (r.status_code == 200) and (r.text != "1"):
+			pbs.event().reject("This express code is not enabled. Please contact rcs-support@imperial.ac.uk" )
+	except :#
+		pbs.event().reject("Exception checking express enabled " )
+		pass
+
 	return project
 
 def match_class(selection, walltime, clssname, clss, express ):
