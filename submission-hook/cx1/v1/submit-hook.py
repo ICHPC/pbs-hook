@@ -180,7 +180,7 @@ def check_express_project_code():
 		if (r.status_code == 200) and (r.text != "1"):
 			pbs.event().reject("This express code is not enabled. Please contact rcs-support@imperial.ac.uk" )
 	except :#
-		pbs.event().reject("Exception checking express enabled " )
+#		pbs.event().reject("Exception checking express enabled " )
 		pass
 
 	return project
