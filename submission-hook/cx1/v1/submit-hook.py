@@ -10,7 +10,7 @@ import pbs
 import traceback
 import re
 
-list_of_resources = ["ncpus","ngpus","mem","mpiprocs","ompthreads","host","switchgroup","avx","avx2","avx512","tmpspace","has_magma","gpu_type","cpumodel","using_ht"]
+list_of_resources = ["ncpus","ngpus","mem","mpiprocs","ompthreads","switchgroup","avx","avx2","avx512","tmpspace","has_magma","gpu_type","cpumodel", "icib" ]
 
 	# 
 # This is prepended to any target_queue name to allow for future versioning in place
@@ -37,6 +37,15 @@ classifications = {
 			"express"  : False
 		},
 
+		"long1000" : {
+			"nodect"   : [1,1],
+			"ncpus"    : [1,8],
+			"ngpus"    : [0,0],
+			"walltime" : [72.00001,1000],
+			"mem"      : [1, 96],
+			"interactive": False,
+			"express"  : False
+		},
 		"throughput24": {
 			"nodect"   : [1,1],
 			"ncpus"    : [1,8],
@@ -410,15 +419,17 @@ def test_group_membership( permitted_groups ):
 try:
 	queue_type = extract_queue_type()
 
+	walltime   = extract_walltime()
+	selection  = extract_selection()
+
 	# Anything goes in private queues
 	# so exit at this point, to prevent walltime and select parsing raising a reject()
 	if queue_type == "private":
 		if pbs.event().job.project:
 			pbs.event().reject( "Express project codes can not be used with private queues" )
+		fixup_mpiprocs_ompthreads( selection )
 		pbs.event().accept()
 
-	walltime   = extract_walltime()
-	selection  = extract_selection()
 
 	# Express version 0 - accept anything provided the user is in an exp-XXX group
 	express = False
