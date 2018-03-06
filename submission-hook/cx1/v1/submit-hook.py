@@ -96,7 +96,7 @@ classifications = {
 		},
 
 		"multinode24": {
-			"nodect"   : [ 2, 20 ],
+			"nodect"   : [ 3, 20 ],
 			"ncpus"    : [ 12, 12 ],
 			"ngpus"    : [0,0],
 			"walltime" : [ 0., 24. ],
@@ -106,7 +106,7 @@ classifications = {
 		},
 
 		"multinode48": {
-			"nodect"   : [ 2, 20 ],
+			"nodect"   : [ 3, 20 ],
 			"ncpus"    : [ 12, 12 ],
 			"ngpus"    : [0,0],
 			"walltime" : [ 24.00001, 48.00 ],
@@ -117,10 +117,10 @@ classifications = {
 
 		"largemem24": {
 			"nodect"   : [ 1, 1 ],
-			"ncpus"    : [ 12, 12 ],
+			"ncpus"    : [ [ 12, 12 ], [24, 24] ],
 			"ngpus"    : [0,0],
 			"walltime" : [ 0.5, 24. ],
-			"mem"      : [127, 252],
+			"mem"      : [128, 380],
 			"interactive": False,
 			"express"  : False
 		},
@@ -129,10 +129,10 @@ classifications = {
 
 		"largemem48": {
 			"nodect"   : [ 1, 1 ],
-			"ncpus"    : [ 12, 12 ],
+			"ncpus"    : [ [ 12, 12 ], [24, 24] ],
 			"ngpus"    : [0,0],
 			"walltime" : [ 24.00001, 48. ],
-			"mem"      : [127, 252],
+			"mem"      : [128, 380],
 			"interactive": False,
 			"express"  : False
 		},
@@ -333,7 +333,7 @@ def extract_selection():
 
 			ret[key] = val
 	except:
-		pbs.event().reject("Invalid -lselect syntax. :" + str(select) + "\n     The corrcet format is -lselect=N:ncpus=X:mem=Ygb" )
+		pbs.event().reject("Invalid -lselect syntax. :" + str(select) + "\n     The correct format is -lselect=N:ncpus=X:mem=Ygb , optionally including ompthreads=A:mpiprocs=B" )
 
 	if "ncpus" not in ret:
 			pbs.event().reject("[ncpus] must be in the -lselect")
