@@ -5,6 +5,9 @@
 # HPC - Imperial College London
 # Home: github ICHPC/pbs-hook
 
+# To install
+# qmgr -c "import hook submit application/x-python default submit-hook.py"
+
 import sys
 import pbs
 import traceback
@@ -171,6 +174,9 @@ classifications = {
 
 }
 
+
+def set_topjob_ineligible( ):
+	pbs.event().job.topjob_ineligible = True
 
 def check_express_project_code():
 	project = pbs.event().job.project
@@ -428,6 +434,10 @@ try:
 		if pbs.event().job.project:
 			pbs.event().reject( "Express project codes can not be used with private queues" )
 		fixup_mpiprocs_ompthreads( selection )
+		# PQ job geometries aren't enforced, so it's possible
+		# to submit something that won't ever run. 
+		# Prevent them becoming topjobs
+		set_topjob_ineligible( )
 		pbs.event().accept()
 
 
@@ -443,6 +453,12 @@ try:
 	
 	if queue_type == "common" or queue_type == "express":
 		clss = classify_job( selection, walltime, express )
+
+		# Array jobs are never top jobs
+		# As a matter of policy, are low-prio throughput
+		if str(pbs.event().job.array_indices_submitted) != "None":
+			set_topjob_ineligible()
+		
 	else:
 		# If the user submitted to a specific queue, test against the config for that alone
 		queue_type = queue_type.split(":")
