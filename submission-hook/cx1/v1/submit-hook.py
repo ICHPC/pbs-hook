@@ -366,6 +366,14 @@ def fixup_icib( queue, sel ):
 		pbs.event().job.Resource_List["select"] = pbs.select( selstr )
 
 def fixup_mpiprocs_ompthreads( sel ):
+	exempt = False
+	try:
+		qn = pbs.event().job.queue.name
+		if qn in [ "pqmrwarn", "pqmrwarn2" ]:
+			exempt = True
+	except:
+		pass
+
 	selstr = repr(pbs.event().job.Resource_List["select"])
 
 	if "mpiprocs" not in sel and "ompthreads" not in sel:
@@ -389,7 +397,8 @@ def fixup_mpiprocs_ompthreads( sel ):
 			mpiprocs  = int(sel["mpiprocs"])
 			ompthreads= int(sel["ompthreads"])
 			if (mpiprocs * ompthreads) != int(sel["ncpus"]):
-				pbs.event().reject( "mpiprocs * ompthreads must equal ncpus" )
+				if not exempt:
+					pbs.event().reject( "mpiprocs * ompthreads must equal ncpus" )
 			
 # Returns a list of all the groups the requestor is a member of
 def test_group_membership( permitted_groups ):
