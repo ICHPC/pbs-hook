@@ -13,7 +13,7 @@ import pbs
 import traceback
 import re
 
-list_of_resources = ["ncpus","ngpus","mem","mpiprocs","ompthreads","switchgroup","avx","avx2","avx512","tmpspace","has_magma","gpu_type","cpumodel", "icib" ]
+list_of_resources = ["ncpus","ngpus","mem","mpiprocs","ompthreads", "avx", "avx2", "avx512", "tmpspace","has_magma","gpu_type","cpumodel" ]
 
 	# 
 # This is prepended to any target_queue name to allow for future versioning in place
