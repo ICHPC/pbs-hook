@@ -20,6 +20,394 @@ list_of_resources = ["ncpus","ngpus","mem","mpiprocs","ompthreads","switchgroup"
 
 queue_config_version = "v1_"
 
+private_queue_restrictions = {
+	"med-bio"  : [ {
+		"nodect"     : [1,20],
+		"ncpus"      : [1,40],
+		"ngpus"      : [0,0],
+		"walltime"   : [0,150.],
+		"mem"        : [1,128],
+	} ],
+	"pqaam"  : [ {
+		"nodect"     : [1,12],
+		"ncpus"      : [1,32],
+		"ngpus"      : [0,0],
+		"walltime"   : [0,168.],
+		"mem"        : [1,64],
+		},
+		{
+		"nodect"     : [1,4],
+		"ncpus"      : [1,48],
+		"ngpus"      : [0,0],
+		"walltime"   : [0,168.],
+		"mem"        : [1,128],
+		} ],
+	"pqaero"  : [ {
+		"nodect"     : [1,12],
+		"ncpus"      : [1,32],
+		"ngpus"      : [0,0],
+		"walltime"   : [0,168.],
+		"mem"        : [1,64],
+		},
+		{
+		"nodect"     : [1,4],
+		"ncpus"      : [1,48],
+		"ngpus"      : [0,0],
+		"walltime"   : [0,168.],
+		"mem"        : [1,128],
+		} ],
+	"pqaerogpu" : [ {
+		"nodect"     : [1,4],
+		"ncpus"      : [1,32],
+		"ngpus"      : [0,8],
+		"walltime"   : [0,168.],
+		"mem"        : [1,32],
+		}, ],
+	"pqaeromg" : [ {
+		"nodect"     : [1,4],
+		"ncpus"      : [1,40],
+		"ngpus"      : [0,0],
+		"walltime"   : [0,168.],
+		"mem"        : [1,128],
+	} ],
+	"pqaeromorph" : [ {
+		"nodect"    : [1,10],
+		"ncpus"     : [1,32],
+		"ngpus"     : [0,2],
+		"walltime"  : [0,168.],
+		"mem"       : [1,64]
+	} ],
+	"pqastro" : [ {
+		"nodect"    : [1,4],
+		"ncpus"     : [1,32],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,168.],
+		"mem"       : [1,64]
+	} ],
+	"pqalwalsh" : [ {
+		"nodect"    : [1,6],
+		"ncpus"     : [1,48],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,168.],
+		"mem"       : [1,256]
+	} ],
+	"pqberloff" : [ {
+		"nodect"    : [1,3],
+		"ncpus"     : [1,32],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,2400.],
+		"mem"       : [1,64]
+	} ],
+	"pqcdt" : [ {
+		"nodect"    : [1,20],
+		"ncpus"     : [1,40],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,168.],
+		"mem"       : [1,64]
+	} ],
+	"pqcgi" : [ {
+		"nodect"    : [1,16],
+		"ncpus"     : [1,32],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,168.],
+		"mem"       : [1,128]
+	} ],
+	"pqchem" : [ {
+		"nodect"    : [1,10],
+		"ncpus"     : [1,40],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,168.],
+		"mem"       : [1,128]
+	} ],
+	"pqchemeng" : [ {
+		"nodect"    : [1,8],
+		"ncpus"     : [1,40],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,168.],
+		"mem"       : [1,128]
+	} ],
+	"pqcivstruct" : [ {
+		"nodect"    : [1,4],
+		"ncpus"     : [1,40],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,168.],
+		"mem"       : [1,128]
+	} ],
+	"pqcvcsm" : [ {
+		"nodect"    : [1,12],
+		"ncpus"     : [1,40],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,168.],
+		"mem"       : [1,128]
+	} ],
+	"pqeboek" : [ {
+		"nodect"    : [1,3],
+		"ncpus"     : [1,12],
+		"ngpus"     : [0,8],
+		"walltime"  : [0,168.],
+		"mem"       : [1,128]
+	} ],
+	"pqeboekcpu" : [ {
+		"nodect"    : [1,20],
+		"ncpus"     : [1,32],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,168.],
+		"mem"       : [1,64]
+	} ],
+	"pqeelab" : [ {
+		"nodect"    : [1,8],
+		"ncpus"     : [1,40],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,168.],
+		"mem"       : [1,128]
+	} ],
+	"pqeph" : [ {
+		"nodect"    : [1,8],
+		"ncpus"     : [1,40],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,2400.],
+		"mem"       : [1,128]
+	} ],
+	"pqexss" : [ {
+		"nodect"    : [1,4],
+		"ncpus"     : [1,40],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,168.],
+		"mem"       : [1,128]
+	} ],
+	"pqfano" : [ {
+		"nodect"    : [1,1],
+		"ncpus"     : [1,48],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,168.],
+		"mem"       : [1,128]
+	} ],
+	"pqfogim" : [ {
+		"nodect"    : [1,4],
+		"ncpus"     : [1,48],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,168.],
+		"mem"       : [1,128]
+	} ],
+	"pqgrimes" : [ {
+		"nodect"    : [1,4],
+		"ncpus"     : [1,40],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,168.],
+		"mem"       : [1,128]
+	} ],
+	"pqigould" : [ {
+		"nodect"    : [1,1],
+		"ncpus"     : [1,8],
+		"ngpus"     : [0,4],
+		"walltime"  : [0,168.],
+		"mem"       : [1,16],
+		"gpu_type"  : ["GTX980", "GTX1080" ],
+	} ],
+	"pqjferrer" : [ {
+		"nodect"    : [1,8],
+		"ncpus"     : [1,40],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,168.],
+		"mem"       : [1,128]
+	} ],
+	"pqjpritcha" : [ {
+		"nodect"    : [1,4],
+		"ncpus"     : [1,48],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,168.],
+		"mem"       : [1,256]
+	} ],
+	"pqkjelfs" : [ {
+		"nodect"    : [1,2],
+		"ncpus"     : [1,48],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,168.],
+		"mem"       : [1,128]
+	} ],
+	"pqlaser" : [ {
+		"nodect"    : [1,12],
+		"ncpus"     : [1,40],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,2400.],
+		"mem"       : [1,256]
+	} ],
+	"pqmaterials" : [ {
+		"nodect"    : [1,10],
+		"ncpus"     : [1,40],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,168.],
+		"mem"       : [1,128]
+	} ],
+	"pqmb" : [ {
+		"nodect"    : [1,8],
+		"ncpus"     : [1,48],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,2400.],
+		"mem"       : [1,256]
+	} ],
+	"pqmedyn" : [ {
+		"nodect"    : [1,40],
+		"ncpus"     : [1,48],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,168.],
+		"mem"       : [1,128]
+	} ],
+	"pqmemphis" : [ {
+		"nodect"    : [1,20],
+		"ncpus"     : [1,56],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,168.],
+		"mem"       : [1,128]
+	} ],
+	"pqmeneg" : [ {
+		"nodect"    : [1,20],
+		"ncpus"     : [1,48],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,2400.],
+		"mem"       : [1,128]
+	} ],
+	"pqmrwarn" : [ {
+		"nodect"    : [1,72],
+		"ncpus"     : [1,48],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,2400.],
+		"mem"       : [1,384]
+	} ],
+	"pqmrwarn2" : [ {
+		"nodect"    : [1,4],
+		"ncpus"     : [1,40],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,168.],
+		"mem"       : [1,128]
+	} ],
+	"pqmultiflow" : [ {
+		"nodect"    : [1,40],
+		"ncpus"     : [1,40],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,168.],
+		"mem"       : [1,128]
+	} ],
+	"pqmultiflowib" : [ {
+		"nodect"    : [1,20],
+		"ncpus"     : [1,40],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,168.],
+		"mem"       : [1,64]
+	} ],
+	"pqndenuc" : [ {
+		"nodect"    : [1,1],
+		"ncpus"     : [1,32],
+		"ngpus"     : [0,16],
+		"walltime"  : [0,168.],
+		"mem"       : [1,512]
+	} ],
+	"pqnmh" : [ {
+		"nodect"    : [1,8],
+		"ncpus"     : [1,48],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,168.],
+		"mem"       : [1,128]
+	} ],
+	"pqpcsmith" : [ {
+		"nodect"    : [1,3],
+		"ncpus"     : [1,24],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,168.],
+		"mem"       : [1,192]
+	} ],
+	"pqpdh" : [ {
+		"nodect"    : [1,8],
+		"ncpus"     : [1,48],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,168.],
+		"mem"       : [1,128]
+	} ],
+	"pqplasma2" : [ 
+		{
+		"nodect"    : [1,5],
+		"ncpus"     : [1,48],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,168.],
+		"mem"       : [1,128]
+		},
+		{
+		"nodect"    : [1,72],
+		"ncpus"     : [1,24],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,168.],
+		"mem"       : [1,48]
+	} ],
+	"pqplinds" : [ {
+		"nodect"    : [1,20],
+		"ncpus"     : [1,40],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,2400.],
+		"mem"       : [1,128]
+	} ],
+	"pqrrng" : [ {
+		"nodect"    : [1,100],
+		"ncpus"     : [1,48],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,2400.],
+		"mem"       : [1,128]
+	} ],
+	"pqsc03" : [ {
+		"nodect"    : [1,12],
+		"ncpus"     : [1,40],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,168.],
+		"mem"       : [1,128]
+	} ],
+	"pqstokes" : [ {
+		"nodect"    : [1,28],
+		"ncpus"     : [1,32],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,168.],
+		"mem"       : [1,128]
+	} ],
+	"pqstorm" : [ {
+		"nodect"    : [1,4],
+		"ncpus"     : [1,48],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,168.],
+		"mem"       : [1,256]
+	} ],
+	"pqtimm" : [ {
+		"nodect"    : [1,4],
+		"ncpus"     : [1,40],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,2400.],
+		"mem"       : [1,128]
+	} ],
+	"pqtouldrid" : [ {
+		"nodect"    : [1,4],
+		"ncpus"     : [1,48],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,168.],
+		"mem"       : [1,128]
+	} ],
+	"pqtribo" : [ {
+		"nodect"    : [1,10],
+		"ncpus"     : [1,48],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,168.],
+		"mem"       : [1,128]
+	} ],
+	"pqturbo" : [ {
+		"nodect"    : [1,4],
+		"ncpus"     : [1,48],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,168.],
+		"mem"       : [1,256]
+	} ],
+
+}
+
+
+	
+
+
 classifications = {
 		"interactive": {
 			"nodect"   : [1,1],
@@ -28,7 +416,8 @@ classifications = {
 			"walltime" : [0,8.],
 			"mem"      : [1, 96],
 			"interactive": True,
-			"express"  : False
+			"express"  : False,
+			"gpu_type" : [ "P100", "K80", "GTXTITAN" ]
 		},
 		"debug": {
 			"nodect"   : [1,1],
@@ -37,7 +426,8 @@ classifications = {
 			"walltime" : [0,0.5], # Up to 30 mins
 			"mem"      : [1, 96],
 			"interactive": False,
-			"express"  : False
+			"express"  : False,
+			"gpu_type" : [ "P100", "K80", "GTXTITAN" ]
 		},
 
 		"long1000" : {
@@ -147,7 +537,8 @@ classifications = {
 			"walltime" : [ 0.5, 24. ],
 			"mem"      : [1, 32],
 			"interactive": False,
-			"express"  : False
+			"express"  : False,
+			"gpu_type" : [ "P100", "K80", "GTXTITAN" ]
 		},
 		"gpu48": {
 			"nodect"   : [ 1, 1 ],
@@ -156,7 +547,8 @@ classifications = {
 			"walltime" : [ 24.00001, 48. ],
 			"mem"      : [1, 32],
 			"interactive": False,
-			"express"  : False
+			"express"  : False,
+			"gpu_type" : [ "P100", "K80", "GTXTITAN" ]
 		},
 
 
@@ -206,9 +598,10 @@ def match_class(selection, walltime, clssname, clss, express ):
 #		pbs.logmsg( pbs.LOG_ERROR, "CLASS [" + clssname +"] failed walltime ("+str(walltime) + "in range " + str(clss["walltime"][0]) + " " + str(clss["walltime"][1]) )
 		return False
 
-	if clss["interactive"] != selection["interactive"]:
+	if "interactive" in clss:
+		if clss["interactive"] != selection["interactive"]:
 #		pbs.logmsg( pbs.LOG_ERROR, "CLASS [" + clssname +"] failed interactive " + str(clss["interactive"] ) + " " + str(selection["interactive"]) )
-		return False
+			return False
 
 	for minmax in [ "nodect", "ngpus" ]:
 		if ( selection[minmax] < clss[minmax][0] ) or ( selection[minmax] > clss[minmax][1] ):
@@ -232,12 +625,33 @@ def match_class(selection, walltime, clssname, clss, express ):
 #			pbs.logmsg( pbs.LOG_ERROR, "CLASS [" + clssname +"] failed ncpus" )
 			return False
 
-	if clss["express"] != express:
+	if "express" in clss:
+		if clss["express"] != express:
 #			pbs.logmsg( pbs.LOG_ERROR, "CLASS [" + clssname +"] doesn't match express" )
 			return False
 	# Classification matches
 #	pbs.logmsg( pbs.LOG_ERROR, " CLASS  " + clssname + " matched" )
+
+	# Check to see if the gpu_type is present and permitted for this class
+	if "gpu_type" in selection:
+		if "gpu_type" not in clss:
+			return False
+		if selection["gpu_type"] not in clss["gpu_type"]:
+			return False
+
 	return True
+
+
+def check_pq_restriction( selection, walltime, queue ):
+	clss = private_queue_restrictions[ queue ]
+	if not clss:
+		# There wasn't a restriction for this pq, so accept it
+		return
+	else:
+		for c in clss:
+			if match_class( selection, walltime, queue, c, False ):
+				return True
+		pbs.event().reject( "The private queue has insufficient resources for a job this size.\nPlease consult https://selfservice.rcs.imperial.ac.uk/pqs/nodes/%s to see what's available.\nFor any queries please contact us via rcs-support@imperial.ac.uk" % ( queue ) )
 
 
 # Match job to class. Error out if it matches more than one class
@@ -437,16 +851,15 @@ try:
 	walltime   = extract_walltime()
 	selection  = extract_selection()
 
-	# Anything goes in private queues
-	# so exit at this point, to prevent walltime and select parsing raising a reject()
 	if queue_type == "private":
 		if pbs.event().job.project:
 			pbs.event().reject( "Express project codes can not be used with private queues" )
 		fixup_mpiprocs_ompthreads( selection )
-		# PQ job geometries aren't enforced, so it's possible
-		# to submit something that won't ever run. 
+		# PQs are small and offline resources may preent jobs running
 		# Prevent them becoming topjobs
 		set_topjob_ineligible( )
+		# Check that geometry is smaller than maximum that pq resources can accommodate
+		check_pq_restriction( selection, walltime, pbs.event().job.queue.name )
 		pbs.event().accept()
 
 
