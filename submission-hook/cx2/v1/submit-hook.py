@@ -27,6 +27,16 @@ classifications = {
 			"interactive": False,
 			"express"  : False
 		},
+		"interactive2": {
+			"nodect"   : [1,17],
+			"ncpus"    : [24,24],
+			"ngpus"    : [0,0],
+			"walltime" : [0,2.],
+			"mem"      : [1, 120],
+			"interactive": True,
+			"express"  : False
+		},
+
 		"general72": {
 			"nodect"   : [2,18],
 			"ncpus"    : [16,16],
