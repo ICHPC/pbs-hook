@@ -27,6 +27,7 @@ private_queue_restrictions = {
 		"ngpus"      : [0,0],
 		"walltime"   : [0,150.],
 		"mem"        : [1,128],
+		"avx512"     : False,
 	} ],
 	"pqaam"  : [ {
 		"nodect"     : [1,12],
@@ -34,6 +35,7 @@ private_queue_restrictions = {
 		"ngpus"      : [0,0],
 		"walltime"   : [0,168.],
 		"mem"        : [1,64],
+		"avx512"     : False,
 		},
 		{
 		"nodect"     : [1,4],
@@ -41,6 +43,7 @@ private_queue_restrictions = {
 		"ngpus"      : [0,0],
 		"walltime"   : [0,168.],
 		"mem"        : [1,128],
+		"avx512"     : False,
 		} ],
 	"pqaero"  : [ {
 		"nodect"     : [1,12],
@@ -48,6 +51,7 @@ private_queue_restrictions = {
 		"ngpus"      : [0,0],
 		"walltime"   : [0,168.],
 		"mem"        : [1,64],
+		"avx512"     : False,
 		},
 		{
 		"nodect"     : [1,4],
@@ -55,6 +59,7 @@ private_queue_restrictions = {
 		"ngpus"      : [0,0],
 		"walltime"   : [0,168.],
 		"mem"        : [1,128],
+		"avx512"     : False,
 		} ],
 	"pqaerogpu" : [ {
 		"nodect"     : [1,4],
@@ -62,6 +67,7 @@ private_queue_restrictions = {
 		"ngpus"      : [0,8],
 		"walltime"   : [0,168.],
 		"mem"        : [1,32],
+		"avx512"     : False,
 		}, ],
 	"pqaeromg" : [ {
 		"nodect"     : [1,4],
@@ -69,132 +75,152 @@ private_queue_restrictions = {
 		"ngpus"      : [0,0],
 		"walltime"   : [0,168.],
 		"mem"        : [1,128],
+		"avx512"     : False,
 	} ],
 	"pqaeromorph" : [ {
 		"nodect"    : [1,10],
 		"ncpus"     : [1,32],
 		"ngpus"     : [0,2],
 		"walltime"  : [0,168.],
-		"mem"       : [1,64]
+		"mem"       : [1,64],
+		"avx512"     : False,
 	} ],
 	"pqastro" : [ {
 		"nodect"    : [1,4],
 		"ncpus"     : [1,32],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,168.],
-		"mem"       : [1,64]
+		"mem"       : [1,64],
+		"avx512"     : False,
 	} ],
 	"pqalwalsh" : [ {
 		"nodect"    : [1,6],
 		"ncpus"     : [1,48],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,168.],
-		"mem"       : [1,256]
+		"mem"       : [1,256],
+		"avx512"     : False,
 	} ],
 	"pqberloff" : [ {
 		"nodect"    : [1,3],
 		"ncpus"     : [1,32],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,2400.],
-		"mem"       : [1,64]
+		"mem"       : [1,64],
+		"avx512"     : False,
 	} ],
 	"pqcdt" : [ {
 		"nodect"    : [1,20],
 		"ncpus"     : [1,40],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,168.],
-		"mem"       : [1,64]
+		"mem"       : [1,64],
+		"avx512"     : False,
 	} ],
 	"pqcgi" : [ {
 		"nodect"    : [1,16],
 		"ncpus"     : [1,32],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,168.],
-		"mem"       : [1,128]
+		"mem"       : [1,128],
+		"avx512"     : False,
 	} ],
 	"pqchem" : [ {
 		"nodect"    : [1,10],
 		"ncpus"     : [1,40],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,168.],
-		"mem"       : [1,128]
+		"mem"       : [1,128],
+		"avx512"     : False,
 	} ],
 	"pqchemeng" : [ {
 		"nodect"    : [1,8],
 		"ncpus"     : [1,40],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,168.],
-		"mem"       : [1,128]
+		"mem"       : [1,128],
+		"avx512"     : False,
 	} ],
 	"pqcivstruct" : [ {
 		"nodect"    : [1,4],
 		"ncpus"     : [1,40],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,168.],
-		"mem"       : [1,128]
+		"mem"       : [1,128],
+		"avx512"     : False,
 	} ],
 	"pqcvcsm" : [ {
 		"nodect"    : [1,12],
 		"ncpus"     : [1,40],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,168.],
-		"mem"       : [1,128]
+		"mem"       : [1,128],
+		"avx512"     : False,
 	} ],
 	"pqeboek" : [ {
-		"nodect"    : [1,3],
+		"nodect"    : [1,7],
 		"ncpus"     : [1,12],
 		"ngpus"     : [0,8],
 		"walltime"  : [0,168.],
-		"mem"       : [1,128]
+		"mem"       : [1,256],
+		"gpu_type"  : [ "K40", "P100", "K80" ],
+		"avx512"     : False,
 	} ],
 	"pqeboekcpu" : [ {
 		"nodect"    : [1,20],
 		"ncpus"     : [1,32],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,168.],
-		"mem"       : [1,64]
+		"mem"       : [1,64],
+		"avx512"     : False,
 	} ],
 	"pqeelab" : [ {
 		"nodect"    : [1,8],
 		"ncpus"     : [1,40],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,168.],
-		"mem"       : [1,128]
+		"mem"       : [1,128],
+		"avx512"     : False,
 	} ],
 	"pqeph" : [ {
 		"nodect"    : [1,8],
 		"ncpus"     : [1,40],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,2400.],
-		"mem"       : [1,128]
+		"mem"       : [1,128],
+		"avx512"     : False,
 	} ],
 	"pqexss" : [ {
 		"nodect"    : [1,4],
 		"ncpus"     : [1,40],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,168.],
-		"mem"       : [1,128]
+		"mem"       : [1,128],
+		"avx512"     : False,
 	} ],
 	"pqfano" : [ {
 		"nodect"    : [1,1],
 		"ncpus"     : [1,48],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,168.],
-		"mem"       : [1,128]
+		"mem"       : [1,128],
+		"avx512"     : False,
 	} ],
 	"pqfogim" : [ {
 		"nodect"    : [1,4],
 		"ncpus"     : [1,48],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,168.],
-		"mem"       : [1,128]
+		"mem"       : [1,128],
+		"avx512"     : False,
 	} ],
 	"pqgrimes" : [ {
 		"nodect"    : [1,4],
 		"ncpus"     : [1,40],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,168.],
-		"mem"       : [1,128]
+		"mem"       : [1,128],
+		"avx512"     : False,
 	} ],
 	"pqigould" : [ {
 		"nodect"    : [1,1],
@@ -203,125 +229,150 @@ private_queue_restrictions = {
 		"walltime"  : [0,168.],
 		"mem"       : [1,16],
 		"gpu_type"  : ["GTX980", "GTX1080" ],
+		"avx512"     : False,
 	} ],
 	"pqjferrer" : [ {
 		"nodect"    : [1,8],
 		"ncpus"     : [1,40],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,168.],
-		"mem"       : [1,128]
+		"mem"       : [1,128],
+		"avx512"     : False,
 	} ],
 	"pqjpritcha" : [ {
 		"nodect"    : [1,4],
 		"ncpus"     : [1,48],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,168.],
-		"mem"       : [1,256]
+		"mem"       : [1,256],
+		"avx512"     : False,
 	} ],
 	"pqkjelfs" : [ {
 		"nodect"    : [1,2],
 		"ncpus"     : [1,48],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,168.],
-		"mem"       : [1,128]
+		"mem"       : [1,128],
+		"avx512"     : False,
 	} ],
 	"pqlaser" : [ {
 		"nodect"    : [1,12],
 		"ncpus"     : [1,40],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,2400.],
-		"mem"       : [1,256]
+		"mem"       : [1,256],
+		"avx512"     : False,
 	} ],
 	"pqmaterials" : [ {
 		"nodect"    : [1,10],
 		"ncpus"     : [1,40],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,168.],
-		"mem"       : [1,128]
+		"mem"       : [1,128],
+		"avx512"     : False,
 	} ],
 	"pqmb" : [ {
 		"nodect"    : [1,8],
 		"ncpus"     : [1,48],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,2400.],
-		"mem"       : [1,256]
+		"mem"       : [1,256],
+		"avx512"     : False,
 	} ],
 	"pqmedyn" : [ {
 		"nodect"    : [1,40],
 		"ncpus"     : [1,48],
 		"ngpus"     : [0,0],
-		"walltime"  : [0,168.],
-		"mem"       : [1,128]
+		"walltime"  : [0,2400.],
+		"mem"       : [1,128],
+		"avx512"     : False,
 	} ],
 	"pqmemphis" : [ {
 		"nodect"    : [1,20],
 		"ncpus"     : [1,56],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,168.],
-		"mem"       : [1,128]
+		"mem"       : [1,128],
+		"avx512"     : False,
 	} ],
 	"pqmeneg" : [ {
 		"nodect"    : [1,20],
 		"ncpus"     : [1,48],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,2400.],
-		"mem"       : [1,128]
+		"mem"       : [1,128],
+		"avx512"     : False,
 	} ],
 	"pqmrwarn" : [ {
 		"nodect"    : [1,72],
 		"ncpus"     : [1,48],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,2400.],
-		"mem"       : [1,384]
+		"mem"       : [1,384],
 	} ],
 	"pqmrwarn2" : [ {
 		"nodect"    : [1,4],
 		"ncpus"     : [1,40],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,168.],
-		"mem"       : [1,128]
+		"mem"       : [1,128],
 	} ],
 	"pqmultiflow" : [ {
 		"nodect"    : [1,40],
 		"ncpus"     : [1,40],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,168.],
-		"mem"       : [1,128]
+		"mem"       : [1,128],
+		"avx512"     : False,
 	} ],
 	"pqmultiflowib" : [ {
 		"nodect"    : [1,20],
 		"ncpus"     : [1,40],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,168.],
-		"mem"       : [1,64]
+		"mem"       : [1,64],
+		"avx512"     : False,
 	} ],
 	"pqndenuc" : [ {
 		"nodect"    : [1,1],
 		"ncpus"     : [1,32],
 		"ngpus"     : [0,16],
 		"walltime"  : [0,168.],
-		"mem"       : [1,512]
+		"mem"       : [1,512],
+		"avx512"     : False,
 	} ],
 	"pqnmh" : [ {
-		"nodect"    : [1,8],
+		"nodect"    : [1,16],
 		"ncpus"     : [1,48],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,168.],
-		"mem"       : [1,128]
+		"mem"       : [1,128],
+		"avx512"     : False,
 	} ],
 	"pqpcsmith" : [ {
 		"nodect"    : [1,3],
 		"ncpus"     : [1,24],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,168.],
-		"mem"       : [1,192]
+		"mem"       : [1,192],
+		"avx512"     : False,
 	} ],
+	"pqph" : [ {
+		"nodect"    : [1,4],
+		"ncpus"     : [1,48],
+		"ngpus"     : [0,0],
+		"walltime"  : [0,168.],
+		"mem"       : [1,256],
+		"avx512"     : False,
+	} ],
+
 	"pqpdh" : [ {
 		"nodect"    : [1,8],
 		"ncpus"     : [1,48],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,168.],
-		"mem"       : [1,128]
+		"mem"       : [1,128],
+		"avx512"     : False,
 	} ],
 	"pqplasma2" : [ 
 		{
@@ -329,77 +380,88 @@ private_queue_restrictions = {
 		"ncpus"     : [1,48],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,168.],
-		"mem"       : [1,128]
+		"mem"       : [1,128],
+		"avx512"     : False,
 		},
 		{
 		"nodect"    : [1,72],
 		"ncpus"     : [1,24],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,168.],
-		"mem"       : [1,48]
+		"mem"       : [1,48],
+		"avx512"     : False,
 	} ],
 	"pqplinds" : [ {
 		"nodect"    : [1,20],
 		"ncpus"     : [1,40],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,2400.],
-		"mem"       : [1,128]
+		"mem"       : [1,128],
+		"avx512"     : False,
 	} ],
 	"pqrrng" : [ {
 		"nodect"    : [1,100],
 		"ncpus"     : [1,48],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,2400.],
-		"mem"       : [1,128]
+		"mem"       : [1,128],
+		"avx512"     : False,
 	} ],
 	"pqsc03" : [ {
 		"nodect"    : [1,12],
 		"ncpus"     : [1,40],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,168.],
-		"mem"       : [1,128]
+		"mem"       : [1,128],
+		"avx512"     : False,
 	} ],
 	"pqstokes" : [ {
 		"nodect"    : [1,28],
 		"ncpus"     : [1,32],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,168.],
-		"mem"       : [1,128]
+		"mem"       : [1,128],
+		"avx512"     : False,
 	} ],
 	"pqstorm" : [ {
 		"nodect"    : [1,4],
 		"ncpus"     : [1,48],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,168.],
-		"mem"       : [1,256]
+		"mem"       : [1,256],
+		"avx512"     : False,
 	} ],
 	"pqtimm" : [ {
 		"nodect"    : [1,4],
 		"ncpus"     : [1,40],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,2400.],
-		"mem"       : [1,128]
+		"mem"       : [1,128],
+		"avx512"     : False,
 	} ],
 	"pqtouldrid" : [ {
 		"nodect"    : [1,4],
 		"ncpus"     : [1,48],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,168.],
-		"mem"       : [1,128]
+		"mem"       : [1,128],
+		"avx512"     : False,
 	} ],
 	"pqtribo" : [ {
 		"nodect"    : [1,10],
 		"ncpus"     : [1,48],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,168.],
-		"mem"       : [1,128]
+		"mem"       : [1,128],
+		"avx512"     : False,
 	} ],
 	"pqturbo" : [ {
 		"nodect"    : [1,4],
 		"ncpus"     : [1,48],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,168.],
-		"mem"       : [1,256]
+		"mem"       : [1,256],
+		"avx512"     : False,
 	} ],
 
 }
@@ -417,7 +479,10 @@ classifications = {
 			"mem"      : [1, 96],
 			"interactive": True,
 			"express"  : False,
-			"gpu_type" : [ "P100", "K80", "GTXTITAN" ]
+			"gpu_type" : [ "P100", "K80", "GTXTITAN" ],
+			"avx"      : True,
+			"avx2"     : False,
+			"avx512"   : False
 		},
 		"debug": {
 			"nodect"   : [1,1],
@@ -427,7 +492,10 @@ classifications = {
 			"mem"      : [1, 96],
 			"interactive": False,
 			"express"  : False,
-			"gpu_type" : [ "P100", "K80", "GTXTITAN" ]
+			"gpu_type" : [ "P100", "K80", "GTXTITAN" ],
+			"avx"      : True,
+			"avx2"     : False,
+			"avx512"   : False
 		},
 
 		"long1000" : {
@@ -437,7 +505,10 @@ classifications = {
 			"walltime" : [72.00001,1000],
 			"mem"      : [1, 96],
 			"interactive": False,
-			"express"  : False
+			"express"  : False,
+			"avx"      : True,
+			"avx2"     : False,
+			"avx512"   : False
 		},
 		"throughput24": {
 			"nodect"   : [1,1],
@@ -446,7 +517,10 @@ classifications = {
 			"walltime" : [0.500001,24],
 			"mem"      : [1, 96],
 			"interactive": False,
-			"express"  : False
+			"express"  : False,
+			"avx"      : True,
+			"avx2"     : False,
+			"avx512"   : False
 		},
 
 		"throughput72": {
@@ -456,7 +530,10 @@ classifications = {
 			"walltime" : [24.00001, 72],
 			"mem"      : [1, 96],
 			"interactive": False,
-			"express"  : False
+			"express"  : False,
+			"avx"      : True,
+			"avx2"     : False,
+			"avx512"   : False
 		},
 
 		"general24": {
@@ -466,7 +543,10 @@ classifications = {
 			"walltime" : [0.50001,24.],
 			"mem"      : [1, 124],
 			"interactive": False,
-			"express"  : False
+			"express"  : False,
+			"avx"      : True,
+			"avx2"     : False,
+			"avx512"   : False
 		},
 
 		"general72": {
@@ -476,7 +556,10 @@ classifications = {
 			"walltime" : [24.00001, 72.],
 			"mem"      : [1, 124],
 			"interactive": False,
-			"express"  : False
+			"express"  : False,
+			"avx"      : True,
+			"avx2"     : False,
+			"avx512"   : False
 		},
 		"singlenode24": {
 			"nodect"   : [1,1],
@@ -485,7 +568,10 @@ classifications = {
 			"walltime" : [1,24.],
 			"mem"      : [1, 250],
 			"interactive": False,
-			"express"  : False
+			"express"  : False,
+			"avx"      : True,
+			"avx2"     : True,
+			"avx512"   : False
 		},
 
 		"multinode24": {
@@ -495,7 +581,10 @@ classifications = {
 			"walltime" : [ 0., 24. ],
 			"mem"      : [1, 46],
 			"interactive": False,
-			"express"  : False
+			"express"  : False,
+			"avx"      : False,
+			"avx2"     : False,
+			"avx512"   : False
 		},
 
 		"multinode48": {
@@ -505,7 +594,10 @@ classifications = {
 			"walltime" : [ 24.00001, 48.00 ],
 			"mem"      : [1, 46],
 			"interactive": False,
-			"express"  : False
+			"express"  : False,
+			"avx"      : False,
+			"avx2"     : False,
+			"avx512"   : False
 		},
 
 		"largemem24": {
@@ -515,7 +607,10 @@ classifications = {
 			"walltime" : [ 0.5, 24. ],
 			"mem"      : [128, 380],
 			"interactive": False,
-			"express"  : False
+			"express"  : False,
+			"avx"      : False,
+			"avx2"     : False,
+			"avx512"   : False
 		},
 
 
@@ -527,7 +622,10 @@ classifications = {
 			"walltime" : [ 24.00001, 48. ],
 			"mem"      : [128, 380],
 			"interactive": False,
-			"express"  : False
+			"express"  : False,
+			"avx"      : False,
+			"avx2"     : False,
+			"avx512"   : False
 		},
 
 		"gpu24": {
@@ -538,7 +636,10 @@ classifications = {
 			"mem"      : [1, 32],
 			"interactive": False,
 			"express"  : False,
-			"gpu_type" : [ "P100", "K80", "GTXTITAN" ]
+			"gpu_type" : [ "P100", "K80", "GTXTITAN" ],
+			"avx"      : True,
+			"avx2"     : False,
+			"avx512"   : False
 		},
 		"gpu48": {
 			"nodect"   : [ 1, 1 ],
@@ -548,7 +649,10 @@ classifications = {
 			"mem"      : [1, 32],
 			"interactive": False,
 			"express"  : False,
-			"gpu_type" : [ "P100", "K80", "GTXTITAN" ]
+			"gpu_type" : [ "P100", "K80", "GTXTITAN" ],
+			"avx"      : True,
+			"avx2"     : False,
+			"avx512"   : False
 		},
 
 
@@ -559,7 +663,10 @@ classifications = {
 			"walltime" : [1, 240.],
 			"mem"      : [1, 252],
 			"interactive": False,
-			"express"  : True
+			"express"  : True,
+			"avx"      : True,
+			"avx2"     : True,
+			"avx512"   : False
 		},
 
 
@@ -639,19 +746,25 @@ def match_class(selection, walltime, clssname, clss, express ):
 		if selection["gpu_type"] not in clss["gpu_type"]:
 			return False
 
+
+	for pcap in [ "avx", "avx2", "avx512" ]:
+		if pcap in clss and pcap in selection:
+			if selection[pcap] != clss[ pcap ]:
+				return False
+
 	return True
 
 
 def check_pq_restriction( selection, walltime, queue ):
-	clss = private_queue_restrictions[ queue ]
-	if not clss:
+	if queue not in private_queue_restrictions:
 		# There wasn't a restriction for this pq, so accept it
 		return
-	else:
-		for c in clss:
+
+	clss = private_queue_restrictions[ queue ]
+	for c in clss:
 			if match_class( selection, walltime, queue, c, False ):
 				return True
-		pbs.event().reject( "The private queue has insufficient resources for a job this size.\nPlease consult https://selfservice.rcs.imperial.ac.uk/pqs/nodes/%s to see what's available.\nFor any queries please contact us via rcs-support@imperial.ac.uk" % ( queue ) )
+	pbs.event().reject( "The private queue has insufficient resources for a job this size.\nPlease consult https://selfservice.rcs.imperial.ac.uk/pqs/nodes/%s to see what's available.\nFor any queries please contact us via rcs-support@imperial.ac.uk" % ( queue ) )
 
 
 # Match job to class. Error out if it matches more than one class
@@ -666,6 +779,7 @@ def classify_job( selection, walltime, express= False, queue = None ):
 				clss["target_queue"] = clssname
 				ret.append( clss )
 				names = names + clssname + " "
+
 
 	if len(ret) > 1:
 		pbs.event().reject( "Job matches multiple classes: [ " + names.strip() + "]" )
@@ -854,6 +968,17 @@ try:
 	if queue_type == "private":
 		if pbs.event().job.project:
 			pbs.event().reject( "Express project codes can not be used with private queues" )
+
+		queue = pbs.server().queue(pbs.event().job.queue.name)
+		if not queue:
+			pbs.event().reject("Invalid queue name")
+
+		permitted_groups =  queue.resources_available['permitted_groups']
+		if permitted_groups:
+			permitted_groups = permitted_groups.split(',')
+			if not test_group_membership( permitted_groups ):
+				pbs.event().reject( "You are not authorised to use this private queue" )
+
 		fixup_mpiprocs_ompthreads( selection )
 		# PQs are small and offline resources may preent jobs running
 		# Prevent them becoming topjobs
