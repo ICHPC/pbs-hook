@@ -9,7 +9,7 @@ from subprocess import Popen, PIPE
 from sets import Set
 
 
-data = json.loads(subprocess.check_output(["/opt/pbs/default/bin/pbsnodes", "-av", "-F", "json" ] ).decode("utf8"))
+data = json.loads(subprocess.check_output(["/opt/pbs/default/bin/pbsnodes", "-av", "-F", "json" ] )) #.decode("ascii"))
 
 count={ "16":0, "24":0, "28":0 }
 queue= { "short":0, "general":0, "large":0, "capability":0 }
@@ -30,6 +30,19 @@ classes= {
 	"exp_48_128_72"   : 0,
 }
 
+def is_dedicated(ql):
+	q=[]
+	has_pq = False 
+	for qq in ql:
+		if ("pq" in qq) or ("med-bio" in qq):
+			has_pq = True
+		if qq not in [ "v1_throughput2a", "v1_general24a" ]:
+			q.append(qq)
+	if len(q)==1 and has_pq:
+		return True
+	else:
+		return False
+	
 qlistlen = dict()
 
 prioritising=False
@@ -48,9 +61,10 @@ for n in data["nodes"]:
 				classes[q] = 0
 
 			if q not in qlistlen:
-				qlistlen[q] = len(qlist)
+				qlistlen[q] = qlist
 			else:
-				qlistlen[q] = max( len(qlist), qlistlen[q] )
+				for qq in qlist:
+					if qq not in qlistlen[q]: qlistlen[q].append(qq)
 
 		if "jobs" not in node or len(node["jobs"])==0:
 			for q in qlist:
@@ -90,7 +104,7 @@ print ( "")
 
 for pq in sorted(pqmemb):
 	if pq in classes:
-		if qlistlen[pq]>1:
+		if not is_dedicated( qlistlen[pq] ) : 
 			mode = "(shared)"
 		else:	
 			mode = "(dedicated)"

@@ -13,12 +13,17 @@ import pbs
 import traceback
 import re
 
-list_of_resources = ["ncpus","ngpus","mem","mpiprocs","ompthreads", "avx", "avx2", "avx512", "tmpspace","has_magma","gpu_type","cpumodel" ]
+list_of_resources = ["ncpus","ngpus","mem","mpiprocs","ompthreads", "avx", "avx2", "avx512", "has_magma","gpu_type","cpumodel" ]
 
 	# 
 # This is prepended to any target_queue name to allow for future versioning in place
 
 queue_config_version = "v1_"
+
+queue_array_variant = {
+	"throughput24" : "throughput2a",
+	"general24"    : "general24a"
+}
 
 private_queue_restrictions = {
 	"med-bio"  : [ {
@@ -459,7 +464,7 @@ private_queue_restrictions = {
 		"nodect"    : [1,4],
 		"ncpus"     : [1,48],
 		"ngpus"     : [0,0],
-		"walltime"  : [0,168.],
+		"walltime"  : [0,2400.],
 		"mem"       : [1,256],
 		"avx512"     : False,
 	} ],
@@ -1012,13 +1017,21 @@ try:
 		clss = classify_job( selection, walltime, express, queue = queue_type[1] )
 		
 
+	dest_queue = clss["target_queue" ]
+
+	# If the job is an array job, check to see if this class has an "array variant"
+	# These are used for preemption
+	if str(pbs.event().job.array_indices_submitted) != "None":
+		if dest_queue in queue_array_variant:
+			dest_queue = queue_array_variant[ dest_queue ]
+
 	# Move the job into the right queue
 	if queue_type == "express":
-		pbs.event().job.queue = pbs.server().queue( clss["target_queue"] )
+		pbs.event().job.queue = pbs.server().queue( dest_queue ) #  clss["target_queue"] )
 	else:
-		pbs.event().job.queue = pbs.server().queue( queue_config_version + clss["target_queue"] )
+		pbs.event().job.queue = pbs.server().queue( queue_config_version + dest_queue ) # clss["target_queue"] )
 
-	pbs.logmsg( pbs.LOG_ERROR, "MOVING JOB TO QUEUE: " + clss["target_queue"] )
+	pbs.logmsg( pbs.LOG_ERROR, "MOVING JOB TO QUEUE: " + dest_queue ) # clss["target_queue"] )
 #	pbs.logmsg( pbs.LOG_ERROR, "MOVING JOB TO QUEUE: " + repr( pbs.event().job.queue.name )  )
 
 	fixup_mpiprocs_ompthreads( selection )
