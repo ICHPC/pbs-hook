@@ -479,7 +479,7 @@ classifications = {
 		"interactive": {
 			"nodect"   : [1,1],
 			"ncpus"    : [1,8],
-			"ngpus"    : [0,1],
+			"ngpus"    : [0,0], # 20180530 , temporarily disable gpu-using interactive jobs
 			"walltime" : [0,8.],
 			"mem"      : [1, 96],
 			"interactive": True,
@@ -679,6 +679,15 @@ classifications = {
 }
 
 
+def queue_name():
+	if pbs.event().job.queue == None:
+		return ""
+	if isinstance ( pbs.event().job.queue, str ):
+		return pbs.event().job.queue
+	else:
+		return pbs.event().job.queue.name
+		
+	
 def set_topjob_ineligible( ):
 	pbs.event().job.topjob_ineligible = True
 
@@ -987,7 +996,10 @@ try:
 		fixup_mpiprocs_ompthreads( selection )
 		# PQs are small and offline resources may preent jobs running
 		# Prevent them becoming topjobs
-		set_topjob_ineligible( )
+		# Exclude med-bio, they can be top jobs, this lets largemem jobs compete against tiny ones
+		if queue_name() != "med-bio":
+			set_topjob_ineligible( )
+
 		# Check that geometry is smaller than maximum that pq resources can accommodate
 		check_pq_restriction( selection, walltime, pbs.event().job.queue.name )
 		pbs.event().accept()
@@ -1009,7 +1021,9 @@ try:
 		# Array jobs are never top jobs
 		# As a matter of policy, are low-prio throughput
 		if str(pbs.event().job.array_indices_submitted) != "None":
-			set_topjob_ineligible()
+			# Exclude med-bio, they can be top jobs, this lets largemem jobs compete against tiny ones
+			if queue_name() != "med-bio":
+				set_topjob_ineligible()
 		
 	else:
 		# If the user submitted to a specific queue, test against the config for that alone
