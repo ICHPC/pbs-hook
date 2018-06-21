@@ -175,6 +175,8 @@ def execjob_launch(js):
         UpdateGpuJobs(job,value, GpuJobsPath, add=True)
 
 def execjob_end(js):
+
+    pbs.logmsg(pbs.LOG_DEBUG, "Removing any GPUs assigned to the job" )
     job = pbs.event().job.id
     vn=pbs.event().vnode_list
     # does not matter what the value is just remove the job from file after completion
