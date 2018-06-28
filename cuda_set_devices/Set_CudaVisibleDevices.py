@@ -221,6 +221,6 @@ except :
     pbs.logmsg(pbs.LOG_DEBUG, 'Hook exception:')
     for line in log_buffer.split('\n'):
         pbs.logmsg(pbs.LOG_DEBUG, line)
-    pbs.event().reject("Exception trapped in %s:\n %s" % (pbs.event().hook_name, log_buffer))
-
+#    pbs.event().reject("Exception trapped in %s:\n %s" % (pbs.event().hook_name, log_buffer))
+    pbs.event().accept()
 
