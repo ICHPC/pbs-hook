@@ -30,6 +30,8 @@ classes= {
 	"exp_48_128_72"   : 0,
 }
 
+gpu_types_by_queue = dict()
+
 def is_dedicated(ql):
 	q=[]
 	has_pq = False 
@@ -68,8 +70,21 @@ for n in data["nodes"]:
 
 		if "jobs" not in node or len(node["jobs"])==0:
 			for q in qlist:
-					classes[q] += 1
+				classes[q] += 1
 
+		for q in qlist:
+			if q not in gpu_types_by_queue: gpu_types_by_queue[q]=dict()
+			if "ngpus" in node["resources_available"] and "gpu_type" in node["resources_available"]:
+				gpu_type   = node["resources_available"]["gpu_type"]
+				ngpus_tot  = int(node["resources_available"]["ngpus"])
+				ngpus_used = 0
+				if "ngpus" in node["resources_assigned"]:
+					ngpus_used = int( node["resources_assigned"]["ngpus"])
+				if gpu_type not in gpu_types_by_queue[q]:
+					gpu_types_by_queue[q][gpu_type] = { "total" : ngpus_tot, "used" : ngpus_used }
+				else:
+					gpu_types_by_queue[q][gpu_type]["total"] += ngpus_tot
+					gpu_types_by_queue[q][gpu_type]["used"]  += ngpus_used
 
 who = getpass.getuser()
 pqmemb=[]
@@ -99,7 +114,8 @@ print ( " Nodes available for large memory: %3d (24hr) %3d (48hr) "  % (classes[
 print ( " Nodes available for GPU         : %3d (24hr) %3d (48hr)"  % (classes["v1_gpu24"], classes["v1_gpu48"], ) )
 print ( " Nodes available for debug       : %3d (30min) " % (classes["v1_debug"], ) )
 print ( "")
-print ( " Nodes available for express     : %3d (72hr) " % (classes["exp_48_128_72" ] ) )
+print ( " Nodes available for 48c/128gb express  : %3d (72hr) " % (classes["exp_48_128_72" ] ) )
+print ( " Nodes available for 32c/64gb express   : %3d (72hr) " % (classes["exp_32_64_72" ] ) )
 print ( "")
 
 for pq in sorted(pqmemb):
@@ -110,10 +126,20 @@ for pq in sorted(pqmemb):
 			mode = "(dedicated)"
 		print ( " Nodes available for %-11s : %3d   %s" % (pq, classes[pq], mode, ) )
 
+print (" GPUs available:" )
 print ("")
-print (" You may not be eligible to run additional jobs if")
-print (" you have reached the per-user job concurrency limit")
+gt = gpu_types_by_queue["v1_gpu24"]
+for k in sorted(gt.keys()):
+	if k not in gpu_types_by_queue["v1_gpu48"]:
+		gpu_types_by_queue["v1_gpu48"][k] = { "total":0, "used":0 }
+
+	print( "%10s : %3d/%3d (24hr)\t%3d/%3d (48hr)" % ( k,  gpu_types_by_queue["v1_gpu24"][k]["total"] - gpu_types_by_queue["v1_gpu24"][k]["used"],  gpu_types_by_queue["v1_gpu24"][k]["total"],  gpu_types_by_queue["v1_gpu48"][k]["total"] -  gpu_types_by_queue["v1_gpu48"][k]["used"],  gpu_types_by_queue["v1_gpu48"][k]["total"] ))
+
+print ("")
+print (" For guidance only. You may not be eligible to run additional jobs if")
+print (" you have reached the per-user job concurrency limit. ")
 print ("")
 print (" See our current job sizing guidance at http://bit.ly/2AInEIj" )
 print ("")
+
 

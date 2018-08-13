@@ -52,12 +52,19 @@ def choose_shared_queues( queue, n, node ):
 		if node["resources_available"]["dedicated"] == "True" or node["resources_available"]["dedicated"] == True:
 			return []
 
+	if "ngpus" in node["resources_available"] and int(node["resources_available"]["ngpus"]) > 0:
+		return [ "v1_gpu24", "v1_gpu48" ]
+
+	if queue == "pqrrng":
+		return [ "v1_general24",  "v1_throughput24", "v1_general24a", "v1_throughput2a" ]
 	if queue == "med-bio":
-		return [ "v1_throughput24", "v1_debug", "v1_interactive" ]
+		return [ "v1_throughput24", "v1_throughput2a", "v1_debug", "v1_interactive" ]
 	if queue == "exp_48_128_72":
 		return [ "v1_singlenode24" ]
+	if queue == "exp_32_64_72":
+		return [ "v1_general24", "v1_general72", "v1_interactive", "v1_general24a" ]
 	else:
-		return [ "v1_throughput24", "v1_debug", "v1_interactive" ]
+		return [ "v1_throughput24", "v1_throughput2a", "v1_debug", "v1_interactive" ]
 		
 def make_queue_shared( queue, nodes ):
 	log("Making %s shared" % (queue) )
@@ -75,15 +82,16 @@ def make_queue_shared( queue, nodes ):
 	
 
 def get_node_states():
-	data = json.loads(subprocess.check_output(["/opt/pbs/default/bin/pbsnodes", "-av", "-F", "json" ] ).decode("utf8"))
+	data = json.loads(subprocess.check_output(["/opt/pbs/default/bin/pbsnodes", "-av", "-F", "json" ] )) #.decode("utf8"))
 	return data["nodes"]
 
 if __name__ == "__main__":
 	log("== Switching Cycle START ==" )
 	nodes = get_node_states()
 
-	switch_queues( "med-bio", nodes, threshold = 0 )
+#	switch_queues( "pqrrng", nodes, threshold = 0 )
+#	switch_queues( "med-bio", nodes, threshold = 0 )
 	switch_queues( "exp_48_128_72", nodes, threshold = 0 )
-
+	switch_queues( "exp_32_64_72", nodes, threshold = 0 )
 	sys.exit(1)
 

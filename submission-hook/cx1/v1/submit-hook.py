@@ -13,7 +13,7 @@ import pbs
 import traceback
 import re
 
-list_of_resources = ["ncpus","ngpus","mem","mpiprocs","ompthreads", "avx", "avx2", "avx512", "has_magma","gpu_type","cpumodel" ]
+list_of_resources = ["ncpus","ngpus","mem","mpiprocs","ompthreads", "avx", "avx2", "avx512", "gpu_type","cpumodel" ]
 
 	# 
 # This is prepended to any target_queue name to allow for future versioning in place
@@ -168,7 +168,7 @@ private_queue_restrictions = {
 		"ngpus"     : [0,8],
 		"walltime"  : [0,168.],
 		"mem"       : [1,256],
-		"gpu_type"  : [ "K40", "P100", "K80" ],
+		"gpu_type"  : [ "P100", "K80" ],
 		"avx512"     : False,
 	} ],
 	"pqeboekcpu" : [ {
@@ -476,7 +476,7 @@ private_queue_restrictions = {
 
 
 classifications = {
-		"interactive": {
+		"interactive": [{
 			"nodect"   : [1,1],
 			"ncpus"    : [1,8],
 			"ngpus"    : [0,0], # 20180530 , temporarily disable gpu-using interactive jobs
@@ -488,8 +488,8 @@ classifications = {
 			"avx"      : True,
 			"avx2"     : False,
 			"avx512"   : False
-		},
-		"debug": {
+		}],
+		"debug": [{
 			"nodect"   : [1,1],
 			"ncpus"    : [1,8],
 			"ngpus"    : [0,1],
@@ -501,9 +501,9 @@ classifications = {
 			"avx"      : True,
 			"avx2"     : False,
 			"avx512"   : False
-		},
+		}],
 
-		"long1000" : {
+		"long1000" : [{
 			"nodect"   : [1,1],
 			"ncpus"    : [1,8],
 			"ngpus"    : [0,0],
@@ -514,8 +514,8 @@ classifications = {
 			"avx"      : True,
 			"avx2"     : False,
 			"avx512"   : False
-		},
-		"throughput24": {
+		}],
+		"throughput24": [{
 			"nodect"   : [1,1],
 			"ncpus"    : [1,8],
 			"ngpus"    : [0,0],
@@ -526,9 +526,9 @@ classifications = {
 			"avx"      : True,
 			"avx2"     : False,
 			"avx512"   : False
-		},
+		}],
 
-		"throughput72": {
+		"throughput72": [{
 			"nodect"   : [1,1],
 			"ncpus"    : [1,8],
 			"ngpus"    : [0,0],
@@ -539,9 +539,9 @@ classifications = {
 			"avx"      : True,
 			"avx2"     : False,
 			"avx512"   : False
-		},
+		}],
 
-		"general24": {
+		"general24": [{
 			"nodect"   : [1,16],
 			"ncpus"    : [ [16,16], [32,32] ],
 			"ngpus"    : [0,0],
@@ -552,9 +552,9 @@ classifications = {
 			"avx"      : True,
 			"avx2"     : False,
 			"avx512"   : False
-		},
+		}],
 
-		"general72": {
+		"general72": [{
 			"nodect"   : [1,16],
 			"ncpus"    : [ [16,16], [32,32] ],
 			"ngpus"    : [0,0],
@@ -565,8 +565,9 @@ classifications = {
 			"avx"      : True,
 			"avx2"     : False,
 			"avx512"   : False
-		},
-		"singlenode24": {
+		}],
+
+		"singlenode24": [{
 			"nodect"   : [1,1],
 			"ncpus"    : [ [24,24], [48,48] ],
 			"ngpus"    : [0,0],
@@ -577,9 +578,9 @@ classifications = {
 			"avx"      : True,
 			"avx2"     : True,
 			"avx512"   : False
-		},
+		}],
 
-		"multinode24": {
+		"multinode24": [{
 			"nodect"   : [ 3, 20 ],
 			"ncpus"    : [ 12, 12 ],
 			"ngpus"    : [0,0],
@@ -590,9 +591,9 @@ classifications = {
 			"avx"      : False,
 			"avx2"     : False,
 			"avx512"   : False
-		},
+		}],
 
-		"multinode48": {
+		"multinode48": [{
 			"nodect"   : [ 3, 20 ],
 			"ncpus"    : [ 12, 12 ],
 			"ngpus"    : [0,0],
@@ -603,9 +604,9 @@ classifications = {
 			"avx"      : False,
 			"avx2"     : False,
 			"avx512"   : False
-		},
+		}],
 
-		"largemem24": {
+		"largemem24": [{
 			"nodect"   : [ 1, 1 ],
 			"ncpus"    : [ [ 12, 12 ], [24, 24] ],
 			"ngpus"    : [0,0],
@@ -616,11 +617,11 @@ classifications = {
 			"avx"      : False,
 			"avx2"     : False,
 			"avx512"   : False
-		},
+		}],
 
 
 
-		"largemem48": {
+		"largemem48": [{
 			"nodect"   : [ 1, 1 ],
 			"ncpus"    : [ [ 12, 12 ], [24, 24] ],
 			"ngpus"    : [0,0],
@@ -631,11 +632,11 @@ classifications = {
 			"avx"      : False,
 			"avx2"     : False,
 			"avx512"   : False
-		},
+		}],
 
-		"gpu24": {
+		"gpu24": [{
 			"nodect"   : [ 1, 1 ],
-			"ncpus"    : [ 1, 4 ],
+			"ncpus"    : [ 1, 8 ],
 			"ngpus"    : [1,2],
 			"walltime" : [ 0.5, 24. ],
 			"mem"      : [1, 32],
@@ -646,22 +647,51 @@ classifications = {
 			"avx2"     : False,
 			"avx512"   : False
 		},
-		"gpu48": {
+		{
 			"nodect"   : [ 1, 1 ],
-			"ncpus"    : [ 1, 16 ],
+			"ncpus"    : [ 1, 8 ],
+			"ngpus"    : [1,1],
+			"walltime" : [ 0.5, 24. ],
+			"mem"      : [1, 32],
+			"interactive": False,
+			"express"  : False,
+			"gpu_type" : [ "P1000" ],
+			"avx"      : True,
+			"avx2"     : False,
+			"avx512"   : False
+		}],
+
+		"gpu48": [{
+			"nodect"   : [ 1, 1 ],
+			"ncpus"    : [ 1, 8 ],
 			"ngpus"    : [1,2],
 			"walltime" : [ 24.00001, 48. ],
 			"mem"      : [1, 32],
 			"interactive": False,
 			"express"  : False,
-			"gpu_type" : [ "P100", "K80", "GTXTITAN" ],
+			"gpu_type" : [ "P100", "K80", "GTXTITAN", "P1000"  ],
 			"avx"      : True,
 			"avx2"     : False,
 			"avx512"   : False
 		},
+		{
+			"nodect"   : [ 1, 1 ],
+			"ncpus"    : [ 1, 8 ],
+			"ngpus"    : [1,1],
+			"walltime" : [ 24.00001, 48. ],
+			"mem"      : [1, 32],
+			"interactive": False,
+			"express"  : False,
+			"gpu_type" : [ "P1000"  ],
+			"avx"      : True,
+			"avx2"     : False,
+			"avx512"   : False
+		}],
 
 
-		"exp_48_128_72": {
+
+
+		"exp_48_128_72": [{
 			"nodect"   : [1,16],
 			"ncpus"    : [ [24,24], [48,48] ],
 			"ngpus"    : [0,0],
@@ -672,7 +702,20 @@ classifications = {
 			"avx"      : True,
 			"avx2"     : True,
 			"avx512"   : False
-		},
+		}],
+		"exp_32_64_72": [{
+			"nodect"   : [1,16],
+			"ncpus"    : [ [16,16], [32,32] ],
+			"ngpus"    : [0,0],
+			"walltime" : [1, 240.],
+			"mem"      : [1, 62 ],
+			"interactive": False,
+			"express"  : True,
+			"avx"      : True,
+			"avx2"     : False,
+			"avx512"   : False
+		}],
+
 
 
 
@@ -787,16 +830,17 @@ def classify_job( selection, walltime, express= False, queue = None ):
 	ret=[];
 
 	for clssname  in sorted(classifications.keys()):
-		clss = classifications[clssname]
-		if ( queue == None ) or clssname == queue:
-			if match_class( selection, walltime, clssname, clss, express ):
-				clss["target_queue"] = clssname
-				ret.append( clss )
-				names = names + clssname + " "
+		clssset = classifications[clssname]
+		for clss in clssset:
+			if ( queue == None ) or clssname == queue:
+				if match_class( selection, walltime, clssname, clss, express ):
+					clss["target_queue"] = clssname
+					ret.append( clss )
+					names = names + clssname + " "
 
-
-	if len(ret) > 1:
-		pbs.event().reject( "Job matches multiple classes: [ " + names.strip() + "]" )
+# Always go with the first if more than one class has matched. Lexical order of classname
+#	if len(ret) > 1:
+#		pbs.event().reject( "Job matches multiple classes: [ " + names.strip() + "]" )
 
 	if len(ret):
 		return ret[0]

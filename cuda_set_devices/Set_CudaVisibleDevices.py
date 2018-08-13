@@ -38,6 +38,7 @@ import pbs
 import string
 import time
 import re
+import subprocess
 
 # Define PBS_CONF_FILE variable
 
@@ -63,6 +64,18 @@ def OpenFile(suspJobsPath, mode):
     myFile = open(suspJobsPath, mode)
     return myFile
 
+def numGpusOnHost():
+    ngpus = 0
+    try:
+      output = subprocess.check_output( [ "/usr/bin/nvidia-smi", "-L" ] )
+      l = output.split("\n")
+      for ll in l:
+         if "GPU" in ll:
+           ngpus = ngpus + 1
+      pbs.logmsg(pbs.LOG_DEBUG, "Host has %d GPUs" %( ngpus, ) )
+      return ngpus
+    except:
+      return 0
 
 def UpdateGpuJobs(job,cuda_visible_devices, GpuJobsPath, add):
     if not os.path.exists(hook_storage_path):
@@ -72,9 +85,11 @@ def UpdateGpuJobs(job,cuda_visible_devices, GpuJobsPath, add):
             pass
     if add:
         cuda_visible_devices = cuda_visible_devices.replace('\\','')
-        f = OpenFile(GpuJobsPath, 'a')
-        f.write('%s=%s\n' % (job.strip(),cuda_visible_devices.strip()))
-        f.close()
+        csd = cuda_visible_devices.strip()
+        if csd != "":
+            f = OpenFile(GpuJobsPath, 'a')
+            f.write('%s=%s\n' % ( job.strip(),csd ) )
+            f.close()
 
     else:
         #Remove the entry from file after resuming
@@ -82,15 +97,15 @@ def UpdateGpuJobs(job,cuda_visible_devices, GpuJobsPath, add):
             f = open(GpuJobsPath, 'r')
             lines = f.readlines()
             f.close()
-        if lines:
-            for line in lines:
-                data = line.split('=')
-                if data[0] == job:
+            if lines:
+              for line in lines:
+                  data = line.split('=')
+                  if data[0] == job:
                     lines.remove(line)
-            f = OpenFile(GpuJobsPath, 'w')
-            for line in lines:
-                f.write('%s\n' % line.strip())
-            f.close()
+              f = OpenFile(GpuJobsPath, 'w')
+              for line in lines:
+                  f.write('%s\n' % line.strip())
+              f.close()
 
 def GetUsedGpus(GpuJobsPath):
     GpuJobs = []
@@ -134,6 +149,7 @@ def GetReqGpus():
 def getJobs():
     job_lst = []
     jobs = {}
+    s = pbs.server()
     if s.vnode(local_node).jobs:
         job_lst = s.vnode(local_node).jobs.split(',')
         for job in job_lst:
@@ -143,11 +159,7 @@ def getJobs():
     return jobs
 
 
-def execjob_launch(js):
-
-    job = pbs.event().job.id 
-    vn=pbs.event().vnode_list
-    req_gpus = GetReqGpus() 
+def execjob_launch():
 
     try:
       if pbs.event().env["PBS_TASKNUM"] != "1":
@@ -156,9 +168,15 @@ def execjob_launch(js):
     except:
       pbs.logmsg(pbs.LOG_DEBUG, "Exception in getting PBS_TASKNUM from env")
 
+    job = pbs.event().job.id 
+    vn=pbs.event().vnode_list
+    req_gpus = GetReqGpus() 
+
+
+
     if req_gpus:
         cuda_visible_devices = ""
-        available_gpus = [ i for i in range(0,s.vnode(local_node).resources_available['ngpus']) ]
+        available_gpus = [ i for i in range(0, numGpusOnHost() ) ] # pbs.server().vnode(local_node).resources_available['ngpus']) ]
         ## Check the gpus already assigned on the node
         used_gpus = GetUsedGpus(GpuJobsPath)
         pbs.logmsg(pbs.LOG_DEBUG,"Used GPUs = %s" %(used_gpus))
@@ -174,7 +192,7 @@ def execjob_launch(js):
         pbs.event().env['CUDA_VISIBLE_DEVICES'] = str(value)
         UpdateGpuJobs(job,value, GpuJobsPath, add=True)
 
-def execjob_end(js):
+def execjob_end():
 
     pbs.logmsg(pbs.LOG_DEBUG, "Removing any GPUs assigned to the job" )
     job = pbs.event().job.id
@@ -200,19 +218,21 @@ try:
     hook_storage_path = '/var/spool/PBS/spool/'
     GpuUsingJobs = 'jobs_using_gpus'
     GpuJobsPath = os.path.join(hook_storage_path, GpuUsingJobs)
-    e = pbs.event()
-    s = pbs.server()
     local_node = pbs.get_local_nodename()
+
     if pbs.event().type == pbs.EXECJOB_LAUNCH:
-        j = e.job
-        js = pbs.server().job(j.id)
-        execjob_launch(js)
+        execjob_launch()
     if pbs.event().type == pbs.EXECJOB_END:
-        j = e.job
-        js = pbs.server().job(j.id)
-        execjob_end(js)
-    if ( pbs.event().type == pbs.EXECHOST_PERIODIC ) and ('ngpus' in s.vnode(local_node).resources_available.keys()) :
-        exechost_periodic()
+        execjob_end()
+    if ( pbs.event().type == pbs.EXECHOST_PERIODIC ):
+#        s = pbs.server()
+#        if ('ngpus' in s.vnode(local_node).resources_available.keys()) :
+#          if str( s.vnode(local_node).resources_available["ngpus"] ) != "0":
+        if (numGpusOnHost() > 0):
+              pbs.logmsg(pbs.LOG_DEBUG, 'Running set_cuda_visible_devices periodic hook' )
+              exechost_periodic()
+        else:
+              pbs.logmsg(pbs.LOG_DEBUG, 'Not running set_cuda_visible_devices periodic hook - no GPUs' )
 
 except : 
     import traceback
