@@ -479,12 +479,12 @@ classifications = {
 		"interactive": [{
 			"nodect"   : [1,1],
 			"ncpus"    : [1,8],
-			"ngpus"    : [0,0], # 20180530 , temporarily disable gpu-using interactive jobs
+			"ngpus"    : [0,1], 
 			"walltime" : [0,8.],
 			"mem"      : [1, 96],
 			"interactive": True,
 			"express"  : False,
-			"gpu_type" : [ "P100", "K80", "GTXTITAN" ],
+			"gpu_type" : [ "P1000"  ],
 			"avx"      : True,
 			"avx2"     : False,
 			"avx512"   : False
@@ -497,7 +497,7 @@ classifications = {
 			"mem"      : [1, 96],
 			"interactive": False,
 			"express"  : False,
-			"gpu_type" : [ "P100", "K80", "GTXTITAN" ],
+			"gpu_type" : [ "P1000" ],
 			"avx"      : True,
 			"avx2"     : False,
 			"avx512"   : False
