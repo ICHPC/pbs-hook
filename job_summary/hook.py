@@ -9,8 +9,7 @@ try:
 	path=j._stdout_file
 
 
-	try:
-		if(j.in_ms_mom()):
+	if(j.in_ms_mom()):
 			mem_rq  = str(j.Resource_List.mem)
 			mem_used= str(j.resources_used.mem)
 			mem_rq = mem_rq.lower()
@@ -45,14 +44,16 @@ try:
 			w.write( "============================================\n" )
 			w.close()
 
-	except IOError :
-		pbs.logmsg(pbs.LOG_DEBUG,"File open error occured : %s ====>>> " % (path))
 
     
 except:
-	import traceback
-	log_buffer = traceback.format_exc()
-	pbs.logmsg(pbs.LOG_DEBUG, 'Hook exception:')
-	for line in log_buffer.split('\n'):
-		pbs.logmsg(pbs.LOG_DEBUG, line)
-		pbs.event().reject("Exception trapped in %s:\n %s" % (pbs.event().hook_name, log_buffer))
+	pbs.logmsg( pbs.LOG_DEBUG, "MJH: Exception in job_summary hook" );
+
+pbs.event().accept()
+
+#	import traceback
+#	log_buffer = traceback.format_exc()
+#	pbs.logmsg(pbs.LOG_DEBUG, 'Hook exception:')
+#	for line in log_buffer.split('\n'):
+#		pbs.logmsg(pbs.LOG_DEBUG, line)
+#		pbs.event().reject("Exception trapped in %s:\n %s" % (pbs.event().hook_name, log_buffer))
