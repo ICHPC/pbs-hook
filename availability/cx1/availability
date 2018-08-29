@@ -28,6 +28,7 @@ classes= {
 	"v1_singlenode24" : 0,
 	"v1_debug"        : 0,
 	"exp_48_128_72"   : 0,
+	"exp_32_64_72"    : 0,
 }
 
 gpu_types_by_queue = dict()
