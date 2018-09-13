@@ -10,9 +10,8 @@ import pbs
 import traceback
 import re
 
-list_of_resources = ["ncpus","ngpus","mem","mpiprocs","ompthreads","host","switchgroup","avx","avx2","avx512","tmpspace","has_magma","gpu_type","cpumodel","using_ht"]
+list_of_resources = ["ncpus","ngpus","mem","mpiprocs","ompthreads","switchgroup","avx","avx2","avx512","cpumodel"]
 
-	# 
 # This is prepended to any target_queue name to allow for future versioning in place
 
 queue_config_version = "v1_"
@@ -20,7 +19,7 @@ queue_config_version = "v1_"
 classifications = {
 		"short2": {
 			"nodect"   : [1,17],
-			"ncpus"    : [24,24],
+			"ncpus"    : [[24,24],[48,48]],
 			"ngpus"    : [0,0],
 			"walltime" : [0,2.],
 			"mem"      : [1, 120],
@@ -29,7 +28,7 @@ classifications = {
 		},
 		"interactive2": {
 			"nodect"   : [1,17],
-			"ncpus"    : [24,24],
+			"ncpus"    : [[24,24],[48,48]],
 			"ngpus"    : [0,0],
 			"walltime" : [0,2.],
 			"mem"      : [1, 120],
@@ -39,7 +38,7 @@ classifications = {
 
 		"general72": {
 			"nodect"   : [2,18],
-			"ncpus"    : [16,16],
+			"ncpus"    : [[16,16],[32,32]],
 			"ngpus"    : [0,0],
 			"walltime" : [0, 72],
 			"mem"      : [1, 62],
@@ -49,7 +48,7 @@ classifications = {
 
 		"large48": {
 			"nodect"   : [18,72],
-			"ncpus"    : [24,24],
+			"ncpus"    : [[24,24],[48,48]],
 			"ngpus"    : [0,0],
 			"walltime" : [2.,48], 
 			"mem"      : [1, 120],
@@ -59,7 +58,7 @@ classifications = {
 
 		"capability24": {
 			"nodect"   : [72,270],
-			"ncpus"    : [28,28],
+			"ncpus"    : [[28,28],[56,56]],
 			"ngpus"    : [0,0],
 			"walltime" : [0,24],
 			"mem"      : [1, 120],
@@ -69,7 +68,7 @@ classifications = {
 
 		"exp_24_128_ib": {
 			"nodect"   : [1,270],
-			"ncpus"    : [ [24,24] ],
+			"ncpus"    : [ [24,24], [48,48] ],
 			"ngpus"    : [0,0],
 			"walltime" : [1, 240.],
 			"mem"      : [1, 120],
