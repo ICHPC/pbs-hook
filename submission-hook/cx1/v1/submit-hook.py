@@ -745,14 +745,20 @@ def check_express_project_code():
 	if not test_group_membership( [ project ] ):
 		pbs.event().reject( "You are not authorised to use this express code" )
 
+	r = None
 	try:
 		import requests
 		r = requests.get( "https://api.rcs.imperial.ac.uk/v1.0/express/%s/enabled" % ( project, ) )
+	except :#
+		pass
+
+	if r:
+		pbs.logmsg( pbs.LOG_ERROR, str(r.status_code) )
+		pbs.logmsg(pbs.LOG_ERROR,  str(r.text) )
 		if (r.status_code == 200) and (r.text != "1"):
 			pbs.event().reject("This express code is not enabled. Please contact rcs-support@imperial.ac.uk" )
-	except :#
-#		pbs.event().reject("Exception checking express enabled " )
-		pass
+	else:
+		pbs.event().reject("This express code cannot be used at this time. Please try later or contact rcs-support@imperial.ac.uk" )
 
 	return project
 
