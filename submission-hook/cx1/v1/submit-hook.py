@@ -183,7 +183,7 @@ private_queue_restrictions = {
 		"nodect"    : [1,8],
 		"ncpus"     : [1,40],
 		"ngpus"     : [0,0],
-		"walltime"  : [0,168.],
+		"walltime"  : [0,1000.],
 		"mem"       : [1,128],
 		"avx512"     : False,
 	} ],
@@ -293,7 +293,7 @@ private_queue_restrictions = {
 		"avx512"     : False,
 	} ],
 	"pqmemphis" : [ {
-		"nodect"    : [1,20],
+		"nodect"    : [1,36],
 		"ncpus"     : [1,56],
 		"ngpus"     : [0,0],
 		"walltime"  : [0,168.],
