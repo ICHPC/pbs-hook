@@ -5,19 +5,53 @@
 # HPC - Imperial College London
 # Home: github ICHPC/pbs-hook
 
+# qmgr -c "import hook submit application/x-python default submit-hook.py"
+
 import sys
 import pbs
 import traceback
 import re
 
-list_of_resources = ["ncpus","ngpus","mem","mpiprocs","ompthreads","switchgroup","avx","avx2","avx512","cpumodel"]
+list_of_resources = ["ncpus","ngpus","mem","mpiprocs","ompthreads","switchgroup","avx","avx2","avx512", "gpu_type", "cpumodel"]
 
 # This is prepended to any target_queue name to allow for future versioning in place
 
 queue_config_version = "v1_"
 
+queue_array_variant = { }
+#	"throughput24" : "throughput2a",
+#}
+
+private_queue_restrictions = {}
+
 classifications = {
-		"short2": {
+      "largemem72"     : [ ],
+#			# NB - largemem72 has additional options that are machine-generated below - for all ncpus in multiples of 10, mem in multiples of 120
+     "throughput24" : [{
+      "nodect"   : [1,1],
+			"ncpus"    : [1,8],
+      "ngpus"    : [0,0],
+      "walltime" : [ 0.5000001, 24 ],
+			"mem"      : [ 1, 96 ],
+			"interactive" : False,
+			"express"  : False,
+			"avx"      : True,
+			"avx2"     : False,
+			"avx512"   : False
+		} ],
+		"throughput72" : [ {
+			"nodect"   : [1,1],
+			"ncpus"    : [1,8],
+      "ngpus"    : [0,0],
+      "walltime" : [ 24.000001, 72 ],
+			"mem"      : [ 1, 96 ],
+			"interactive" : False,
+			"express"  : False,
+			"avx"      : True,
+			"avx2"     : False,
+			"avx512"   : False
+		} ],
+		"short2": [{
 			"nodect"   : [1,17],
 			"ncpus"    : [[24,24],[48,48]],
 			"ngpus"    : [0,0],
@@ -25,8 +59,8 @@ classifications = {
 			"mem"      : [1, 120],
 			"interactive": False,
 			"express"  : False
-		},
-		"interactive2": {
+		}],
+		"interactive2": [{
 			"nodect"   : [1,17],
 			"ncpus"    : [[24,24],[48,48]],
 			"ngpus"    : [0,0],
@@ -34,9 +68,9 @@ classifications = {
 			"mem"      : [1, 120],
 			"interactive": True,
 			"express"  : False
-		},
+		}],
 
-		"general72": {
+		"general72":[ {
 			"nodect"   : [2,18],
 			"ncpus"    : [[16,16],[32,32]],
 			"ngpus"    : [0,0],
@@ -44,9 +78,9 @@ classifications = {
 			"mem"      : [1, 62],
 			"interactive": False,
 			"express"  : False
-		},
+		}],
 
-		"large48": {
+		"large48":[ {
 			"nodect"   : [18,72],
 			"ncpus"    : [[24,24],[48,48]],
 			"ngpus"    : [0,0],
@@ -54,27 +88,27 @@ classifications = {
 			"mem"      : [1, 120],
 			"interactive": False,
 			"express"  : False
-		},
+		}],
 
-		"capability24": {
-			"nodect"   : [72,270],
+		"capability24": [{
+			"nodect"   : [72,265],
 			"ncpus"    : [[28,28],[56,56]],
 			"ngpus"    : [0,0],
 			"walltime" : [0,24],
 			"mem"      : [1, 120],
 			"interactive": False,
 			"express"  : False
-		},
+		}],
 
-		"exp_24_128_ib": {
-			"nodect"   : [1,270],
+		"exp_24_128_ib":[ {
+			"nodect"   : [1,265],
 			"ncpus"    : [ [24,24], [48,48] ],
 			"ngpus"    : [0,0],
 			"walltime" : [1, 240.],
 			"mem"      : [1, 120],
 			"interactive": False,
 			"express"  : True
-		},
+		} ],
 }
 
 
@@ -139,6 +173,19 @@ def match_class(selection, walltime, clssname, clss, express ):
 #	pbs.logmsg( pbs.LOG_ERROR, " CLASS  " + clssname + " matched" )
 	return True
 
+def set_topjob_ineligible():
+	pbs.event().job.topjob_ineligible = True
+
+def check_pq_restriction( selection, walltime, queue ):
+	if queue not in private_queue_restrictions:
+		# There wasn't a restriction for this pq, so accept it
+		return
+
+	clss = private_queue_restrictions[ queue ]
+	for c in clss:
+			if match_class( selection, walltime, queue, c, False ):
+				return True
+	pbs.event().reject( "The private queue has insufficient resources for a job this size.\nPlease consult https://selfservice.rcs.imperial.ac.uk/pqs/nodes/%s to see what's available.\nFor any queries please contact us via rcs-support@imperial.ac.uk" % ( queue ) )
 
 # Match job to class. Error out if it matches more than one class
 def classify_job( selection, walltime, express= False, queue = None ):
@@ -146,12 +193,13 @@ def classify_job( selection, walltime, express= False, queue = None ):
 	ret=[];
 
 	for clssname  in sorted(classifications.keys()):
-		clss = classifications[clssname]
-		if ( queue == None ) or clssname == queue:
-			if match_class( selection, walltime, clssname, clss, express ):
-				clss["target_queue"] = clssname
-				ret.append( clss )
-				names = names + clssname + " "
+		clssset = classifications[clssname]
+		for clss in clssset:
+			if ( queue == None ) or clssname == queue:
+				if match_class( selection, walltime, clssname, clss, express ):
+					clss["target_queue"] = clssname
+					ret.append( clss )
+					names = names + clssname + " "
 
 	if len(ret) > 1:
 		pbs.event().reject( "Job matches multiple classes: [ " + names.strip() + "]" )
@@ -172,6 +220,9 @@ def extract_queue_type():
 
 	if ( pbs.event().job.queue != "" ):
 		queue_name=pbs.event().job.queue.name
+
+	if len(queue_name)>0 and queue_name[0] == "R":
+		return "reservation"
 
 	if queue_name == "express": # len(queue_name)>0 and queue_name[0] == "e":
 		return "express"
@@ -321,19 +372,70 @@ def test_group_membership( permitted_groups ):
   return False
 
 
+def expand_classifications():
+	# machine-generate extra classes
+	c = []  
+
+	for n in range(1, 100 ):
+		ncpus =  10 * n
+		mem   = 120 * n
+		c.append(	
+		{ "nodect"   : [1,1],
+			"ncpus"    : [ ncpus, ncpus ],
+      "ngpus"    : [0,0],
+      "walltime" : [ 0.5000001, 72 ],
+			"mem"      : [ mem, mem ],
+			"interactive" : False,
+			"express"  : False,
+			"avx"      : True,
+			"avx2"     : False,
+		} 
+		)
+	classifications["largemem72"] = c;
+
+	# Same as largemem, just 
+	private_queue_restrictions["med-bio"]    = c;
+		
+	
 # MAIN LOGIC BEGIN
 try:
+	expand_classifications()
 	queue_type = extract_queue_type()
 
-	# Anything goes in private queues
+	walltime   = extract_walltime()
+	selection  = extract_selection()
+
+	# Anything goes in reservatgions
 	# so exit at this point, to prevent walltime and select parsing raising a reject()
+	if queue_type == "reservation":
+		if pbs.event().job.project:
+			pbs.event().reject( "Express project codes can not be used with reservations" )
+		pbs.event().accept()
+
+
+
+	# private queues
+	# check group membership
+	# fix ompthreads/mpiprocs
+	# check that selection is valid
 	if queue_type == "private":
 		if pbs.event().job.project:
 			pbs.event().reject( "Express project codes can not be used with private queues" )
 		pbs.event().accept()
 
-	walltime   = extract_walltime()
-	selection  = extract_selection()
+		queue = pbs.server().queue(pbs.event().job.queue.name)
+		if not queue:
+			pbs.event().reject("Invalid queue name")
+
+		permitted_groups = queue.resources_available["permitted_groups"]
+		if permitted_groups:
+			permitted_groups = permitted_groups.split(",")
+			if not test_group_membership( permitted_groups ):
+				pbs.event().reject("You are not authorised to use this private queue")
+		fixup_mpiprocs_ompthreads( selection )
+
+	#	check_pq_restriction( selection, walltime, pbs.event().job.queue.name )
+		pbs.event().accept()
 
 	# Express version 0 - accept anything provided the user is in an exp-XXX group
 	express = False
@@ -351,18 +453,28 @@ try:
 		# If the user submitted to a specific queue, test against the config for that alone
 		queue_type = queue_type.split(":")
 		clss = classify_job( selection, walltime, express, queue = queue_type[1] )
-		
+	
+	dest_queue = clss["target_queue"]
+	# If the job is an array job, check to see if this class has an "array variant"
+	# These are used for preemption
+	if str(pbs.event().job.array_indices_submitted) != "None":
+		if dest_queue in queue_array_variant:
+			dest_queue = queue_array_variant[ dest_queue ]		
 
 	# Move the job into the right queue
 	if queue_type == "express":
-		pbs.event().job.queue = pbs.server().queue( clss["target_queue"] )
+		pbs.event().job.queue = pbs.server().queue( dest_queue )
 	else:
-		pbs.event().job.queue = pbs.server().queue( queue_config_version + clss["target_queue"] )
+		pbs.event().job.queue = pbs.server().queue( queue_config_version + dest_queue )
 
-	pbs.logmsg( pbs.LOG_ERROR, "MOVING JOB TO QUEUE: " + clss["target_queue"] )
+	pbs.logmsg( pbs.LOG_ERROR, "MOVING JOB TO QUEUE: " + dest_queue )
 #	pbs.logmsg( pbs.LOG_ERROR, "MOVING JOB TO QUEUE: " + repr( pbs.event().job.queue.name )  )
 
 	fixup_mpiprocs_ompthreads( selection )
+
+	queue_name = dest_queue
+	if queue_name in [ "med-bio", "largemem72", "throughput24", "throughput72" ]:
+		set_topjob_ineligible()	
 
 	pbs.event().accept()
 
