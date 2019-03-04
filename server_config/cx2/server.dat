@@ -1,0 +1,194 @@
+#
+# Create resources and set their properties.
+#
+#
+# Create and define resource router
+#
+create resource router
+set resource router type = string_array
+set resource router flag = h
+#
+# Create and define resource cpumodel
+#
+create resource cpumodel
+set resource cpumodel type = string
+set resource cpumodel flag = hr
+#
+# Create and define resource Qlist
+#
+create resource Qlist
+set resource Qlist type = string_array
+set resource Qlist flag = hr
+#
+# Create and define resource permitted_groups
+#
+create resource permitted_groups
+set resource permitted_groups type = string_array
+#
+# Create queues and set their attributes.
+#
+#
+# Create and define queue express
+#
+create queue express
+set queue express queue_type = Execution
+set queue express enabled = True
+set queue express started = False
+#
+# Create and define queue v1_submit
+#
+create queue v1_submit
+set queue v1_submit queue_type = Execution
+set queue v1_submit acl_group_enable = False
+set queue v1_submit enabled = True
+set queue v1_submit started = True
+#
+# Create and define queue v1_interactive2
+#
+create queue v1_interactive2
+set queue v1_interactive2 queue_type = Execution
+set queue v1_interactive2 max_queued = [u:PBS_GENERIC=1]
+set queue v1_interactive2 from_route_only = False
+set queue v1_interactive2 default_chunk.Qlist = v1_short2
+set queue v1_interactive2 resources_available.place = scatter:excl
+set queue v1_interactive2 max_run = [u:PBS_GENERIC=1]
+set queue v1_interactive2 enabled = True
+set queue v1_interactive2 started = True
+#
+# Create and define queue v1_capability24
+#
+create queue v1_capability24
+set queue v1_capability24 queue_type = Execution
+set queue v1_capability24 Priority = 98
+set queue v1_capability24 max_queued = [u:PBS_GENERIC=2]
+set queue v1_capability24 from_route_only = False
+set queue v1_capability24 resources_default.place = scatter:excl
+set queue v1_capability24 default_chunk.Qlist = v1_capability24
+set queue v1_capability24 max_run = [u:PBS_GENERIC=2]
+set queue v1_capability24 enabled = True
+set queue v1_capability24 started = True
+#
+# Create and define queue v1_large48
+#
+create queue v1_large48
+set queue v1_large48 queue_type = Execution
+set queue v1_large48 Priority = 90
+set queue v1_large48 from_route_only = False
+set queue v1_large48 resources_default.place = scatter:excl
+set queue v1_large48 default_chunk.Qlist = v1_large48
+set queue v1_large48 max_run = [u:PBS_GENERIC=2]
+set queue v1_large48 enabled = True
+set queue v1_large48 started = True
+#
+# Create and define queue v1_general72
+#
+create queue v1_general72
+set queue v1_general72 queue_type = Execution
+set queue v1_general72 Priority = 80
+set queue v1_general72 max_queued = [u:PBS_GENERIC=1000]
+set queue v1_general72 from_route_only = False
+set queue v1_general72 resources_default.place = scatter:excl
+set queue v1_general72 default_chunk.Qlist = v1_general72
+set queue v1_general72 max_run = [u:PBS_GENERIC=3]
+set queue v1_general72 enabled = True
+set queue v1_general72 started = True
+#
+# Create and define queue v1_short2
+#
+create queue v1_short2
+set queue v1_short2 queue_type = Execution
+set queue v1_short2 Priority = 70
+set queue v1_short2 max_queued = [u:PBS_GENERIC=50]
+set queue v1_short2 from_route_only = False
+set queue v1_short2 default_chunk.Qlist = v1_short2
+set queue v1_short2 resources_available.place = scatter:excl
+set queue v1_short2 max_run = [u:PBS_GENERIC=2]
+set queue v1_short2 enabled = True
+set queue v1_short2 started = True
+#
+# Create and define queue exp_24_128_ib
+#
+create queue exp_24_128_ib
+set queue exp_24_128_ib queue_type = Execution
+set queue exp_24_128_ib Priority = 99
+set queue exp_24_128_ib from_route_only = False
+set queue exp_24_128_ib resources_default.place = scatter:excl
+set queue exp_24_128_ib default_chunk.Qlist = exp_24_128_ib
+set queue exp_24_128_ib enabled = True
+set queue exp_24_128_ib started = True
+#
+# Create and define queue v1_throughput24
+#
+create queue v1_throughput24
+set queue v1_throughput24 queue_type = Execution
+set queue v1_throughput24 Priority = 1
+set queue v1_throughput24 from_route_only = False
+set queue v1_throughput24 default_chunk.Qlist = v1_throughput24
+set queue v1_throughput24 enabled = True
+set queue v1_throughput24 started = True
+#
+# Create and define queue v1_throughput72
+#
+create queue v1_throughput72
+set queue v1_throughput72 queue_type = Execution
+set queue v1_throughput72 Priority = 1
+set queue v1_throughput72 from_route_only = False
+set queue v1_throughput72 default_chunk.Qlist = v1_throughput72
+set queue v1_throughput72 enabled = True
+set queue v1_throughput72 started = True
+#
+# Create and define queue med-bio
+#
+create queue med-bio
+set queue med-bio queue_type = Execution
+set queue med-bio Priority = 20
+set queue med-bio acl_user_enable = False
+set queue med-bio resources_max.walltime = 72:00:00
+set queue med-bio resources_default.walltime = 01:00:00
+set queue med-bio default_chunk.Qlist = med-bio
+set queue med-bio resources_available.permitted_groups = pq-med-bio
+set queue med-bio enabled = True
+set queue med-bio started = True
+#
+# Create and define queue v1_largemem72
+#
+create queue v1_largemem72
+set queue v1_largemem72 queue_type = Execution
+set queue v1_largemem72 Priority = 10
+set queue v1_largemem72 from_route_only = False
+set queue v1_largemem72 default_chunk.Qlist = v1_largemem72
+set queue v1_largemem72 enabled = True
+set queue v1_largemem72 started = True
+#
+# Set server attributes.
+#
+set server scheduling = True
+set server max_queued = [o:PBS_ALL=10000]
+set server max_queued += [u:PBS_GENERIC=50]
+set server managers = mao@cx2
+set server managers += mjharvey@cx2-pbs.cx2.hpc.ic.ac.uk
+set server managers += mjharvey@cx2
+set server managers += root@cx2
+set server default_queue = v1_submit
+set server log_events = 511
+set server mail_from = noreply@imperial.ac.uk
+set server query_other_jobs = False
+set server resources_default.mem = 600mb
+set server resources_default.ncpus = 1
+set server resources_default.place = scatter:excl
+set server resources_default.walltime = 01:00:00
+set server default_chunk.ncpus = 1
+set server scheduler_iteration = 600
+set server flatuid = True
+set server resv_enable = True
+set server node_fail_requeue = 310
+set server max_array_size = 10000
+set server node_group_enable = False
+set server node_group_key = router
+set server pbs_license_info = 6200@iclic24.cc.imperial.ac.uk
+set server pbs_license_min = 1
+set server pbs_license_max = 2147483647
+set server pbs_license_linger_time = 31536000
+set server eligible_time_enable = False
+set server max_concurrent_provision = 5
+set server backfill_depth = 20
