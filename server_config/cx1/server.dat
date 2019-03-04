@@ -1,0 +1,1492 @@
+#
+# Create resources and set their properties.
+#
+#
+# Create and define resource icib
+#
+create resource icib
+set resource icib type = boolean
+set resource icib flag = h
+#
+# Create and define resource abaqus_token
+#
+create resource abaqus_token
+set resource abaqus_token type = long
+set resource abaqus_token flag = q
+#
+# Create and define resource lstc_token
+#
+create resource lstc_token
+set resource lstc_token type = long
+set resource lstc_token flag = q
+#
+# Create and define resource switchgroup
+#
+create resource switchgroup
+set resource switchgroup type = string
+set resource switchgroup flag = h
+#
+# Create and define resource ngpus
+#
+create resource ngpus
+set resource ngpus type = long
+set resource ngpus flag = hn
+#
+# Create and define resource gpu_type
+#
+create resource gpu_type
+set resource gpu_type type = string
+set resource gpu_type flag = h
+#
+# Create and define resource avx
+#
+create resource avx
+set resource avx type = boolean
+set resource avx flag = h
+#
+# Create and define resource avx2
+#
+create resource avx2
+set resource avx2 type = boolean
+set resource avx2 flag = h
+#
+# Create and define resource Qlist
+#
+create resource Qlist
+set resource Qlist type = string_array
+set resource Qlist flag = hr
+#
+# Create and define resource cpumodel
+#
+create resource cpumodel
+set resource cpumodel type = string
+set resource cpumodel flag = h
+#
+# Create and define resource last_switch
+#
+create resource last_switch
+set resource last_switch type = long
+set resource last_switch flag = h
+#
+# Create and define resource permitted_groups
+#
+create resource permitted_groups
+set resource permitted_groups type = string_array
+#
+# Create and define resource warranty_end
+#
+create resource warranty_end
+set resource warranty_end type = string
+set resource warranty_end flag = h
+#
+# Create and define resource avx512
+#
+create resource avx512
+set resource avx512 type = boolean
+set resource avx512 flag = h
+#
+# Create and define resource dedicated
+#
+create resource dedicated
+set resource dedicated type = boolean
+set resource dedicated flag = h
+#
+# Create and define resource fs_factor
+#
+create resource fs_factor
+set resource fs_factor type = float
+set resource fs_factor flag = i
+#
+# Create queues and set their attributes.
+#
+#
+# Create and define queue express
+#
+create queue express
+set queue express queue_type = Execution
+set queue express enabled = True
+set queue express started = False
+#
+# Create and define queue v1_submit
+#
+create queue v1_submit
+set queue v1_submit queue_type = Execution
+set queue v1_submit Priority = 5
+set queue v1_submit acl_group_enable = False
+set queue v1_submit enabled = True
+set queue v1_submit started = True
+#
+# Create and define queue v1_throughput24
+#
+create queue v1_throughput24
+set queue v1_throughput24 queue_type = Execution
+set queue v1_throughput24 Priority = 1
+set queue v1_throughput24 from_route_only = False
+set queue v1_throughput24 default_chunk.Qlist = v1_throughput24
+set queue v1_throughput24 enabled = True
+set queue v1_throughput24 started = True
+#
+# Create and define queue v1_debug
+#
+create queue v1_debug
+set queue v1_debug queue_type = Execution
+set queue v1_debug Priority = 8
+set queue v1_debug from_route_only = False
+set queue v1_debug default_chunk.Qlist = v1_debug
+set queue v1_debug max_run = [u:PBS_GENERIC=1]
+set queue v1_debug enabled = True
+set queue v1_debug started = True
+#
+# Create and define queue v1_multinode24
+#
+create queue v1_multinode24
+set queue v1_multinode24 queue_type = Execution
+set queue v1_multinode24 Priority = 6
+set queue v1_multinode24 from_route_only = False
+set queue v1_multinode24 resources_default.place = excl
+set queue v1_multinode24 default_chunk.icib = True
+set queue v1_multinode24 default_chunk.Qlist = v1_multinode24
+set queue v1_multinode24 enabled = True
+set queue v1_multinode24 started = True
+#
+# Create and define queue v1_multinode48
+#
+create queue v1_multinode48
+set queue v1_multinode48 queue_type = Execution
+set queue v1_multinode48 Priority = 6
+set queue v1_multinode48 from_route_only = False
+set queue v1_multinode48 resources_default.place = excl
+set queue v1_multinode48 default_chunk.icib = True
+set queue v1_multinode48 default_chunk.Qlist = v1_multinode48
+set queue v1_multinode48 enabled = True
+set queue v1_multinode48 started = True
+#
+# Create and define queue v1_largemem24
+#
+create queue v1_largemem24
+set queue v1_largemem24 queue_type = Execution
+set queue v1_largemem24 Priority = 5
+set queue v1_largemem24 from_route_only = False
+set queue v1_largemem24 default_chunk.Qlist = v1_largemem24
+set queue v1_largemem24 enabled = True
+set queue v1_largemem24 started = True
+#
+# Create and define queue v1_throughput2a
+#
+create queue v1_throughput2a
+set queue v1_throughput2a queue_type = Execution
+set queue v1_throughput2a Priority = 1
+set queue v1_throughput2a from_route_only = False
+set queue v1_throughput2a default_chunk.Qlist = v1_throughput2a
+set queue v1_throughput2a enabled = True
+set queue v1_throughput2a started = True
+#
+# Create and define queue v1_general24a
+#
+create queue v1_general24a
+set queue v1_general24a queue_type = Execution
+set queue v1_general24a Priority = 5
+set queue v1_general24a from_route_only = False
+set queue v1_general24a resources_default.place = scatter:excl
+set queue v1_general24a default_chunk.Qlist = v1_general24a
+set queue v1_general24a enabled = True
+set queue v1_general24a started = True
+#
+# Create and define queue pqchemlab1
+#
+create queue pqchemlab1
+set queue pqchemlab1 queue_type = Execution
+set queue pqchemlab1 Priority = 185
+set queue pqchemlab1 acl_user_enable = True
+set queue pqchemlab1 acl_users = scan-user-1
+set queue pqchemlab1 resources_max.walltime = 24:00:00
+set queue pqchemlab1 resources_min.ncpus = 1
+set queue pqchemlab1 resources_default.fs_factor = 0.01
+set queue pqchemlab1 resources_default.preempt_targets = queue=v1_throughput2a
+set queue pqchemlab1 resources_default.preempt_targets += queue=v1_general24a
+set queue pqchemlab1 resources_default.walltime = 01:00:00
+set queue pqchemlab1 default_chunk.Qlist = pqchem
+set queue pqchemlab1 kill_delay = 15
+set queue pqchemlab1 enabled = True
+set queue pqchemlab1 started = True
+#
+# Create and define queue pqchemeng
+#
+create queue pqchemeng
+set queue pqchemeng queue_type = Execution
+set queue pqchemeng Priority = 163
+set queue pqchemeng acl_user_enable = False
+set queue pqchemeng resources_max.walltime = 168:00:00
+set queue pqchemeng resources_default.fs_factor = 0.01
+set queue pqchemeng resources_default.preempt_targets = queue=v1_throughput2a
+set queue pqchemeng resources_default.preempt_targets += queue=v1_general24a
+set queue pqchemeng resources_default.walltime = 01:00:00
+set queue pqchemeng default_chunk.Qlist = pqchemeng
+set queue pqchemeng resources_available.permitted_groups = pq-chemeng
+set queue pqchemeng resources_available.permitted_groups += hpc-admin
+set queue pqchemeng kill_delay = 15
+set queue pqchemeng max_run_res.mem = [o:PBS_ALL=1000gb]
+set queue pqchemeng max_run_res.ncpus = [o:PBS_ALL=320]
+set queue pqchemeng max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqchemeng enabled = True
+set queue pqchemeng started = True
+#
+# Create and define queue pqeph
+#
+create queue pqeph
+set queue pqeph queue_type = Execution
+set queue pqeph Priority = 193
+set queue pqeph acl_user_enable = False
+set queue pqeph resources_max.walltime = 2400:00:00
+set queue pqeph resources_default.fs_factor = 0.01
+set queue pqeph resources_default.preempt_targets = queue=v1_throughput2a
+set queue pqeph resources_default.preempt_targets += queue=v1_general24a
+set queue pqeph resources_default.walltime = 01:00:00
+set queue pqeph default_chunk.Qlist = pqeph
+set queue pqeph resources_available.permitted_groups = pq-eph
+set queue pqeph resources_available.permitted_groups += hpc-admin
+set queue pqeph kill_delay = 15
+set queue pqeph max_run_res.mem = [o:PBS_ALL=1291gb]
+set queue pqeph max_run_res.ncpus = [o:PBS_ALL=392]
+set queue pqeph max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqeph enabled = True
+set queue pqeph started = True
+#
+# Create and define queue pqjpritcha
+#
+create queue pqjpritcha
+set queue pqjpritcha queue_type = Execution
+set queue pqjpritcha Priority = 182
+set queue pqjpritcha acl_user_enable = False
+set queue pqjpritcha resources_max.walltime = 168:00:00
+set queue pqjpritcha resources_default.fs_factor = 0.01
+set queue pqjpritcha resources_default.preempt_targets = queue=v1_throughput2a
+set queue pqjpritcha resources_default.preempt_targets += queue=v1_general24a
+set queue pqjpritcha default_chunk.Qlist = pqjpritcha
+set queue pqjpritcha resources_available.permitted_groups = pq-jpritcha
+set queue pqjpritcha resources_available.permitted_groups += hpc-admin
+set queue pqjpritcha kill_delay = 15
+set queue pqjpritcha max_run_res.mem = [o:PBS_ALL=1004gb]
+set queue pqjpritcha max_run_res.ncpus = [o:PBS_ALL=192]
+set queue pqjpritcha max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqjpritcha enabled = True
+set queue pqjpritcha started = True
+#
+# Create and define queue pqfano
+#
+create queue pqfano
+set queue pqfano queue_type = Execution
+set queue pqfano Priority = 178
+set queue pqfano acl_user_enable = False
+set queue pqfano resources_max.walltime = 168:00:00
+set queue pqfano resources_default.fs_factor = 0.01
+set queue pqfano resources_default.preempt_targets = queue=v1_general24a
+set queue pqfano resources_default.preempt_targets += queue=v1_throughput2a
+set queue pqfano resources_default.walltime = 01:00:00
+set queue pqfano default_chunk.Qlist = pqfano
+set queue pqfano resources_available.permitted_groups = pq-fano
+set queue pqfano resources_available.permitted_groups += hpc-admin
+set queue pqfano max_run_res.mem = [o:PBS_ALL=4300gb]
+set queue pqfano max_run_res.ncpus = [o:PBS_ALL=1584]
+set queue pqfano max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqfano enabled = True
+set queue pqfano started = True
+#
+# Create and define queue pqmb
+#
+create queue pqmb
+set queue pqmb queue_type = Execution
+set queue pqmb Priority = 180
+set queue pqmb acl_user_enable = False
+set queue pqmb resources_max.walltime = 2400:00:00
+set queue pqmb resources_default.fs_factor = 0.01
+set queue pqmb resources_default.preempt_targets = queue=v1_throughput2a
+set queue pqmb resources_default.preempt_targets += queue=v1_general24a
+set queue pqmb resources_default.walltime = 01:00:00
+set queue pqmb default_chunk.Qlist = pqmb
+set queue pqmb resources_available.permitted_groups = pq-mb
+set queue pqmb resources_available.permitted_groups += hpc-admin
+set queue pqmb kill_delay = 15
+set queue pqmb max_run_res.mem = [o:PBS_ALL=3072gb]
+set queue pqmb max_run_res.ncpus = [o:PBS_ALL=640]
+set queue pqmb max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqmb enabled = True
+set queue pqmb started = True
+#
+# Create and define queue pqtimm
+#
+create queue pqtimm
+set queue pqtimm queue_type = Execution
+set queue pqtimm Priority = 192
+set queue pqtimm acl_user_enable = False
+set queue pqtimm resources_max.walltime = 2400:00:00
+set queue pqtimm resources_default.fs_factor = 0.01
+set queue pqtimm resources_default.preempt_targets = queue=v1_throughput2a
+set queue pqtimm resources_default.preempt_targets += queue=v1_general24a
+set queue pqtimm resources_default.walltime = 01:00:00
+set queue pqtimm default_chunk.Qlist = pqtimm
+set queue pqtimm resources_available.permitted_groups = pq-timm
+set queue pqtimm resources_available.permitted_groups += hpc-admin
+set queue pqtimm max_run_res.mem = [o:PBS_ALL=512gb]
+set queue pqtimm max_run_res.ncpus = [o:PBS_ALL=160]
+set queue pqtimm max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqtimm enabled = True
+set queue pqtimm started = True
+#
+# Create and define queue pqberloff
+#
+create queue pqberloff
+set queue pqberloff queue_type = Execution
+set queue pqberloff Priority = 186
+set queue pqberloff acl_user_enable = False
+set queue pqberloff resources_max.walltime = 2400:00:00
+set queue pqberloff resources_default.fs_factor = 0.01
+set queue pqberloff resources_default.preempt_targets = queue=v1_throughput2a
+set queue pqberloff resources_default.preempt_targets += queue=v1_general24a
+set queue pqberloff resources_default.walltime = 01:00:00
+set queue pqberloff default_chunk.Qlist = pqberloff
+set queue pqberloff resources_available.permitted_groups = pq-berloff
+set queue pqberloff resources_available.permitted_groups += hpc-admin
+set queue pqberloff max_run_res.mem = [o:PBS_ALL=186gb]
+set queue pqberloff max_run_res.ncpus = [o:PBS_ALL=96]
+set queue pqberloff max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqberloff enabled = True
+set queue pqberloff started = True
+#
+# Create and define queue pqplinds
+#
+create queue pqplinds
+set queue pqplinds queue_type = Execution
+set queue pqplinds Priority = 179
+set queue pqplinds acl_user_enable = False
+set queue pqplinds resources_max.walltime = 2400:00:00
+set queue pqplinds resources_default.fs_factor = 0.01
+set queue pqplinds resources_default.preempt_targets = queue=v1_general24a
+set queue pqplinds resources_default.walltime = 01:00:00
+set queue pqplinds default_chunk.Qlist = pqplinds
+set queue pqplinds resources_available.permitted_groups = pq-plinds
+set queue pqplinds resources_available.permitted_groups += hpc-admin
+set queue pqplinds max_run_res.mem = [o:PBS_ALL=2527gb]
+set queue pqplinds max_run_res.ncpus = [o:PBS_ALL=800]
+set queue pqplinds max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqplinds enabled = True
+set queue pqplinds started = True
+#
+# Create and define queue pqcdt
+#
+create queue pqcdt
+set queue pqcdt queue_type = Execution
+set queue pqcdt Priority = 173
+set queue pqcdt acl_user_enable = False
+set queue pqcdt resources_max.walltime = 168:00:00
+set queue pqcdt resources_default.fs_factor = 0.01
+set queue pqcdt resources_default.preempt_targets = queue=v1_general24a
+set queue pqcdt resources_default.preempt_targets += queue=v1_throughput2a
+set queue pqcdt resources_default.walltime = 01:00:00
+set queue pqcdt default_chunk.Qlist = pqcdt
+set queue pqcdt resources_available.permitted_groups = pq-cdt
+set queue pqcdt resources_available.permitted_groups += hpc-admin
+set queue pqcdt max_run_res.mem = [o:PBS_ALL=2769gb]
+set queue pqcdt max_run_res.ncpus = [o:PBS_ALL=1280]
+set queue pqcdt max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqcdt enabled = True
+set queue pqcdt started = True
+#
+# Create and define queue pqpcsmith
+#
+create queue pqpcsmith
+set queue pqpcsmith queue_type = Execution
+set queue pqpcsmith Priority = 165
+set queue pqpcsmith acl_user_enable = False
+set queue pqpcsmith resources_max.walltime = 168:00:00
+set queue pqpcsmith resources_default.fs_factor = 0.01
+set queue pqpcsmith resources_default.preempt_targets = queue=v1_throughput2a
+set queue pqpcsmith resources_default.preempt_targets += queue=v1_general24a
+set queue pqpcsmith resources_default.walltime = 01:00:00
+set queue pqpcsmith default_chunk.Qlist = pqpcsmith
+set queue pqpcsmith resources_available.permitted_groups = pq-pcsmith
+set queue pqpcsmith resources_available.permitted_groups += hpc-admin
+set queue pqpcsmith max_run_res.mem = [o:PBS_ALL=576gb]
+set queue pqpcsmith max_run_res.ncpus = [o:PBS_ALL=72]
+set queue pqpcsmith max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqpcsmith enabled = True
+set queue pqpcsmith started = True
+#
+# Create and define queue pqfogim
+#
+create queue pqfogim
+set queue pqfogim queue_type = Execution
+set queue pqfogim Priority = 152
+set queue pqfogim acl_user_enable = False
+set queue pqfogim resources_max.walltime = 168:00:00
+set queue pqfogim resources_default.fs_factor = 0.01
+set queue pqfogim resources_default.preempt_targets = queue=v1_throughput2a
+set queue pqfogim resources_default.preempt_targets += queue=v1_general24a
+set queue pqfogim resources_default.walltime = 01:00:00
+set queue pqfogim default_chunk.Qlist = pqfogim
+set queue pqfogim resources_available.permitted_groups = pq-fogim
+set queue pqfogim resources_available.permitted_groups += hpc-admin
+set queue pqfogim max_run_res.mem = [o:PBS_ALL=506gb]
+set queue pqfogim max_run_res.ncpus = [o:PBS_ALL=192]
+set queue pqfogim max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqfogim enabled = True
+set queue pqfogim started = True
+#
+# Create and define queue pqpdh
+#
+create queue pqpdh
+set queue pqpdh queue_type = Execution
+set queue pqpdh Priority = 177
+set queue pqpdh acl_user_enable = False
+set queue pqpdh resources_max.walltime = 168:00:00
+set queue pqpdh resources_default.fs_factor = 0.01
+set queue pqpdh resources_default.preempt_targets = queue=v1_throughput2a
+set queue pqpdh resources_default.preempt_targets += queue=v1_general24a
+set queue pqpdh resources_default.walltime = 01:00:00
+set queue pqpdh default_chunk.Qlist = pqpdh
+set queue pqpdh resources_available.permitted_groups = pq-pdh
+set queue pqpdh resources_available.permitted_groups += hpc-admin
+set queue pqpdh max_run_res.mem = [o:PBS_ALL=1015gb]
+set queue pqpdh max_run_res.ncpus = [o:PBS_ALL=384]
+set queue pqpdh max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqpdh enabled = True
+set queue pqpdh started = True
+#
+# Create and define queue pqturbo
+#
+create queue pqturbo
+set queue pqturbo queue_type = Execution
+set queue pqturbo Priority = 156
+set queue pqturbo acl_user_enable = False
+set queue pqturbo resources_max.walltime = 2400:00:00
+set queue pqturbo resources_default.fs_factor = 0.01
+set queue pqturbo resources_default.preempt_targets = queue=v1_throughput2a
+set queue pqturbo resources_default.preempt_targets += queue=v1_general24a
+set queue pqturbo resources_default.walltime = 01:00:00
+set queue pqturbo default_chunk.Qlist = pqturbo
+set queue pqturbo resources_available.permitted_groups = pq-turbo
+set queue pqturbo resources_available.permitted_groups += hpc-admin
+set queue pqturbo max_run_res.mem = [o:PBS_ALL=1009gb]
+set queue pqturbo max_run_res.ncpus = [o:PBS_ALL=192]
+set queue pqturbo max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqturbo enabled = True
+set queue pqturbo started = True
+#
+# Create and define queue pqtouldrid
+#
+create queue pqtouldrid
+set queue pqtouldrid queue_type = Execution
+set queue pqtouldrid Priority = 172
+set queue pqtouldrid acl_user_enable = False
+set queue pqtouldrid resources_max.walltime = 168:00:00
+set queue pqtouldrid resources_default.fs_factor = 0.01
+set queue pqtouldrid resources_default.preempt_targets = queue=v1_throughput2a
+set queue pqtouldrid resources_default.preempt_targets += queue=v1_general24a
+set queue pqtouldrid default_chunk.Qlist = pqtouldrid
+set queue pqtouldrid resources_available.permitted_groups = pq-touldrid
+set queue pqtouldrid resources_available.permitted_groups += hpc-admin
+set queue pqtouldrid max_run_res.mem = [o:PBS_ALL=509gb]
+set queue pqtouldrid max_run_res.ncpus = [o:PBS_ALL=192]
+set queue pqtouldrid max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqtouldrid enabled = True
+set queue pqtouldrid started = True
+#
+# Create and define queue pqaeromg
+#
+create queue pqaeromg
+set queue pqaeromg queue_type = Execution
+set queue pqaeromg Priority = 158
+set queue pqaeromg acl_user_enable = False
+set queue pqaeromg resources_max.walltime = 168:00:00
+set queue pqaeromg resources_default.fs_factor = 0.01
+set queue pqaeromg resources_default.preempt_targets = queue=v1_throughput2a
+set queue pqaeromg resources_default.preempt_targets += queue=v1_general24a
+set queue pqaeromg resources_default.walltime = 01:00:00
+set queue pqaeromg default_chunk.Qlist = pqaeromg
+set queue pqaeromg resources_available.permitted_groups = pq-aeromg
+set queue pqaeromg resources_available.permitted_groups += hpc-admin
+set queue pqaeromg max_run_res.mem = [o:PBS_ALL=503gb]
+set queue pqaeromg max_run_res.ncpus = [o:PBS_ALL=160]
+set queue pqaeromg max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqaeromg enabled = True
+set queue pqaeromg started = True
+#
+# Create and define queue pqsc03
+#
+create queue pqsc03
+set queue pqsc03 queue_type = Execution
+set queue pqsc03 Priority = 187
+set queue pqsc03 acl_user_enable = False
+set queue pqsc03 resources_max.walltime = 168:00:00
+set queue pqsc03 resources_default.fs_factor = 0.01
+set queue pqsc03 resources_default.preempt_targets = queue=v1_throughput2a
+set queue pqsc03 resources_default.preempt_targets += queue=v1_general24a
+set queue pqsc03 resources_default.walltime = 01:00:00
+set queue pqsc03 default_chunk.Qlist = pqsc03
+set queue pqsc03 resources_available.permitted_groups = pq-sc03
+set queue pqsc03 resources_available.permitted_groups += hpc-admin
+set queue pqsc03 max_run_res.mem = [o:PBS_ALL=1536gb]
+set queue pqsc03 max_run_res.ncpus = [o:PBS_ALL=480]
+set queue pqsc03 max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqsc03 enabled = True
+set queue pqsc03 started = True
+#
+# Create and define queue pqaam
+#
+create queue pqaam
+set queue pqaam queue_type = Execution
+set queue pqaam Priority = 166
+set queue pqaam acl_user_enable = False
+set queue pqaam resources_max.walltime = 168:00:00
+set queue pqaam resources_default.fs_factor = 0.01
+set queue pqaam resources_default.preempt_targets = queue=v1_throughput2a
+set queue pqaam resources_default.preempt_targets += queue=v1_general24a
+set queue pqaam resources_default.walltime = 01:00:00
+set queue pqaam default_chunk.Qlist = pqaam
+set queue pqaam resources_available.permitted_groups = pq-aam
+set queue pqaam resources_available.permitted_groups += hpc-admin
+set queue pqaam max_run_res.mem = [o:PBS_ALL=1005gb]
+set queue pqaam max_run_res.ncpus = [o:PBS_ALL=448]
+set queue pqaam max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqaam enabled = True
+set queue pqaam started = True
+#
+# Create and define queue pqastro
+#
+create queue pqastro
+set queue pqastro queue_type = Execution
+set queue pqastro Priority = 198
+set queue pqastro acl_user_enable = False
+set queue pqastro resources_max.walltime = 72:00:00
+set queue pqastro resources_default.fs_factor = 0.01
+set queue pqastro resources_default.preempt_targets = queue=v1_throughput2a
+set queue pqastro resources_default.preempt_targets += queue=v1_general24a
+set queue pqastro default_chunk.Qlist = pqastro
+set queue pqastro resources_available.permitted_groups = pq-astro
+set queue pqastro kill_delay = 15
+set queue pqastro max_run_res.mem = [o:PBS_ALL=248gb]
+set queue pqastro max_run_res.ncpus = [o:PBS_ALL=128]
+set queue pqastro max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqastro enabled = True
+set queue pqastro started = True
+#
+# Create and define queue pqcivstruct
+#
+create queue pqcivstruct
+set queue pqcivstruct queue_type = Execution
+set queue pqcivstruct Priority = 154
+set queue pqcivstruct acl_user_enable = False
+set queue pqcivstruct resources_max.walltime = 168:00:00
+set queue pqcivstruct resources_default.fs_factor = 0.01
+set queue pqcivstruct resources_default.preempt_targets = queue=v1_throughput2a
+set queue pqcivstruct resources_default.preempt_targets += queue=v1_general24a
+set queue pqcivstruct resources_default.walltime = 01:00:00
+set queue pqcivstruct default_chunk.Qlist = pqcivstruct
+set queue pqcivstruct resources_available.permitted_groups = pq-civstruct
+set queue pqcivstruct resources_available.permitted_groups += hpc-admin
+set queue pqcivstruct kill_delay = 15
+set queue pqcivstruct max_run_res.mem = [o:PBS_ALL=506gb]
+set queue pqcivstruct max_run_res.ncpus = [o:PBS_ALL=160]
+set queue pqcivstruct max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqcivstruct enabled = True
+set queue pqcivstruct started = True
+#
+# Create and define queue pqaero
+#
+create queue pqaero
+set queue pqaero queue_type = Execution
+set queue pqaero Priority = 170
+set queue pqaero acl_user_enable = False
+set queue pqaero resources_max.walltime = 168:00:00
+set queue pqaero resources_default.fs_factor = 0.01
+set queue pqaero resources_default.preempt_targets = queue=v1_general24a
+set queue pqaero resources_default.walltime = 01:00:00
+set queue pqaero default_chunk.Qlist = pqaero
+set queue pqaero resources_available.permitted_groups = pq-aero
+set queue pqaero resources_available.permitted_groups += hpc-admin
+set queue pqaero max_run_res.mem = [o:PBS_ALL=6295gb]
+set queue pqaero max_run_res.ncpus = [o:PBS_ALL=2112]
+set queue pqaero max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqaero enabled = True
+set queue pqaero started = True
+#
+# Create and define queue pqeboekcpu
+#
+create queue pqeboekcpu
+set queue pqeboekcpu queue_type = Execution
+set queue pqeboekcpu Priority = 196
+set queue pqeboekcpu acl_user_enable = False
+set queue pqeboekcpu resources_max.walltime = 168:00:00
+set queue pqeboekcpu resources_default.fs_factor = 0.01
+set queue pqeboekcpu resources_default.preempt_targets = queue=v1_throughput2a
+set queue pqeboekcpu resources_default.preempt_targets += queue=v1_general24a
+set queue pqeboekcpu resources_default.preempt_targets += queue=v1_multinode24
+set queue pqeboekcpu resources_default.walltime = 01:00:00
+set queue pqeboekcpu default_chunk.Qlist = pqeboekcpu
+set queue pqeboekcpu resources_available.permitted_groups = pq-eboek
+set queue pqeboekcpu max_run_res.mem = [o:PBS_ALL=1184gb]
+set queue pqeboekcpu max_run_res.ncpus = [o:PBS_ALL=608]
+set queue pqeboekcpu max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqeboekcpu enabled = True
+set queue pqeboekcpu started = True
+#
+# Create and define queue pqnmh
+#
+create queue pqnmh
+set queue pqnmh queue_type = Execution
+set queue pqnmh Priority = 167
+set queue pqnmh acl_user_enable = False
+set queue pqnmh acl_users = local_500
+set queue pqnmh acl_users += local_501
+set queue pqnmh acl_users += local_502
+set queue pqnmh acl_users += local_503
+set queue pqnmh acl_users += local_504
+set queue pqnmh acl_users += local_505
+set queue pqnmh acl_users += local_506
+set queue pqnmh acl_users += local_507
+set queue pqnmh acl_users += local_508
+set queue pqnmh acl_users += local_509
+set queue pqnmh acl_users += local_510
+set queue pqnmh acl_users += local_511
+set queue pqnmh acl_users += local_512
+set queue pqnmh acl_users += local_513
+set queue pqnmh acl_users += local_514
+set queue pqnmh acl_users += local_515
+set queue pqnmh acl_users += local_516
+set queue pqnmh acl_users += local_517
+set queue pqnmh acl_users += local_518
+set queue pqnmh acl_users += local_519
+set queue pqnmh acl_users += local_520
+set queue pqnmh acl_users += local_521
+set queue pqnmh acl_users += local_522
+set queue pqnmh acl_users += local_523
+set queue pqnmh acl_users += local_524
+set queue pqnmh acl_users += local_525
+set queue pqnmh acl_users += local_526
+set queue pqnmh acl_users += local_527
+set queue pqnmh acl_users += local_528
+set queue pqnmh acl_users += local_529
+set queue pqnmh acl_users += local_530
+set queue pqnmh acl_users += local_531
+set queue pqnmh acl_users += local_532
+set queue pqnmh acl_users += local_533
+set queue pqnmh acl_users += local_534
+set queue pqnmh acl_users += local_535
+set queue pqnmh acl_users += local_536
+set queue pqnmh acl_users += local_537
+set queue pqnmh acl_users += local_538
+set queue pqnmh acl_users += local_539
+set queue pqnmh acl_users += local_540
+set queue pqnmh resources_max.walltime = 168:00:00
+set queue pqnmh resources_default.fs_factor = 0.01
+set queue pqnmh resources_default.preempt_targets = queue=v1_throughput2a
+set queue pqnmh resources_default.preempt_targets += queue=v1_general24a
+set queue pqnmh resources_default.walltime = 01:00:00
+set queue pqnmh default_chunk.Qlist = pqnmh
+set queue pqnmh resources_available.permitted_groups = pq-nmh
+set queue pqnmh resources_available.permitted_groups += hpc-admin
+set queue pqnmh max_run_res.mem = [o:PBS_ALL=2027gb]
+set queue pqnmh max_run_res.ncpus = [o:PBS_ALL=768]
+set queue pqnmh max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqnmh enabled = True
+set queue pqnmh started = True
+#
+# Create and define queue pqcvcsm
+#
+create queue pqcvcsm
+set queue pqcvcsm queue_type = Execution
+set queue pqcvcsm Priority = 159
+set queue pqcvcsm acl_user_enable = False
+set queue pqcvcsm resources_max.walltime = 168:00:00
+set queue pqcvcsm resources_default.fs_factor = 0.01
+set queue pqcvcsm resources_default.preempt_targets = queue=v1_throughput2a
+set queue pqcvcsm resources_default.preempt_targets += queue=v1_general24a
+set queue pqcvcsm resources_default.walltime = 01:00:00
+set queue pqcvcsm default_chunk.Qlist = pqcvcsm
+set queue pqcvcsm resources_available.permitted_groups = pq-cvcsm
+set queue pqcvcsm resources_available.permitted_groups += hpc-admin
+set queue pqcvcsm kill_delay = 15
+set queue pqcvcsm max_run_res.mem = [o:PBS_ALL=1509gb]
+set queue pqcvcsm max_run_res.ncpus = [o:PBS_ALL=480]
+set queue pqcvcsm max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqcvcsm enabled = True
+set queue pqcvcsm started = True
+#
+# Create and define queue pqgrimes
+#
+create queue pqgrimes
+set queue pqgrimes queue_type = Execution
+set queue pqgrimes Priority = 155
+set queue pqgrimes acl_user_enable = False
+set queue pqgrimes resources_max.walltime = 168:00:00
+set queue pqgrimes resources_default.fs_factor = 0.01
+set queue pqgrimes resources_default.preempt_targets = queue=v1_throughput2a
+set queue pqgrimes resources_default.preempt_targets += queue=v1_general24a
+set queue pqgrimes resources_default.walltime = 01:00:00
+set queue pqgrimes default_chunk.Qlist = pqgrimes
+set queue pqgrimes resources_available.permitted_groups = pq-grimes
+set queue pqgrimes resources_available.permitted_groups += hpc-admin
+set queue pqgrimes kill_delay = 15
+set queue pqgrimes max_run_res.mem = [o:PBS_ALL=758gb]
+set queue pqgrimes max_run_res.ncpus = [o:PBS_ALL=320]
+set queue pqgrimes max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqgrimes enabled = True
+set queue pqgrimes started = True
+#
+# Create and define queue pqmultiflow
+#
+create queue pqmultiflow
+set queue pqmultiflow queue_type = Execution
+set queue pqmultiflow Priority = 194
+set queue pqmultiflow acl_user_enable = False
+set queue pqmultiflow resources_max.walltime = 168:00:00
+set queue pqmultiflow resources_default.fs_factor = 0.01
+set queue pqmultiflow resources_default.preempt_targets = queue=v1_general24a
+set queue pqmultiflow resources_default.walltime = 01:00:00
+set queue pqmultiflow default_chunk.icib = False
+set queue pqmultiflow default_chunk.Qlist = pqmultiflow
+set queue pqmultiflow resources_available.permitted_groups = pq-multiflow
+set queue pqmultiflow resources_available.permitted_groups += hpc-admin
+set queue pqmultiflow max_run_res.mem = [o:PBS_ALL=6429gb]
+set queue pqmultiflow max_run_res.ncpus = [o:PBS_ALL=2136]
+set queue pqmultiflow max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqmultiflow enabled = True
+set queue pqmultiflow started = True
+#
+# Create and define queue pqkjelfs
+#
+create queue pqkjelfs
+set queue pqkjelfs queue_type = Execution
+set queue pqkjelfs Priority = 164
+set queue pqkjelfs acl_user_enable = False
+set queue pqkjelfs resources_max.walltime = 168:00:00
+set queue pqkjelfs resources_default.fs_factor = 0.01
+set queue pqkjelfs resources_default.preempt_targets = queue=v1_throughput2a
+set queue pqkjelfs resources_default.preempt_targets += queue=v1_general24a
+set queue pqkjelfs resources_default.walltime = 01:00:00
+set queue pqkjelfs default_chunk.Qlist = pqkjelfs
+set queue pqkjelfs resources_available.permitted_groups = pq-kjelfs
+set queue pqkjelfs resources_available.permitted_groups += hpc-admin
+set queue pqkjelfs max_run_res.mem = [o:PBS_ALL=253gb]
+set queue pqkjelfs max_run_res.ncpus = [o:PBS_ALL=96]
+set queue pqkjelfs max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqkjelfs enabled = True
+set queue pqkjelfs started = True
+#
+# Create and define queue pqeelab
+#
+create queue pqeelab
+set queue pqeelab queue_type = Execution
+set queue pqeelab Priority = 151
+set queue pqeelab acl_user_enable = False
+set queue pqeelab resources_max.walltime = 1000:00:00
+set queue pqeelab resources_default.fs_factor = 0.01
+set queue pqeelab resources_default.preempt_targets = queue=v1_throughput2a
+set queue pqeelab resources_default.preempt_targets += queue=v1_general24a
+set queue pqeelab resources_default.walltime = 01:00:00
+set queue pqeelab default_chunk.Qlist = pqeelab
+set queue pqeelab resources_available.permitted_groups = pq-eelab
+set queue pqeelab resources_available.permitted_groups += hpc-admin
+set queue pqeelab max_run_res.mem = [o:PBS_ALL=1003gb]
+set queue pqeelab max_run_res.ncpus = [o:PBS_ALL=320]
+set queue pqeelab max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqeelab enabled = True
+set queue pqeelab started = True
+#
+# Create and define queue pqigould
+#
+create queue pqigould
+set queue pqigould queue_type = Execution
+set queue pqigould Priority = 153
+set queue pqigould acl_user_enable = False
+set queue pqigould resources_max.walltime = 168:00:00
+set queue pqigould resources_default.fs_factor = 0.01
+set queue pqigould resources_default.preempt_targets = queue=v1_throughput2a
+set queue pqigould resources_default.preempt_targets += queue=v1_general24a
+set queue pqigould resources_default.preempt_targets += queue=v1_gpu24
+set queue pqigould resources_default.walltime = 01:00:00
+set queue pqigould default_chunk.Qlist = pqigould
+set queue pqigould resources_available.permitted_groups = pq-igould
+set queue pqigould resources_available.permitted_groups += hpc-admin
+set queue pqigould max_run_res.mem = [o:PBS_ALL=189gb]
+set queue pqigould max_run_res.ncpus = [o:PBS_ALL=28]
+set queue pqigould max_run_res.ngpus = [o:PBS_ALL=12]
+set queue pqigould enabled = True
+set queue pqigould started = True
+#
+# Create and define queue pqlaser
+#
+create queue pqlaser
+set queue pqlaser queue_type = Execution
+set queue pqlaser Priority = 191
+set queue pqlaser acl_user_enable = False
+set queue pqlaser resources_max.walltime = 2400:00:00
+set queue pqlaser resources_default.fs_factor = 0.01
+set queue pqlaser resources_default.preempt_targets = queue=v1_throughput2a
+set queue pqlaser resources_default.preempt_targets += queue=v1_general24a
+set queue pqlaser resources_default.walltime = 01:00:00
+set queue pqlaser default_chunk.Qlist = pqlaser
+set queue pqlaser resources_available.permitted_groups = pq-laser
+set queue pqlaser resources_available.permitted_groups += hpc-admin
+set queue pqlaser kill_delay = 15
+set queue pqlaser max_run_res.mem = [o:PBS_ALL=3057gb]
+set queue pqlaser max_run_res.ncpus = [o:PBS_ALL=480]
+set queue pqlaser max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqlaser enabled = True
+set queue pqlaser started = True
+#
+# Create and define queue pqexss
+#
+create queue pqexss
+set queue pqexss queue_type = Execution
+set queue pqexss Priority = 176
+set queue pqexss acl_user_enable = False
+set queue pqexss resources_max.walltime = 168:00:00
+set queue pqexss resources_default.fs_factor = 0.01
+set queue pqexss resources_default.preempt_targets = queue=v1_throughput2a
+set queue pqexss resources_default.preempt_targets += queue=v1_general24a
+set queue pqexss resources_default.walltime = 01:00:00
+set queue pqexss default_chunk.Qlist = pqexss
+set queue pqexss resources_available.permitted_groups = pq-exss
+set queue pqexss resources_available.permitted_groups += hpc-admin
+set queue pqexss kill_delay = 15
+set queue pqexss max_run_res.mem = [o:PBS_ALL=503gb]
+set queue pqexss max_run_res.ncpus = [o:PBS_ALL=160]
+set queue pqexss max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqexss enabled = True
+set queue pqexss started = True
+#
+# Create and define queue pqcgi
+#
+create queue pqcgi
+set queue pqcgi queue_type = Execution
+set queue pqcgi Priority = 162
+set queue pqcgi acl_user_enable = False
+set queue pqcgi resources_max.walltime = 168:00:00
+set queue pqcgi resources_default.fs_factor = 0.01
+set queue pqcgi resources_default.preempt_targets = queue=v1_general24a
+set queue pqcgi resources_default.walltime = 01:00:00
+set queue pqcgi default_chunk.Qlist = pqcgi
+set queue pqcgi resources_available.permitted_groups = pq-cgi
+set queue pqcgi resources_available.permitted_groups += hpc-admin
+set queue pqcgi kill_delay = 15
+set queue pqcgi max_run_res.mem = [o:PBS_ALL=2659gb]
+set queue pqcgi max_run_res.ncpus = [o:PBS_ALL=672]
+set queue pqcgi max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqcgi enabled = True
+set queue pqcgi started = True
+#
+# Create and define queue pqtribo
+#
+create queue pqtribo
+set queue pqtribo queue_type = Execution
+set queue pqtribo Priority = 161
+set queue pqtribo acl_user_enable = False
+set queue pqtribo resources_max.nodes = 10
+set queue pqtribo resources_max.walltime = 168:00:00
+set queue pqtribo resources_default.fs_factor = 0.01
+set queue pqtribo resources_default.preempt_targets = queue=v1_throughput2a
+set queue pqtribo resources_default.preempt_targets += queue=v1_general24a
+set queue pqtribo resources_default.walltime = 01:00:00
+set queue pqtribo default_chunk.Qlist = pqtribo
+set queue pqtribo resources_available.permitted_groups = pq-tribo
+set queue pqtribo resources_available.permitted_groups += hpc-admin
+set queue pqtribo max_run_res.mem = [o:PBS_ALL=1262gb]
+set queue pqtribo max_run_res.ncpus = [o:PBS_ALL=456]
+set queue pqtribo max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqtribo enabled = True
+set queue pqtribo started = True
+#
+# Create and define queue pqmaterials
+#
+create queue pqmaterials
+set queue pqmaterials queue_type = Execution
+set queue pqmaterials Priority = 160
+set queue pqmaterials acl_user_enable = False
+set queue pqmaterials resources_max.walltime = 168:00:00
+set queue pqmaterials resources_default.fs_factor = 0.01
+set queue pqmaterials resources_default.preempt_targets = queue=v1_general24a
+set queue pqmaterials resources_default.walltime = 01:00:00
+set queue pqmaterials default_chunk.Qlist = pqmaterials
+set queue pqmaterials resources_available.permitted_groups = pq-materials
+set queue pqmaterials resources_available.permitted_groups += hpc-admin
+set queue pqmaterials max_run_res.mem = [o:PBS_ALL=2652gb]
+set queue pqmaterials max_run_res.ncpus = [o:PBS_ALL=784]
+set queue pqmaterials max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqmaterials enabled = True
+set queue pqmaterials started = True
+#
+# Create and define queue pqjferrer
+#
+create queue pqjferrer
+set queue pqjferrer queue_type = Execution
+set queue pqjferrer Priority = 174
+set queue pqjferrer acl_user_enable = False
+set queue pqjferrer resources_max.walltime = 168:00:00
+set queue pqjferrer resources_default.fs_factor = 0.01
+set queue pqjferrer resources_default.preempt_targets = queue=v1_throughput2a
+set queue pqjferrer resources_default.preempt_targets += queue=v1_general24a
+set queue pqjferrer resources_default.walltime = 01:00:00
+set queue pqjferrer default_chunk.Qlist = pqjferrer
+set queue pqjferrer resources_available.permitted_groups = pq-jferrer
+set queue pqjferrer resources_available.permitted_groups += hpc-admin
+set queue pqjferrer kill_delay = 15
+set queue pqjferrer max_run_res.mem = [o:PBS_ALL=1024gb]
+set queue pqjferrer max_run_res.ncpus = [o:PBS_ALL=320]
+set queue pqjferrer max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqjferrer enabled = True
+set queue pqjferrer started = True
+#
+# Create and define queue pqrrng
+#
+create queue pqrrng
+set queue pqrrng queue_type = Execution
+set queue pqrrng Priority = 190
+set queue pqrrng acl_user_enable = False
+set queue pqrrng resources_max.walltime = 2400:00:00
+set queue pqrrng resources_default.fs_factor = 0.01
+set queue pqrrng resources_default.place = excl
+set queue pqrrng resources_default.preempt_targets = queue=v1_general24a
+set queue pqrrng resources_default.preempt_targets += queue=v1_throughput2a
+set queue pqrrng resources_default.walltime = 01:00:00
+set queue pqrrng default_chunk.Qlist = pqrrng
+set queue pqrrng resources_available.permitted_groups = pq-rrng
+set queue pqrrng resources_available.permitted_groups += hpc-admin
+set queue pqrrng kill_delay = 15
+set queue pqrrng max_run_res.mem = [o:PBS_ALL=12358gb]
+set queue pqrrng max_run_res.ncpus = [o:PBS_ALL=4704]
+set queue pqrrng max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqrrng enabled = True
+set queue pqrrng started = True
+#
+# Create and define queue pqstokes
+#
+create queue pqstokes
+set queue pqstokes queue_type = Execution
+set queue pqstokes Priority = 168
+set queue pqstokes acl_user_enable = False
+set queue pqstokes resources_max.walltime = 168:00:00
+set queue pqstokes resources_default.fs_factor = 0.01
+set queue pqstokes resources_default.preempt_targets = queue=v1_general24a
+set queue pqstokes resources_default.walltime = 01:00:00
+set queue pqstokes default_chunk.Qlist = pqstokes
+set queue pqstokes resources_available.permitted_groups = pq-stokes
+set queue pqstokes resources_available.permitted_groups += hpc-admin
+set queue pqstokes kill_delay = 15
+set queue pqstokes max_run_res.mem = [o:PBS_ALL=2908gb]
+set queue pqstokes max_run_res.ncpus = [o:PBS_ALL=736]
+set queue pqstokes max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqstokes enabled = True
+set queue pqstokes started = True
+#
+# Create and define queue pqmrwarn2
+#
+create queue pqmrwarn2
+set queue pqmrwarn2 queue_type = Execution
+set queue pqmrwarn2 Priority = 188
+set queue pqmrwarn2 resources_max.walltime = 168:00:00
+set queue pqmrwarn2 resources_default.fs_factor = 0.01
+set queue pqmrwarn2 resources_default.preempt_targets = queue=v1_throughput2a
+set queue pqmrwarn2 resources_default.preempt_targets += queue=v1_general24a
+set queue pqmrwarn2 default_chunk.Qlist = pqmrwarn2
+set queue pqmrwarn2 resources_available.permitted_groups = pq-mrwarn
+set queue pqmrwarn2 resources_available.permitted_groups += hpc-admin
+set queue pqmrwarn2 max_run_res.mem = [o:PBS_ALL=384gb]
+set queue pqmrwarn2 max_run_res.ncpus = [o:PBS_ALL=120]
+set queue pqmrwarn2 max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqmrwarn2 enabled = True
+set queue pqmrwarn2 started = True
+#
+# Create and define queue pqmultiflowib
+#
+create queue pqmultiflowib
+set queue pqmultiflowib queue_type = Execution
+set queue pqmultiflowib Priority = 194
+set queue pqmultiflowib acl_user_enable = False
+set queue pqmultiflowib resources_max.walltime = 168:00:00
+set queue pqmultiflowib resources_default.fs_factor = 0.01
+set queue pqmultiflowib resources_default.preempt_targets = queue=v1_general24a
+set queue pqmultiflowib resources_default.walltime = 01:00:00
+set queue pqmultiflowib default_chunk.icib = True
+set queue pqmultiflowib default_chunk.Qlist = pqmultiflowib
+set queue pqmultiflowib resources_available.permitted_groups = pq-multiflow
+set queue pqmultiflowib resources_available.permitted_groups += hpc-admin
+set queue pqmultiflowib max_run_res.mem = [o:PBS_ALL=1204gb]
+set queue pqmultiflowib max_run_res.ncpus = [o:PBS_ALL=760]
+set queue pqmultiflowib max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqmultiflowib enabled = True
+set queue pqmultiflowib started = True
+#
+# Create and define queue pqmeneg
+#
+create queue pqmeneg
+set queue pqmeneg queue_type = Execution
+set queue pqmeneg Priority = 189
+set queue pqmeneg acl_user_enable = False
+set queue pqmeneg resources_max.nodes = 20
+set queue pqmeneg resources_max.walltime = 2400:00:00
+set queue pqmeneg resources_min.ncpus = 1
+set queue pqmeneg resources_min.nodect = 1
+set queue pqmeneg resources_default.fs_factor = 0.01
+set queue pqmeneg resources_default.preempt_targets = queue=v1_general24a
+set queue pqmeneg resources_default.preempt_targets += queue=v1_throughput2a
+set queue pqmeneg resources_default.walltime = 01:00:00
+set queue pqmeneg default_chunk.Qlist = pqmeneg
+set queue pqmeneg resources_available.permitted_groups = pq-meneg
+set queue pqmeneg resources_available.permitted_groups += hpc-admin
+set queue pqmeneg max_run_res.mem = [o:PBS_ALL=2941gb]
+set queue pqmeneg max_run_res.ncpus = [o:PBS_ALL=1104]
+set queue pqmeneg max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqmeneg enabled = True
+set queue pqmeneg started = True
+#
+# Create and define queue pqmemphis
+#
+create queue pqmemphis
+set queue pqmemphis queue_type = Execution
+set queue pqmemphis Priority = 169
+set queue pqmemphis acl_user_enable = False
+set queue pqmemphis resources_max.walltime = 168:00:00
+set queue pqmemphis resources_default.fs_factor = 0.01
+set queue pqmemphis resources_default.preempt_targets = queue=v1_general24a
+set queue pqmemphis resources_default.walltime = 01:00:00
+set queue pqmemphis default_chunk.Qlist = pqmemphis
+set queue pqmemphis resources_available.permitted_groups = pq-memphis
+set queue pqmemphis resources_available.permitted_groups += hpc-admin
+set queue pqmemphis max_run_res.mem = [o:PBS_ALL=2512gb]
+set queue pqmemphis max_run_res.ncpus = [o:PBS_ALL=1120]
+set queue pqmemphis max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqmemphis enabled = True
+set queue pqmemphis started = True
+#
+# Create and define queue pqstorm
+#
+create queue pqstorm
+set queue pqstorm queue_type = Execution
+set queue pqstorm Priority = 181
+set queue pqstorm acl_user_enable = False
+set queue pqstorm resources_max.walltime = 168:00:00
+set queue pqstorm resources_default.fs_factor = 0.01
+set queue pqstorm resources_default.preempt_targets = queue=v1_throughput2a
+set queue pqstorm resources_default.preempt_targets += queue=v1_general24a
+set queue pqstorm resources_default.walltime = 01:00:00
+set queue pqstorm default_chunk.Qlist = pqstorm
+set queue pqstorm resources_available.permitted_groups = pq-storm
+set queue pqstorm resources_available.permitted_groups += hpc-admin
+set queue pqstorm kill_delay = 15
+set queue pqstorm max_run_res.mem = [o:PBS_ALL=1024gb]
+set queue pqstorm max_run_res.ncpus = [o:PBS_ALL=192]
+set queue pqstorm max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqstorm enabled = True
+set queue pqstorm started = True
+#
+# Create and define queue pqchem
+#
+create queue pqchem
+set queue pqchem queue_type = Execution
+set queue pqchem Priority = 184
+set queue pqchem acl_user_enable = False
+set queue pqchem resources_max.walltime = 168:00:00
+set queue pqchem resources_default.fs_factor = 0.01
+set queue pqchem resources_default.preempt_targets = queue=v1_throughput2a
+set queue pqchem resources_default.preempt_targets += queue=v1_general24a
+set queue pqchem resources_default.walltime = 01:00:00
+set queue pqchem default_chunk.Qlist = pqchem
+set queue pqchem resources_available.permitted_groups = pq-chem
+set queue pqchem resources_available.permitted_groups += hpc-admin
+set queue pqchem kill_delay = 15
+set queue pqchem max_run_res.mem = [o:PBS_ALL=1400gb]
+set queue pqchem max_run_res.ncpus = [o:PBS_ALL=464]
+set queue pqchem max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqchem enabled = True
+set queue pqchem started = True
+#
+# Create and define queue pqph
+#
+create queue pqph
+set queue pqph queue_type = Execution
+set queue pqph Priority = 150
+set queue pqph acl_user_enable = False
+set queue pqph resources_max.walltime = 168:00:00
+set queue pqph resources_default.fs_factor = 0.01
+set queue pqph resources_default.preempt_targets = queue=v1_general24a
+set queue pqph resources_default.preempt_targets += queue=v1_throughput2a
+set queue pqph resources_default.walltime = 01:00:00
+set queue pqph default_chunk.Qlist = pqph
+set queue pqph resources_available.permitted_groups = pq-ph
+set queue pqph resources_available.permitted_groups += hpc-admin
+set queue pqph resources_available.permitted_groups += hpc-admin
+set queue pqph kill_delay = 15
+set queue pqph max_run_res.mem = [o:PBS_ALL=3479gb]
+set queue pqph max_run_res.ncpus = [o:PBS_ALL=984]
+set queue pqph max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqph enabled = True
+set queue pqph started = True
+#
+# Create and define queue v1_throughput72
+#
+create queue v1_throughput72
+set queue v1_throughput72 queue_type = Execution
+set queue v1_throughput72 Priority = 1
+set queue v1_throughput72 from_route_only = False
+set queue v1_throughput72 default_chunk.Qlist = v1_throughput72
+set queue v1_throughput72 enabled = True
+set queue v1_throughput72 started = True
+#
+# Create and define queue pqawalsh
+#
+create queue pqawalsh
+set queue pqawalsh queue_type = Execution
+set queue pqawalsh Priority = 183
+set queue pqawalsh acl_user_enable = False
+set queue pqawalsh resources_max.walltime = 168:00:00
+set queue pqawalsh resources_default.fs_factor = 0.01
+set queue pqawalsh resources_default.preempt_targets = queue=v1_throughput2a
+set queue pqawalsh resources_default.preempt_targets += queue=v1_general24a
+set queue pqawalsh default_chunk.Qlist = pqawalsh
+set queue pqawalsh resources_available.permitted_groups = pq-awalsh
+set queue pqawalsh resources_available.permitted_groups += hpc-admin
+set queue pqawalsh max_run_res.mem = [o:PBS_ALL=1275gb]
+set queue pqawalsh max_run_res.ncpus = [o:PBS_ALL=240]
+set queue pqawalsh max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqawalsh enabled = True
+set queue pqawalsh started = True
+#
+# Create and define queue v1_interactive
+#
+create queue v1_interactive
+set queue v1_interactive queue_type = Execution
+set queue v1_interactive Priority = 9
+set queue v1_interactive from_route_only = False
+set queue v1_interactive default_chunk.Qlist = v1_interactive
+set queue v1_interactive max_run = [u:PBS_GENERIC=1]
+set queue v1_interactive enabled = True
+set queue v1_interactive started = True
+#
+# Create and define queue med-bio
+#
+create queue med-bio
+set queue med-bio queue_type = Execution
+set queue med-bio Priority = 50
+set queue med-bio acl_user_enable = False
+set queue med-bio resources_max.walltime = 168:00:00
+set queue med-bio resources_default.fs_factor = 1
+set queue med-bio resources_default.preempt_targets = queue=v1_general24a
+set queue med-bio resources_default.preempt_targets += queue=v1_throughput2a
+set queue med-bio resources_default.walltime = 01:00:00
+set queue med-bio default_chunk.Qlist = med-bio
+set queue med-bio resources_available.permitted_groups = pq-med-bio
+set queue med-bio max_run_res.mem = [o:PBS_ALL=19tb]
+set queue med-bio max_run_res.ncpus = [o:PBS_ALL=6000]
+set queue med-bio enabled = True
+set queue med-bio started = True
+#
+# Create and define queue v1_largemem48
+#
+create queue v1_largemem48
+set queue v1_largemem48 queue_type = Execution
+set queue v1_largemem48 Priority = 5
+set queue v1_largemem48 from_route_only = False
+set queue v1_largemem48 default_chunk.Qlist = v1_largemem48
+set queue v1_largemem48 enabled = True
+set queue v1_largemem48 started = True
+#
+# Create and define queue pqplasma2
+#
+create queue pqplasma2
+set queue pqplasma2 queue_type = Execution
+set queue pqplasma2 Priority = 157
+set queue pqplasma2 acl_user_enable = False
+set queue pqplasma2 resources_max.walltime = 168:00:00
+set queue pqplasma2 resources_default.fs_factor = 0.01
+set queue pqplasma2 resources_default.preempt_targets = queue=v1_general24a
+set queue pqplasma2 resources_default.preempt_targets += queue=v1_throughput2a
+set queue pqplasma2 resources_default.walltime = 01:00:00
+set queue pqplasma2 default_chunk.Qlist = pqplasma2
+set queue pqplasma2 resources_available.permitted_groups = pq-plasma2
+set queue pqplasma2 resources_available.permitted_groups += hpc-admin
+set queue pqplasma2 max_run_res.mem = [o:PBS_ALL=6017gb]
+set queue pqplasma2 max_run_res.ncpus = [o:PBS_ALL=1848]
+set queue pqplasma2 max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqplasma2 enabled = True
+set queue pqplasma2 started = True
+#
+# Create and define queue pqaerogpu
+#
+create queue pqaerogpu
+set queue pqaerogpu queue_type = Execution
+set queue pqaerogpu Priority = 175
+set queue pqaerogpu acl_user_enable = False
+set queue pqaerogpu resources_max.walltime = 168:00:00
+set queue pqaerogpu resources_default.fs_factor = 0.01
+set queue pqaerogpu resources_default.preempt_targets = queue=v1_throughput2a
+set queue pqaerogpu resources_default.preempt_targets += queue=v1_general24a
+set queue pqaerogpu resources_default.preempt_targets += queue=v1_gpu24
+set queue pqaerogpu resources_default.preempt_targets += queue=v1_gpu48
+set queue pqaerogpu resources_default.walltime = 01:00:00
+set queue pqaerogpu default_chunk.Qlist = pqaerogpu
+set queue pqaerogpu resources_available.permitted_groups = pq-aerogpu
+set queue pqaerogpu resources_available.permitted_groups += hpc-admin
+set queue pqaerogpu max_run_res.mem = [o:PBS_ALL=568gb]
+set queue pqaerogpu max_run_res.ncpus = [o:PBS_ALL=128]
+set queue pqaerogpu max_run_res.ngpus = [o:PBS_ALL=32]
+set queue pqaerogpu enabled = True
+set queue pqaerogpu started = True
+#
+# Create and define queue pqeboek
+#
+create queue pqeboek
+set queue pqeboek queue_type = Execution
+set queue pqeboek Priority = 195
+set queue pqeboek acl_user_enable = False
+set queue pqeboek resources_max.walltime = 168:00:00
+set queue pqeboek resources_default.fs_factor = 0.01
+set queue pqeboek resources_default.preempt_targets = queue=v1_gpu24
+set queue pqeboek resources_default.preempt_targets += queue=v1_general24a
+set queue pqeboek resources_default.preempt_targets += queue=v1_throughput2a
+set queue pqeboek resources_default.walltime = 01:00:00
+set queue pqeboek default_chunk.Qlist = pqeboek
+set queue pqeboek resources_available.permitted_groups = pq-eboek
+set queue pqeboek resources_available.permitted_groups += hpc-admin
+set queue pqeboek kill_delay = 15
+set queue pqeboek max_run_res.mem = [o:PBS_ALL=1014gb]
+set queue pqeboek max_run_res.ncpus = [o:PBS_ALL=164]
+set queue pqeboek max_run_res.ngpus = [o:PBS_ALL=64]
+set queue pqeboek enabled = True
+set queue pqeboek started = True
+#
+# Create and define queue pqmrwarn
+#
+create queue pqmrwarn
+set queue pqmrwarn queue_type = Execution
+set queue pqmrwarn Priority = 199
+set queue pqmrwarn acl_user_enable = False
+set queue pqmrwarn resources_max.walltime = 2400:00:00
+set queue pqmrwarn resources_default.fs_factor = 0.01
+set queue pqmrwarn resources_default.preempt_targets = queue=v1_general24a
+set queue pqmrwarn resources_default.walltime = 01:00:00
+set queue pqmrwarn default_chunk.Qlist = pqmrwarn
+set queue pqmrwarn resources_available.permitted_groups = pq-mrwarn
+set queue pqmrwarn resources_available.permitted_groups += hpc-admin
+set queue pqmrwarn kill_delay = 15
+set queue pqmrwarn max_run = [u:PBS_GENERIC=1]
+set queue pqmrwarn max_run += [u:as3710=3]
+set queue pqmrwarn max_run += [u:db911=6]
+set queue pqmrwarn max_run += [u:djb108=50]
+set queue pqmrwarn max_run += [u:fgr14=1]
+set queue pqmrwarn max_run += [u:gls451=2]
+set queue pqmrwarn max_run += [u:gy09=5]
+set queue pqmrwarn max_run += [u:hd307=128]
+set queue pqmrwarn max_run += [u:isugden=128]
+set queue pqmrwarn max_run += [u:jaa209=20]
+set queue pqmrwarn max_run += [u:jy2114=20]
+set queue pqmrwarn max_run += [u:koi10=10]
+set queue pqmrwarn max_run += [u:lguasch=10]
+set queue pqmrwarn max_run += [u:mjdr=66]
+set queue pqmrwarn max_run += [u:mpaulatt=20]
+set queue pqmrwarn max_run += [u:mrwarn=10]
+set queue pqmrwarn max_run += [u:ns4409=20]
+set queue pqmrwarn max_run += [u:nvieira1=128]
+set queue pqmrwarn max_run += [u:oc14=2]
+set queue pqmrwarn max_run += [u:sjn=2]
+set queue pqmrwarn max_run += [u:tb1913=2]
+set queue pqmrwarn max_run += [u:tlin=4]
+set queue pqmrwarn max_run += [u:tmellan=66]
+set queue pqmrwarn max_run += [u:tpn08=20]
+set queue pqmrwarn max_run += [u:yboumedi=3]
+set queue pqmrwarn max_run += [u:ybourmedi=3]
+set queue pqmrwarn max_run_res.mem = [o:PBS_ALL=30208gb]
+set queue pqmrwarn max_run_res.ncpus = [o:PBS_ALL=6440]
+set queue pqmrwarn max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqmrwarn enabled = True
+set queue pqmrwarn started = True
+#
+# Create and define queue pqndenuc
+#
+create queue pqndenuc
+set queue pqndenuc queue_type = Execution
+set queue pqndenuc Priority = 171
+set queue pqndenuc acl_user_enable = False
+set queue pqndenuc resources_max.walltime = 168:00:00
+set queue pqndenuc resources_default.fs_factor = 0.01
+set queue pqndenuc resources_default.preempt_targets = queue=v1_gpu24
+set queue pqndenuc resources_default.preempt_targets += queue=v1_throughput2a
+set queue pqndenuc resources_default.preempt_targets += queue=v1_general24a
+set queue pqndenuc resources_default.walltime = 01:00:00
+set queue pqndenuc default_chunk.ngpus = 1
+set queue pqndenuc default_chunk.Qlist = pqndenuc
+set queue pqndenuc resources_available.permitted_groups = pq-ndenuc
+set queue pqndenuc resources_available.permitted_groups += hpc-admin
+set queue pqndenuc max_run_res.mem = [o:PBS_ALL=1022gb]
+set queue pqndenuc max_run_res.ncpus = [o:PBS_ALL=32]
+set queue pqndenuc enabled = True
+set queue pqndenuc started = True
+#
+# Create and define queue v1_long1000
+#
+create queue v1_long1000
+set queue v1_long1000 queue_type = Execution
+set queue v1_long1000 Priority = 5
+set queue v1_long1000 max_queued = [u:PBS_GENERIC=2]
+set queue v1_long1000 from_route_only = False
+set queue v1_long1000 default_chunk.Qlist = v1_throughput72
+set queue v1_long1000 max_run = [u:PBS_GENERIC=1]
+set queue v1_long1000 enabled = True
+set queue v1_long1000 started = True
+#
+# Create and define queue v1_gpu24
+#
+create queue v1_gpu24
+set queue v1_gpu24 queue_type = Execution
+set queue v1_gpu24 Priority = 4
+set queue v1_gpu24 from_route_only = False
+set queue v1_gpu24 default_chunk.Qlist = v1_gpu24
+set queue v1_gpu24 enabled = True
+set queue v1_gpu24 started = True
+#
+# Create and define queue v1_gpu48
+#
+create queue v1_gpu48
+set queue v1_gpu48 queue_type = Execution
+set queue v1_gpu48 Priority = 4
+set queue v1_gpu48 from_route_only = False
+set queue v1_gpu48 default_chunk.Qlist = v1_gpu48
+set queue v1_gpu48 enabled = True
+set queue v1_gpu48 started = True
+#
+# Create and define queue v1_singlenode24
+#
+create queue v1_singlenode24
+set queue v1_singlenode24 queue_type = Execution
+set queue v1_singlenode24 Priority = 5
+set queue v1_singlenode24 from_route_only = False
+set queue v1_singlenode24 resources_default.place = scatter:excl
+set queue v1_singlenode24 default_chunk.Qlist = v1_singlenode24
+set queue v1_singlenode24 enabled = True
+set queue v1_singlenode24 started = True
+#
+# Create and define queue exp_48_128_72
+#
+create queue exp_48_128_72
+set queue exp_48_128_72 queue_type = Execution
+set queue exp_48_128_72 Priority = 150
+set queue exp_48_128_72 from_route_only = False
+set queue exp_48_128_72 resources_default.fs_factor = 0.01
+set queue exp_48_128_72 resources_default.place = scatter:excl
+set queue exp_48_128_72 resources_default.preempt_targets = queue=v1_throughput2a
+set queue exp_48_128_72 resources_default.preempt_targets += queue=v1_general24a
+set queue exp_48_128_72 default_chunk.Qlist = exp_48_128_72
+set queue exp_48_128_72 enabled = True
+set queue exp_48_128_72 started = True
+#
+# Create and define queue v1_general72
+#
+create queue v1_general72
+set queue v1_general72 queue_type = Execution
+set queue v1_general72 Priority = 5
+set queue v1_general72 from_route_only = False
+set queue v1_general72 resources_default.place = scatter:excl
+set queue v1_general72 default_chunk.Qlist = v1_general72
+set queue v1_general72 max_run = [u:PBS_GENERIC=20]
+set queue v1_general72 enabled = True
+set queue v1_general72 started = True
+#
+# Create and define queue v1_general24
+#
+create queue v1_general24
+set queue v1_general24 queue_type = Execution
+set queue v1_general24 Priority = 5
+set queue v1_general24 from_route_only = False
+set queue v1_general24 resources_default.place = scatter:excl
+set queue v1_general24 default_chunk.Qlist = v1_general24
+set queue v1_general24 max_run = [u:PBS_GENERIC=20]
+set queue v1_general24 enabled = True
+set queue v1_general24 started = True
+#
+# Create and define queue exp_32_64_72
+#
+create queue exp_32_64_72
+set queue exp_32_64_72 queue_type = Execution
+set queue exp_32_64_72 Priority = 150
+set queue exp_32_64_72 from_route_only = False
+set queue exp_32_64_72 resources_default.fs_factor = 0.01
+set queue exp_32_64_72 resources_default.place = scatter:excl
+set queue exp_32_64_72 resources_default.preempt_targets = queue=v1_throughput2a
+set queue exp_32_64_72 resources_default.preempt_targets += queue=v1_general24a
+set queue exp_32_64_72 default_chunk.Qlist = exp_32_64_72
+set queue exp_32_64_72 enabled = True
+set queue exp_32_64_72 started = True
+#
+# Create and define queue pqmedyn
+#
+create queue pqmedyn
+set queue pqmedyn queue_type = Execution
+set queue pqmedyn Priority = 197
+set queue pqmedyn acl_user_enable = False
+set queue pqmedyn resources_max.walltime = 2400:00:00
+set queue pqmedyn resources_default.fs_factor = 0.01
+set queue pqmedyn resources_default.preempt_targets = queue=v1_general24a
+set queue pqmedyn resources_default.preempt_targets += queue=v1_throughput2a
+set queue pqmedyn resources_default.walltime = 01:00:00
+set queue pqmedyn default_chunk.Qlist = pqmedyn
+set queue pqmedyn resources_available.permitted_groups = pq-medyn
+set queue pqmedyn resources_available.permitted_groups += hpc-admin
+set queue pqmedyn max_run_res.mem = [o:PBS_ALL=3626gb]
+set queue pqmedyn max_run_res.ncpus = [o:PBS_ALL=1936]
+set queue pqmedyn max_run_res.ngpus = [o:PBS_ALL=0]
+set queue pqmedyn enabled = True
+set queue pqmedyn started = True
+#
+# Set server attributes.
+#
+set server scheduling = True
+set server max_queued = [o:PBS_ALL=10000]
+set server max_queued += [u:PBS_GENERIC=50]
+set server max_queued += [u:mwielsch=400]
+set server managers = apache@cx1b.hpc.ic.ac.uk
+set server managers += mjharvey@admin
+set server managers += mjharvey@cx1b
+set server managers += mjharvey@cx1
+set server operators = apache@admin
+set server operators += apache@cx1b.hpc.ic.ac.uk
+set server operators += apache@cx1b
+set server operators += kmichali@cx1b.hpc.ic.ac.uk
+set server operators += kmichali@login-3-internal.cx1.hpc.ic.ac.uk
+set server operators += kmichali@login-2-internal.cx1.hpc.ic.ac.uk
+set server operators += mjharvey@admin
+set server operators += mjharvey@login-3-internal.cx1.hpc.ic.ac.uk
+set server operators += mjharvey@login-2-internal.cx1.hpc.ic.ac.uk
+set server operators += rcregan@admin
+set server operators += rcregan@login-3-internal.cx1.hpc.ic.ac.uk
+set server operators += rcregan@login-2-internal.cx1.hpc.ic.ac.uk
+set server operators += rcs-role-5@admin
+set server operators += root@admin
+set server operators += root@*
+set server operators += slacalle@login-3-internal.cx1.hpc.ic.ac.uk
+set server operators += slacalle@login-2-internal.cx1.hpc.ic.ac.uk
+set server default_queue = v1_submit
+set server log_events = 511
+set server mail_from = noreply@imperial.ac.uk
+set server query_other_jobs = False
+set server resources_available.abaqus_token = 0
+set server resources_available.lstc_token = 0
+set server resources_default.fs_factor = 1
+set server resources_default.mem = 1gb
+set server resources_default.ncpus = 1
+set server resources_default.walltime = 01:00:00
+set server default_chunk.ncpus = 1
+set server scheduler_iteration = 600
+set server flatuid = True
+set server resv_enable = False
+set server node_fail_requeue = 310
+set server max_array_size = 10000
+set server node_group_enable = True
+set server node_group_key = switchgroup
+set server rpp_retry = 100
+set server pbs_license_info = 6200@iclic24.cc.imperial.ac.uk
+set server pbs_license_min = 30000
+set server pbs_license_max = 2147483647
+set server pbs_license_linger_time = 172800
+set server eligible_time_enable = False
+set server max_concurrent_provision = 5
+set server backfill_depth = 1
